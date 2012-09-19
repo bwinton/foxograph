@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node app.js"
   },
+  "amd": {},
   "volo": {
     "baseUrl": "public/js/lib",
     "dependencies": {
