@@ -3,10 +3,27 @@
   <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <link href="styles/style.css" type="text/css" rel="stylesheet" />
+    <link href="styles/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="styles/style.css" type="text/css" rel="stylesheet">
     <script data-main="js/app" src="js/lib/require.js"></script>
   </head>
   <body>
     <h1>Hello world.</h1>
+    <div id="mockups"></div>
+    <div id="testme" class="btn btn-primary"><i class="icon-barcode icon-white"></i>
+      click</div>
   </body>
+
+  <script type="text/template" id="mockups-template">
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      All the pretties…
+      <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+        <!-- dropdown menu links -->
+        <% _.each(mockups, function(mockup) { %> <li><%= mockup.name %></li> <% }); %>
+      </ul>
+    </div>
+  </script>
 </html>
