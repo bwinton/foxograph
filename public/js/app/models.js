@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'backbone'], function($, _, Backbone) {
+define(['backbone'], function(Backbone) {
 
 // Base classes.
 
@@ -66,7 +66,6 @@ var BugList = Backbone.Collection.extend({
 // Instances.
 
 var mockups = new MockupList();
-mockups.fetch();
 
 return {'mockups': mockups};
 

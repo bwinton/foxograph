@@ -65,6 +65,7 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
+app.get('/mockups/', routes.getMockups);
 
 var server = app.listen(3000);
 console.log("Express server listening on port %d in %s mode", server.address().port, app.settings.env);
