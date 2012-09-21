@@ -8,19 +8,36 @@
     <script data-main="js/app" src="js/lib/require.js"></script>
   </head>
   <body>
-    <h1>Hello world.</h1>
-    <div></div>
     <div id="mockups" class="btn-group">
-      <a id="current-mockup" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-      All the pretties…
-      <span class="caret"></span>
-      </a>
-      <ul id="mockup-list" class="dropdown-menu" role="menu">
+      <a id="current-mockup" class="btn dropdown-toggle" role="button" data-toggle="dropdown" href="#">All the pretties… <b class="caret"></b></a>
+      <ul id="mockup-list" class="dropdown-menu" role="menu"
+          aria-labelledby="current-mockup">
       </ul>
     </div>
+    <form id="newMockup" class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="inputName">Mockup name</label>
+        <div class="controls">
+          <input type="text" id="inputName" placeholder="New Mockup">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button id="createMockup" type="submit" class="btn btn-primary">Create Mockup</button>
+          <button id="cancelMockup" type="submit" class="btn">Cancel</button>
+        </div>
+      </div>
+    </form>
+    <div id="mockup"></div>
   </body>
 
   <script type="text/template" id="mockups-template">
-    <% _.each(mockups, function(mockup) { %> <li><%= mockup.name %></li> <% }); %>
+    <li><a href="#" data-id="<%=cid%>"><%= get('name') %></a></li>
   </script>
+
+  <script type="text/template" id="mockup-template">
+    <h1><%= get('name') %></h1>
+  </script>
+
+
 </html>

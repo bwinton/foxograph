@@ -67,6 +67,8 @@ var BugList = Backbone.Collection.extend({
 
 var mockups = new MockupList();
 
-return {'mockups': mockups};
+return {
+  'mockups': mockups,
+};
 
 });
