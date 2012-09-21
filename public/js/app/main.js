@@ -4,9 +4,4 @@ define(function (require) {
   var views = require("./views");
 
   var appView = new views.AppView({model: models.mockups});
-
-  $("#testme").click(function() {
-    models.mockups.fetch();
-  });
-
 });

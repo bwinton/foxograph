@@ -9,21 +9,18 @@
   </head>
   <body>
     <h1>Hello world.</h1>
-    <div id="mockups"></div>
-    <div id="testme" class="btn btn-primary"><i class="icon-barcode icon-white"></i>
-      click</div>
-  </body>
-
-  <script type="text/template" id="mockups-template">
-    <div class="btn-group">
-      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+    <div></div>
+    <div id="mockups" class="btn-group">
+      <a id="current-mockup" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
       All the pretties…
       <span class="caret"></span>
       </a>
-      <ul class="dropdown-menu" role="menu">
-        <!-- dropdown menu links -->
-        <% _.each(mockups, function(mockup) { %> <li><%= mockup.name %></li> <% }); %>
+      <ul id="mockup-list" class="dropdown-menu" role="menu">
       </ul>
     </div>
+  </body>
+
+  <script type="text/template" id="mockups-template">
+    <% _.each(mockups, function(mockup) { %> <li><%= mockup.name %></li> <% }); %>
   </script>
 </html>

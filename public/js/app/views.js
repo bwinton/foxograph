@@ -8,11 +8,15 @@ var AppView = Backbone.View.extend({
   template: _.template( $('#mockups-template').html() ),
 
   initialize: function() {
+    this.button = this.$('#current-mockup');
+    this.menu = this.$('#mockup-list');
+
     this.model.on('reset', this.render, this);
+    this.model.fetch();
   },
 
   render: function() {
-    this.$el.html( this.template( {"mockups": this.model.toJSON()} ) );
+    this.menu.html( this.template( {"mockups": this.model.toJSON()} ) );
     $('.dropdown-toggle').dropdown();
     return this;
   }
