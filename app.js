@@ -4,6 +4,7 @@
 
 var ejs = require('ejs');
 var express = require('express');
+var mongoose = require('mongoose');
 var routes = require('./routes');
 var url = require('url');
 
@@ -13,6 +14,8 @@ const logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                             '<%= status %> <%= method %> <%= url %>');
 
 // Configuration
+
+mongoose.connect('mongodb://localhost/my_database');
 
 app.configure(function(){
   app.set('views', __dirname + '/www');
@@ -66,6 +69,7 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/mockups/', routes.getMockups);
+app.post('/mockups/', routes.postMockup);
 
 var server = app.listen(3000);
-console.log("Express server listening on port %d in %s mode", server.address().port, app.settings.env);
+console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
