@@ -26,11 +26,13 @@ define(function (require) {
       },
 
       run: function (d, v, namedArgs) {
-        //Remove the old dir
         v.rm('www');
-
         v.copyDir('public', 'www');
+        v.spawn('mongod', {'useConsole': true});
+        v.prompt('Hit enter to continue…', function() {
+          v.spawn('node', 'app.js', {'useConsole': true});
+        });
       }
     },
-  }
+  };
 });
