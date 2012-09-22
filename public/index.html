@@ -8,12 +8,16 @@
     <script data-main="js/app" src="js/lib/require.js"></script>
   </head>
   <body>
+
+    <!-- Mockup Menu -->
     <div id="mockups" class="btn-group">
       <a id="current-mockup" class="btn dropdown-toggle" role="button" data-toggle="dropdown" href="#">All the pretties… <b class="caret"></b></a>
       <ul id="mockup-list" class="dropdown-menu" role="menu"
           aria-labelledby="current-mockup">
       </ul>
     </div>
+
+    <!-- New Mockup Form -->
     <form id="newMockup" class="form-horizontal">
       <div class="control-group">
         <label class="control-label" for="inputName">Mockup name</label>
@@ -28,9 +32,13 @@
         </div>
       </div>
     </form>
+
+    <!-- Current Mockup -->
     <div id="mockup"></div>
+
   </body>
 
+  <!-- Templates -->
   <script type="text/template" id="mockups-template">
     <li><a href="#" data-id="<%=cid%>"><%= get('name') %></a></li>
   </script>
@@ -38,6 +46,5 @@
   <script type="text/template" id="mockup-template">
     <h1><%= get('name') %></h1>
   </script>
-
 
 </html>

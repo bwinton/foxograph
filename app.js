@@ -45,7 +45,7 @@ app.configure(function(){
       req.kvLog.status = res.statusCode;
       req.kvLog.response_time = (new Date() - req._rlStartTime);
 
-      // Send the log off to winston
+      // Print the log
       console.log(logTmpl(req.kvLog));
     };
 

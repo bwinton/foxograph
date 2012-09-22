@@ -1,6 +1,10 @@
-define(['jquery', 'underscore', 'backbone', 'bootstrap'], function($, _, Backbone) {
+define(['jquery', 'underscore', 'backbone', 'bootstrap', 'backbone.layoutmanager'],
+       function($, _, Backbone) {
 
 // Base classes.
+
+
+// Mockup View
 
 var MockupView = Backbone.View.extend({
   el: '#mockup',
@@ -8,19 +12,20 @@ var MockupView = Backbone.View.extend({
   template: _.template( $('#mockup-template').html() ),
 
   initialize: function() {
-    console.log("initializing…");
     var self = this;
     window.mockupView = this;
     return this;
   },
 
   render: function() {
-    console.log("rendering…");
     var self = this;
     $(this.el).html(this.template(this.model));
     return this;
   },
 });
+
+
+// App View.
 
 var AppView = Backbone.View.extend({
   el: '#mockups',
@@ -72,7 +77,6 @@ var AppView = Backbone.View.extend({
     if (!$('#inputName').val())
       return;
     var x = this.model.create({'name': $('#inputName').val()});
-    console.log(x);
     this.showMockup(x);
   },
 
