@@ -8,8 +8,21 @@ exports.index = function(req, res) {
   res.sendfile('www/index.html');
 };
 
+var Bug = mongoose.model('Bug', new mongoose.Schema({
+  number: String,
+  x: Number,
+  y: Number
+}));
+
+var Page = mongoose.model('Page', new mongoose.Schema({
+  image: String,
+  number: Number,
+  bugs: [Bug]
+}));
+
 var Mockup = mongoose.model('Mockup', new mongoose.Schema({
-  name: String
+  name: String,
+  pages: [Page]
 }));
 
 exports.getMockups = function(req, res) {
