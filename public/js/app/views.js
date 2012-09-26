@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'backbone', 'bootstrap', 'backbone.layoutmanager'],
+define(['jquery', 'underscore', 'backbone', 'bootstrap'],
        function($, _, Backbone) {
 
 // Base classes.
@@ -9,7 +9,7 @@ define(['jquery', 'underscore', 'backbone', 'bootstrap', 'backbone.layoutmanager
 var MockupView = Backbone.View.extend({
   el: '#mockup',
 
-  template: _.template( $('#mockup-template').html() ),
+  template: _.template($('#mockup-template').html()),
 
   initialize: function() {
     var self = this;
@@ -30,7 +30,7 @@ var MockupView = Backbone.View.extend({
 var AppView = Backbone.View.extend({
   el: '#mockups',
 
-  template: _.template( $('#mockups-template').html() ),
+  template: _.template($('#mockups-template').html()),
 
   events: {
     'click #addMockup': 'showNewForm',
