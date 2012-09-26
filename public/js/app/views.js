@@ -3,6 +3,12 @@ define(['jquery', 'underscore', 'backbone', 'bootstrap'],
 
 // Base classes.
 
+var oldSync = Backbone.sync;
+
+Backbone.sync = function(method, model, options) {
+  alert(method + ": " + JSON.stringify(model) + " - " + JSON.stringify(options));
+  return oldSync(method, model, options);
+};
 
 // Mockup View
 
@@ -14,6 +20,8 @@ var MockupView = Backbone.View.extend({
   initialize: function() {
     var self = this;
     window.mockupView = this;
+    this.model.fetch();
+    this.model.get('pages').fetch();
     return this;
   },
 
@@ -77,6 +85,8 @@ var AppView = Backbone.View.extend({
     if (!$('#inputName').val())
       return;
     var x = this.model.create({'name': $('#inputName').val()});
+    window.views = this;
+    x.get('pages').create({});
     this.showMockup(x);
   },
 

@@ -70,6 +70,8 @@ app.configure('production', function(){
 app.get('/', routes.index);
 app.get('/mockups/', routes.getMockups);
 app.post('/mockups/', routes.postMockup);
+app.get('/mockups/:mockup_id/pages/', routes.getPages);
+app.post('/mockups/:mockup_id/pages/', routes.postPage);
 
 var server = app.listen(3000);
 console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
