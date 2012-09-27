@@ -10,6 +10,49 @@ Backbone.sync = function(method, model, options) {
   return oldSync(method, model, options);
 };
 
+
+// Page View
+
+var PageView = Backbone.View.extend({
+  el: '#page',
+
+  template: _.template($('#page-template').html()),
+
+  initialize: function() {
+    var self = this;
+    this.currentPage = this.$('#current-page');
+    return this;
+  },
+
+  render: function() {
+    var self = this;
+    $(this.el).html(this.template(this.model));
+    var holder = $('.background');
+
+    holder[0].ondragover = function () { holder.addClass('hover'); return false; };
+    holder[0].ondragend = function () { holder.removeClass('hover'); return false; };
+    holder[0].ondrop = function (e) {
+      e.preventDefault();
+
+      var file = e.dataTransfer.files[0],
+          reader = new FileReader();
+      reader.onload = function (event) {
+        console.log(event.target.result);
+        self.model.set('image', event.target.result);
+        //self.model.save();
+        self.render();
+      };
+      console.log(file.name);
+      reader.readAsDataURL(file);
+
+      return false;
+    };
+    return this;
+  },
+});
+
+
+
 // Mockup View
 
 var MockupView = Backbone.View.extend({
@@ -19,6 +62,7 @@ var MockupView = Backbone.View.extend({
 
   initialize: function() {
     var self = this;
+    this.currentPage = this.$('#current-page');
     window.mockupView = this;
     this.model.fetch();
     this.model.get('pages').fetch();
@@ -30,6 +74,11 @@ var MockupView = Backbone.View.extend({
     $(this.el).html(this.template(this.model));
     return this;
   },
+
+  setPage: function(page) {
+    this.render();
+    this.subview = new PageView({model: this.model.get('pages').at(page)}).render();
+  }
 });
 
 
@@ -103,7 +152,8 @@ var AppView = Backbone.View.extend({
 
     $('#mockup').show();
     this.hideNewForm();
-    this.subview = new MockupView({model: mockup}).render();
+    this.subview = new MockupView({model: mockup});
+    this.subview.setPage(0);
     this.render();
   }
 

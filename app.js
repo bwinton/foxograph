@@ -72,6 +72,7 @@ app.get('/mockups/', routes.getMockups);
 app.post('/mockups/', routes.postMockup);
 app.get('/mockups/:mockup_id/pages/', routes.getPages);
 app.post('/mockups/:mockup_id/pages/', routes.postPage);
+app.post('/mockups/:mockup_id/pages/:page_id/bugs', routes.postBug);
 
 var server = app.listen(3000);
 console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);

@@ -35,7 +35,7 @@
       </div>
     </form>
 
-    <!-- Current Mockup -->
+    <!-- Current Mockup, and page. -->
     <div id="mockup"></div>
 
   </body>
@@ -47,7 +47,14 @@
 
   <script type="text/template" id="mockup-template">
     <h1><%= get('name') %></h1>
+    <div id="page"></div>
     Page 1 of <%= get('pages').length %>
+  </script>
+
+  <script type="text/template" id="page-template">
+    <div class="background" style="background-image: url('<%= get('image') %>');">
+    &nbsp;
+    </div>
   </script>
 
 </html>
