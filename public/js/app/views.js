@@ -56,27 +56,47 @@ var MockupView = Backbone.View.extend({
   template: _.template($('#mockup-template').html()),
 
   initialize: function() {
-    var self = this;
-    this.model.fetch({success: function(model, response) {
-      if (model.get('pages').length === 0)
-        model.get('pages').create({mockup: model.id},
-          {success: function(){
-            self.render();
-          }});
-    }});
-    window.mockupView = this;
+    this.subview = null;
+
+    alert("MockupView initialize");
+
+    this.model.on('sync', this.render, this);
+    this.model.get('pages').on('add', this.setPage, this);
+
+    // Debug events.
+    this.model.get('pages').on('all', this.debugPages, this);
+    this.model.on('all', this.debug, this);
+
+    var pages = this.model.get('pages');
+    if (pages.length === 0)
+      pages.create({'mockup': this.model.id}, {wait: true});
+    else
+      this.setPage(pages.at(0));
+
+    //  this.model.fetch();
     return this;
   },
 
+  debug: function(eventName, extra) {
+    console.log('MockupView sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
+  debugPages: function(eventName, extra) {
+    console.log('MockupView.Pages sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
+
   render: function() {
+    alert("MockupView render");
     var self = this;
     $(this.el).html(this.template(this.model));
     return this;
   },
 
   setPage: function(page) {
-    this.render();
-    this.subview = new PageView({model: this.model.get('pages').at(page)}).render();
+    alert("Setting page!");
+    this.page = page;
+    this.subview = new PageView({model: page});
   }
 });
 
@@ -98,9 +118,20 @@ var AppView = Backbone.View.extend({
   initialize: function() {
     this.menu = this.$('#mockup-list');
     this.subview = null;
-    var self = this;
+    this.mockup = null;
+
     this.model.on('reset', this.render, this);
+    this.model.on('add', this.setMockup, this);
+
+    // Debug events.
+    this.model.on('all', this.debug, this);
+
     this.model.fetch();
+    return this;
+  },
+
+  debug: function(eventName, extra) {
+    console.log('AppView sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
   render: function() {
@@ -118,14 +149,11 @@ var AppView = Backbone.View.extend({
 
   // Utility Methods.
 
-  showMockup: function(mockup) {
-    if (!mockup)
-      return;
-
+  setMockup: function(mockup) {
+    this.mockup = mockup;
     $('#mockup').show();
     this.hideNewForm();
-    this.subview = new MockupView({model: mockup});
-    this.subview.setPage(0);
+    this.subview = new MockupView({model: this.mockup});
     this.render();
   },
 
@@ -142,7 +170,7 @@ var AppView = Backbone.View.extend({
     e.preventDefault();
     var id = $(e.currentTarget).data('id');
     var mockup = this.model.getByCid(id);
-    this.showMockup(mockup);
+    this.setMockup(mockup);
   },
 
   hideNewForm: function(e) {
@@ -156,8 +184,7 @@ var AppView = Backbone.View.extend({
     // Create a new mockup, and add it.
     if (!$('#inputName').val())
       return;
-    var mockup = this.model.create({'name': $('#inputName').val()});
-    this.model.create({'name': $('#inputName').val()});
+    this.model.create({'name': $('#inputName').val()}, {wait: true});
   }
 
 });
