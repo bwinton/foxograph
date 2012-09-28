@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  margin: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   height: 100%;
   background-color: #DBDBDB;
@@ -15,8 +15,8 @@ a {
 
 .background {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   z-index: -5;
@@ -25,5 +25,5 @@ a {
 }
 
 .background.hover {
-  opacity: 10%;
+  opacity: .1;
 }
