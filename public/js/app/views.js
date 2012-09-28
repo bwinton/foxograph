@@ -148,6 +148,7 @@ var AppView = Backbone.View.extend({
   setMockup: function(mockup) {
     this.mockup = mockup;
     $('#mockup').show();
+    $('#page').show();
     this.hideNewForm();
     this.subview = new MockupView({model: this.mockup});
     this.render();
@@ -159,6 +160,7 @@ var AppView = Backbone.View.extend({
   showNewForm: function(e) {
     if (e) e.preventDefault();
     $('#mockup').hide();
+    $('#page').hide();
     $('#newMockup').show();
   },
 
