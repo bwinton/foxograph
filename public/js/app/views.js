@@ -34,8 +34,7 @@ var PageView = Backbone.View.extend({
       reader.onload = function (event) {
         console.log(event.target.result);
         self.model.set('image', event.target.result);
-        //self.model.save();
-        self.render();
+        self.model.save();
       };
       console.log(file.name);
       reader.readAsDataURL(file);
@@ -58,22 +57,22 @@ var MockupView = Backbone.View.extend({
   initialize: function() {
     this.subview = null;
 
-    alert("MockupView initialize");
-
-    this.model.on('sync', this.render, this);
-    this.model.get('pages').on('add', this.setPage, this);
-
     // Debug events.
     this.model.get('pages').on('all', this.debugPages, this);
     this.model.on('all', this.debug, this);
 
-    var pages = this.model.get('pages');
-    if (pages.length === 0)
-      pages.create({'mockup': this.model.id}, {wait: true});
-    else
-      this.setPage(pages.at(0));
+    this.model.on('sync', this.render, this);
+    this.model.get('pages').on('add', this.setPage, this);
 
-    //  this.model.fetch();
+    var self = this;
+    this.model.get('pages').fetch({success: function() {
+      var pages = self.model.get('pages');
+      if (pages.length === 0)
+        pages.create({'mockup': self.model.id}, {wait: true});
+      else
+        self.setPage(pages.at(0));
+    }});
+
     return this;
   },
 
@@ -85,18 +84,15 @@ var MockupView = Backbone.View.extend({
     console.log('MockupView.Pages sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-
   render: function() {
-    alert("MockupView render");
-    var self = this;
     $(this.el).html(this.template(this.model));
     return this;
   },
 
   setPage: function(page) {
-    alert("Setting page!");
     this.page = page;
     this.subview = new PageView({model: page});
+    this.render();
   }
 });
 
@@ -181,7 +177,6 @@ var AppView = Backbone.View.extend({
 
   createMockup: function(e) {
     e.preventDefault();
-    // Create a new mockup, and add it.
     if (!$('#inputName').val())
       return;
     this.model.create({'name': $('#inputName').val()}, {wait: true});
