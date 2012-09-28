@@ -9,8 +9,12 @@ var Bug = Backbone.Model.extend({
   defaults: {
     type: 'Bug',
     number: "0",
-    position: {x: 0, y: 0}
+    position: {x: 0, y: 0},
+    page: ''
   },
+
+  idAttribute: "_id",
+  urlRoot : '/bugs/',
 
   initialize: function() {
   }
@@ -20,6 +24,7 @@ var BugList = Backbone.Collection.extend({
   model: Bug,
 
   setParent: function(parent) {
+    this.parent = parent;
     this.url = function () {
       var url = parent.url() + parent.get('_id') + '/bugs/';
       if (this.get('_id'))
@@ -36,12 +41,18 @@ var BugList = Backbone.Collection.extend({
 var Page = Backbone.Model.extend({
   defaults: {
     type: 'Page',
-    image: '/images/default.png'
+    image: '/images/default.png',
+    mockup: ''
   },
 
+  idAttribute: "_id",
+  urlRoot : '/pages/',
+
   initialize: function() {
-    this.bugs = new BugList();
-    this.bugs.setParent(this);
+    if (!this.get('bugs'))
+      this.set('bugs', new BugList());
+    this.get('bugs').setParent(this);
+    //this.set('mockup', this.collection.parent.id);
   }
 
 });
@@ -50,10 +61,11 @@ var PageList = Backbone.Collection.extend({
   model: Page,
 
   setParent: function(parent) {
+    this.parent = parent;
     this.url = function () {
-      var url = parent.url() + parent.get('_id') + '/pages/';
-      if (this.get('_id'))
-        url += this.get('_id');
+      var url = parent.url() + '/pages/';
+      if (this.id)
+        url += this.id;
       return url;
     };
 
@@ -68,12 +80,14 @@ var Mockup = Backbone.Model.extend({
   defaults: {
     type: 'Mockup',
     name: 'New Mockup',
-    pages: new PageList()
   },
 
+  idAttribute: "_id",
+
   initialize: function() {
+    if (!this.get('pages'))
+      this.set('pages', new PageList());
     this.get('pages').setParent(this);
-    this.get('pages').fetch();
   }
 
 });

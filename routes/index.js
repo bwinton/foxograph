@@ -29,7 +29,7 @@ exports.index = function(req, res) {
 
 exports.getBugs = function(req, res) {
   console.log("Looking for bugs for mockup "+req.params.mockup_id+", page "+req.params.page_id);
-  return Bug.find({mockup: req.params.mockup_id, Page: req.params.page_id}, function(err, bugs) {
+  return Bug.find({page: req.params.page_id}, function(err, bugs) {
     console.log(JSON.stringify(bugs));
     return res.json(bugs);
   });
@@ -64,7 +64,7 @@ exports.postPage = function(req, res) {
     return res.json({"error": "Missing image."});
   console.log("Creating page:");
   console.log(req.body);
-  var page = new Page({image: req.body.image, mockup: req.params.mockup_id});
+  var page = new Page({image: req.body.image, mockup: req.body.mockup});
   console.log(page);
   page.save(function (err) {
     console.log(err);
@@ -77,7 +77,16 @@ exports.postPage = function(req, res) {
 
 
 exports.getMockups = function(req, res) {
+  console.log("Getting all mockups");
   return Mockup.find(function(err, mockups) {
+    console.log(JSON.stringify(mockups));
+    return res.json(mockups);
+  });
+};
+
+exports.getMockup = function(req, res) {
+  console.log("Getting mockup "+req.params.mockup_id);
+  return Mockup.find({_id: req.params.mockup_id}, function(err, mockups) {
     console.log(JSON.stringify(mockups));
     return res.json(mockups);
   });

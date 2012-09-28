@@ -3,14 +3,6 @@ define(['jquery', 'underscore', 'backbone', 'bootstrap'],
 
 // Base classes.
 
-var oldSync = Backbone.sync;
-
-Backbone.sync = function(method, model, options) {
-  alert(method + ": " + JSON.stringify(model) + " - " + JSON.stringify(options));
-  return oldSync(method, model, options);
-};
-
-
 // Page View
 
 var PageView = Backbone.View.extend({
@@ -20,7 +12,10 @@ var PageView = Backbone.View.extend({
 
   initialize: function() {
     var self = this;
-    this.currentPage = this.$('#current-page');
+    this.model.fetch({success: function(model, response) {
+      self.render();
+    }});
+
     return this;
   },
 
@@ -62,10 +57,14 @@ var MockupView = Backbone.View.extend({
 
   initialize: function() {
     var self = this;
-    this.currentPage = this.$('#current-page');
+    this.model.fetch({success: function(model, response) {
+      if (model.get('pages').length === 0)
+        model.get('pages').create({mockup: model.id},
+          {success: function(){
+            self.render();
+          }});
+    }});
     window.mockupView = this;
-    this.model.fetch();
-    this.model.get('pages').fetch();
     return this;
   },
 
@@ -85,24 +84,21 @@ var MockupView = Backbone.View.extend({
 // App View.
 
 var AppView = Backbone.View.extend({
-  el: '#mockups',
+  el: 'body',
 
   template: _.template($('#mockups-template').html()),
 
   events: {
     'click #addMockup': 'showNewForm',
-    'click #mockup-list a': 'clickMockup'
+    'click #mockup-list a': 'clickMockup',
+    'click #createMockup': 'createMockup',
+    'click #cancelMockup': 'hideNewForm'
   },
 
   initialize: function() {
-    this.button = this.$('#current-mockup');
     this.menu = this.$('#mockup-list');
     this.subview = null;
     var self = this;
-
-    $('#createMockup').click(function() {self.createMockup();});
-    $('#cancelMockup').click(function() {self.hideNewForm();});
-
     this.model.on('reset', this.render, this);
     this.model.fetch();
   },
@@ -119,9 +115,33 @@ var AppView = Backbone.View.extend({
     return this;
   },
 
+
+  // Utility Methods.
+
+  showMockup: function(mockup) {
+    if (!mockup)
+      return;
+
+    $('#mockup').show();
+    this.hideNewForm();
+    this.subview = new MockupView({model: mockup});
+    this.subview.setPage(0);
+    this.render();
+  },
+
+
+  // Event Handlers.
+
   showNewForm: function() {
     $('#mockup').hide();
     $('#newMockup').show();
+  },
+
+  clickMockup: function(e) {
+    e.preventDefault();
+    var id = $(e.currentTarget).data('id');
+    var mockup = this.model.getByCid(id);
+    this.showMockup(mockup);
   },
 
   hideNewForm: function() {
@@ -133,28 +153,7 @@ var AppView = Backbone.View.extend({
     // Create a new mockup, and add it.
     if (!$('#inputName').val())
       return;
-    var x = this.model.create({'name': $('#inputName').val()});
-    window.views = this;
-    x.get('pages').create({});
-    this.showMockup(x);
-  },
-
-  clickMockup: function(e) {
-    e.preventDefault();
-    var id = $(e.currentTarget).data('id');
-    var mockup = this.model.getByCid(id);
-    this.showMockup(mockup);
-  },
-
-  showMockup: function(mockup) {
-    if (!mockup)
-      return;
-
-    $('#mockup').show();
-    this.hideNewForm();
-    this.subview = new MockupView({model: mockup});
-    this.subview.setPage(0);
-    this.render();
+    var mockup = this.model.create({'name': $('#inputName').val()});
   }
 
 });

@@ -46,7 +46,8 @@ app.configure(function(){
       req.kvLog.response_time = (new Date() - req._rlStartTime);
 
       // Print the log
-      console.log(logTmpl(req.kvLog));
+      //if (res.statusCode != 200 && res.statusCode != 304)
+        console.log(logTmpl(req.kvLog));
     };
 
     next();
@@ -69,10 +70,12 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/mockups/', routes.getMockups);
+app.get('/mockups/:mockup_id', routes.getMockup);
 app.post('/mockups/', routes.postMockup);
 app.get('/mockups/:mockup_id/pages/', routes.getPages);
-app.post('/mockups/:mockup_id/pages/', routes.postPage);
-app.post('/mockups/:mockup_id/pages/:page_id/bugs', routes.postBug);
+app.post('/pages/', routes.postPage);
+app.get('/pages/:page_id/bugs/', routes.getBugs);
+app.post('/bugs/', routes.postBug);
 
 var server = app.listen(3000);
 console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
