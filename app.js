@@ -69,13 +69,21 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
+
+// Mockups.
 app.get('/mockups/', routes.getMockups);
-app.get('/mockups/:mockup_id', routes.getMockup);
 app.post('/mockups/', routes.postMockup);
+app.get('/mockups/:mockup_id', routes.getMockup);
+
+// Pages.
 app.get('/mockups/:mockup_id/pages/', routes.getPages);
 app.post('/pages/', routes.postPage);
+app.get('/pages/:page_id', routes.getPage);
+
+// Bugs
 app.get('/pages/:page_id/bugs/', routes.getBugs);
 app.post('/bugs/', routes.postBug);
+app.get('/bugs/:bug_id', routes.getBug);
 
 var server = app.listen(3000);
 console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);

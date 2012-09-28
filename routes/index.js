@@ -27,29 +27,41 @@ exports.index = function(req, res) {
 };
 
 
-exports.getBugs = function(req, res) {
-  console.log("Looking for bugs for mockup "+req.params.mockup_id+", page "+req.params.page_id);
-  return Bug.find({page: req.params.page_id}, function(err, bugs) {
-    console.log(JSON.stringify(bugs));
-    return res.json(bugs);
+// Mockups.
+
+exports.getMockups = function(req, res) {
+  console.log("Getting all mockups");
+  return Mockup.find(function(err, mockups) {
+    console.log(JSON.stringify(mockups));
+    return res.json(mockups);
   });
 };
 
-exports.postBug = function(req, res) {
-  if (!req.body || !req.body.number)
-    return res.json({"error": "Missing number."});
-  console.log("Creating bug:");
+exports.postMockup = function(req, res) {
+  if (!req.body || !req.body.name)
+    return res.json({"error": "Missing name."});
+  console.log("Creating mockup:");
   console.log(req.body);
-  var bug = new Bug({number: req.body.number});
-  console.log(bug);
-  bug.save(function (err) {
+  var mockup = new Mockup({name: req.body.name});
+  console.log(mockup);
+  mockup.save(function (err) {
     if (!err) {
       return console.log("created");
     }
   });
-  return res.send(bug);
+  return res.send(mockup);
 };
 
+exports.getMockup = function(req, res) {
+  console.log("Getting mockup "+req.params.mockup_id);
+  return Mockup.find({_id: req.params.mockup_id}, function(err, mockups) {
+    console.log(JSON.stringify(mockups[0]));
+    return res.json(mockups[0]);
+  });
+};
+
+
+// Pages.
 
 exports.getPages = function(req, res) {
   console.log("Looking for pages for mockup "+req.params.mockup_id);
@@ -75,34 +87,44 @@ exports.postPage = function(req, res) {
   return res.send(page);
 };
 
-
-exports.getMockups = function(req, res) {
-  console.log("Getting all mockups");
-  return Mockup.find(function(err, mockups) {
-    console.log(JSON.stringify(mockups));
-    return res.json(mockups);
+exports.getPage = function(req, res) {
+  console.log("Getting page "+req.params.page_id);
+  return Page.find({_id: req.params.page_id}, function(err, pages) {
+    console.log(JSON.stringify(pages[0]));
+    return res.json(pages[0]);
   });
 };
 
-exports.getMockup = function(req, res) {
-  console.log("Getting mockup "+req.params.mockup_id);
-  return Mockup.find({_id: req.params.mockup_id}, function(err, mockups) {
-    console.log(JSON.stringify(mockups));
-    return res.json(mockups);
+
+// Bugs.
+
+exports.getBugs = function(req, res) {
+  console.log("Looking for bugs for mockup "+req.params.mockup_id+", page "+req.params.page_id);
+  return Bug.find({page: req.params.page_id}, function(err, bugs) {
+    console.log(JSON.stringify(bugs));
+    return res.json(bugs);
   });
 };
 
-exports.postMockup = function(req, res) {
-  if (!req.body || !req.body.name)
-    return res.json({"error": "Missing name."});
-  console.log("Creating mockup:");
+exports.postBug = function(req, res) {
+  if (!req.body || !req.body.number)
+    return res.json({"error": "Missing number."});
+  console.log("Creating bug:");
   console.log(req.body);
-  var mockup = new Mockup({name: req.body.name});
-  console.log(mockup);
-  mockup.save(function (err) {
+  var bug = new Bug({number: req.body.number});
+  console.log(bug);
+  bug.save(function (err) {
     if (!err) {
       return console.log("created");
     }
   });
-  return res.send(mockup);
+  return res.send(bug);
+};
+
+exports.getBug = function(req, res) {
+  console.log("Getting bug "+req.params.bug_id);
+  return Bug.find({_id: req.params.bug_id}, function(err, bugs) {
+    console.log(JSON.stringify(bugs));
+    return res.json(bugs[0]);
+  });
 };
