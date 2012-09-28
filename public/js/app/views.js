@@ -90,7 +90,7 @@ var AppView = Backbone.View.extend({
 
   events: {
     'click #addMockup': 'showNewForm',
-    'click #mockup-list a': 'clickMockup',
+    'click #mockup-list a[id!="addMockup"]': 'clickMockup',
     'click #createMockup': 'createMockup',
     'click #cancelMockup': 'hideNewForm'
   },
@@ -105,13 +105,13 @@ var AppView = Backbone.View.extend({
 
   render: function() {
     var self = this;
-    this.menu.html('');
-    this.model.each(function(model, i, l) {
-      self.menu.append(self.template(model));
-    });
+    var menu = '<li><a id="addMockup" href="#">Add a new mockup…</a></li>';
     if (this.model.length)
-      this.menu.prepend($('<li class="divider"></li>'));
-    this.menu.prepend($('<li><a id="addMockup" href="#">Add a new mockup…</a></li>'));
+      menu += '<li class="divider"></li>';
+    this.model.each(function(model, i, l) {
+      menu += self.template(model);
+    });
+    this.menu.html(menu);
     return this;
   },
 
@@ -132,7 +132,8 @@ var AppView = Backbone.View.extend({
 
   // Event Handlers.
 
-  showNewForm: function() {
+  showNewForm: function(e) {
+    if (e) e.preventDefault();
     $('#mockup').hide();
     $('#newMockup').show();
   },
@@ -144,16 +145,19 @@ var AppView = Backbone.View.extend({
     this.showMockup(mockup);
   },
 
-  hideNewForm: function() {
+  hideNewForm: function(e) {
+    if (e) e.preventDefault();
     $('#inputName').val('');
     $('#newMockup').hide();
   },
 
-  createMockup: function() {
+  createMockup: function(e) {
+    e.preventDefault();
     // Create a new mockup, and add it.
     if (!$('#inputName').val())
       return;
     var mockup = this.model.create({'name': $('#inputName').val()});
+    this.model.create({'name': $('#inputName').val()});
   }
 
 });
