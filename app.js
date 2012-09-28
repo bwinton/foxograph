@@ -79,6 +79,7 @@ app.get('/mockups/:mockup_id', routes.getMockup);
 app.get('/mockups/:mockup_id/pages/', routes.getPages);
 app.post('/pages/', routes.postPage);
 app.get('/pages/:page_id', routes.getPage);
+app.put('/pages/:page_id', routes.putPage);
 
 // Bugs
 app.get('/pages/:page_id/bugs/', routes.getBugs);
