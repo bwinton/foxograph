@@ -1,5 +1,5 @@
-define(['jquery', 'underscore', 'backbone', 'bootstrap'],
-       function($, _, Backbone) {
+define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
+       function($, _, Backbone, bugzillaMockup) {
 
 // Base classes.
 
@@ -30,6 +30,11 @@ var PageView = Backbone.View.extend({
 
   template: _.template($('#page-template').html()),
 
+  events: {
+    'click .background': 'clickBackground'
+  },
+
+
   initialize: function() {
     var self = this;
     this.ctx = document.getElementById('background-canvas').getContext('2d');
@@ -44,6 +49,8 @@ var PageView = Backbone.View.extend({
 
     this.model.on('change:image', this.changeBackground, this);
     this.model.on('sync', this.render, this);
+    this.bugs = ['667235', '689543', '644169', '449299', '457270',
+                 '650170', '667246', '605652', '679513', '509397'];
 
     return this;
   },
@@ -56,6 +63,17 @@ var PageView = Backbone.View.extend({
     console.log('PageView.Bugs sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
+
+  clickBackground: function(e) {
+    var bug = this.bugs.shift();
+    if (!bug) return;
+
+    console.log('Adding bug '+bug+' at '+e.pageX+','+e.pageY);
+    $('<div class="bug" id="bug-'+bug+'"></div>')
+      .css({"top": e.pageY, "left": e.pageX})
+      .appendTo($("#page"));
+    bugzillaMockup.run();
+  },
 
   render: function() {
     var self = this;
@@ -86,16 +104,14 @@ var PageView = Backbone.View.extend({
     var holder = $('.background');
     var ctx = this.ctx;
 
-    // Figure out how big the image is, and set the size here, too.
-    // Also, get the bottom-right pixel colour, and set the color to that!
     holder.removeClass('hover')
           .css({"background-image": "url('" + model.get('image') + "')"});
     loadImage(model.get('image'), function (img) {
       holder.css({"height": img.height, "width": img.width});
       ctx.drawImage(img, 1-img.width, 1-img.height);
       var imgData = ctx.getImageData(0, 0, 1, 1);
-      var pixel = imgData.data[0];
-      $('body').css({'background-color': 'rgba('+imgData.data[0]+','+imgData.data[1]+','+imgData.data[2]+','+imgData.data[3]+')'});
+      var pixel = 'rgb('+imgData.data[0]+','+imgData.data[1]+','+imgData.data[2]+')';
+      $('body').css({'background-color': pixel});
     });
   }
 });

@@ -24,3 +24,7 @@ a {
 .background.hover {
   opacity: .1;
 }
+
+.bug {
+  position: absolute;
+}
