@@ -16,8 +16,24 @@ var PageView = Backbone.View.extend({
       self.render();
     }});
 
+    // Debug events.
+    this.model.get('bugs').on('all', this.debugBugs, this);
+    this.model.on('all', this.debug, this);
+
+    this.model.on('change:image', this.changeBackground, this);
+    this.model.on('sync', this.render, this);
+
     return this;
   },
+
+  debug: function(eventName, extra) {
+    console.log('PageView sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
+  debugBugs: function(eventName, extra) {
+    console.log('PageView.Bugs sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
 
   render: function() {
     var self = this;
@@ -25,7 +41,7 @@ var PageView = Backbone.View.extend({
     var holder = $('.background');
 
     holder[0].ondragover = function () { holder.addClass('hover'); return false; };
-    holder[0].ondragend = function () { holder.removeClass('hover'); return false; };
+    holder[0].ondragleave = function () { holder.removeClass('hover'); return false; };
     holder[0].ondrop = function (e) {
       e.preventDefault();
 
@@ -43,6 +59,12 @@ var PageView = Backbone.View.extend({
     };
     return this;
   },
+
+  changeBackground: function(model) {
+    var holder = $('.background');
+    holder.removeClass('hover')
+          .css("background-image", "url('" + model.get('image') + "')");
+  }
 });
 
 
