@@ -8,6 +8,7 @@
     <script data-main="js/app" src="js/lib/require.js"></script>
   </head>
   <body>
+    <canvas id="background-canvas" width="1" height="1"></canvas>
 
     <!-- Mockup Menu -->
     <div id="mockups">
@@ -48,9 +49,7 @@
   </script>
 
   <script type="text/template" id="page-template">
-    <div class="background" style="background-image: url('<%= get('image') %>');">
-    &nbsp;
-    </div>
+    <div class="background">&nbsp;</div>
   </script>
 
 </html>

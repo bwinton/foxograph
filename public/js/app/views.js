@@ -3,6 +3,26 @@ define(['jquery', 'underscore', 'backbone', 'bootstrap'],
 
 // Base classes.
 
+function loadImage(imageSrc, callback)
+{
+  var img = new Image();
+  img.src = imageSrc;
+  if (img.complete) {
+    callback(img);
+    img.onload=function(){};
+  } else {
+    img.onload = function() {
+      callback(img);
+      // clear onLoad, IE behaves erratically with animated gifs otherwise
+      img.onload=function(){};
+    };
+    img.onerror = function() {
+      alert("Could not load image.");
+    };
+  }
+
+}
+
 // Page View
 
 var PageView = Backbone.View.extend({
@@ -12,6 +32,8 @@ var PageView = Backbone.View.extend({
 
   initialize: function() {
     var self = this;
+    this.ctx = document.getElementById('background-canvas').getContext('2d');
+
     this.model.fetch({success: function(model, response) {
       self.render();
     }});
@@ -48,7 +70,6 @@ var PageView = Backbone.View.extend({
       var file = e.dataTransfer.files[0],
           reader = new FileReader();
       reader.onload = function (event) {
-        console.log(event.target.result);
         self.model.set('image', event.target.result);
         self.model.save();
       };
@@ -57,13 +78,25 @@ var PageView = Backbone.View.extend({
 
       return false;
     };
+    this.changeBackground(this.model);
     return this;
   },
 
   changeBackground: function(model) {
     var holder = $('.background');
+    var ctx = this.ctx;
+
+    // Figure out how big the image is, and set the size here, too.
+    // Also, get the bottom-right pixel colour, and set the color to that!
     holder.removeClass('hover')
-          .css("background-image", "url('" + model.get('image') + "')");
+          .css({"background-image": "url('" + model.get('image') + "')"});
+    loadImage(model.get('image'), function (img) {
+      holder.css({"height": img.height, "width": img.width});
+      ctx.drawImage(img, 1-img.width, 1-img.height);
+      var imgData = ctx.getImageData(0, 0, 1, 1);
+      var pixel = imgData.data[0];
+      $('body').css({'background-color': 'rgba('+imgData.data[0]+','+imgData.data[1]+','+imgData.data[2]+','+imgData.data[3]+')'});
+    });
   }
 });
 
