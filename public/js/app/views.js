@@ -105,8 +105,8 @@ var AppView = Backbone.View.extend({
   template: _.template($('#mockups-template').html()),
 
   events: {
-    'click #addMockup': 'showNewForm',
-    'click #mockup-list a[id!="addMockup"]': 'clickMockup',
+    'click option[value="addMockup"]': 'showNewForm',
+    'click option[data-id]': 'clickMockup',
     'click #createMockup': 'createMockup',
     'click #cancelMockup': 'hideNewForm'
   },
@@ -132,13 +132,15 @@ var AppView = Backbone.View.extend({
 
   render: function() {
     var self = this;
-    var menu = '<li><a id="addMockup" href="#">Add a new mockup…</a></li>';
+    var menu = '<option value="addMockup">Add a new mockup…</option>';
     if (this.model.length)
-      menu += '<li class="divider"></li>';
+      menu += '<optgroup label="---"></optgroup>';
     this.model.each(function(model, i, l) {
       menu += self.template(model);
     });
     this.menu.html(menu);
+    if (this.subview)
+      $("option[data-id='"+this.subview.model.cid+"']").attr("selected", true);
     return this;
   },
 
@@ -158,14 +160,12 @@ var AppView = Backbone.View.extend({
   // Event Handlers.
 
   showNewForm: function(e) {
-    if (e) e.preventDefault();
     $('#mockup').hide();
     $('#page').hide();
     $('#newMockup').show();
   },
 
   clickMockup: function(e) {
-    e.preventDefault();
     var id = $(e.currentTarget).data('id');
     var mockup = this.model.getByCid(id);
     this.setMockup(mockup);

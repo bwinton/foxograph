@@ -10,13 +10,9 @@
   <body>
 
     <!-- Mockup Menu -->
-    <div id="mockups" class="btn-group">
-      <a id="current-mockup" class="btn dropdown-toggle" role="button"
-         data-toggle="dropdown" data-target="mockup-list"
-         href="/page">All the pretties… <b class="caret"></b></a>
-      <ul id="mockup-list" class="dropdown-menu" role="menu"
-          aria-labelledby="current-mockup">
-      </ul>
+    <div id="mockups">
+      <select id="mockup-list">
+      </select>
     </div>
 
     <!-- New Mockup Form -->
@@ -43,7 +39,7 @@
 
   <!-- Templates -->
   <script type="text/template" id="mockups-template">
-    <li><a href="#" data-id="<%=cid%>"><%= get('name') %></a></li>
+    <option data-id="<%=cid%>" value="<%= get('name') %>"><%= get('name') %></option>
   </script>
 
   <script type="text/template" id="mockup-template">
