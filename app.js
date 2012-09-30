@@ -15,7 +15,15 @@ const logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
 
 // Configuration
 
-mongoose.connect('mongodb://localhost/my_database');
+var mongo_url = 'mongodb://localhost/my_database';
+if (process.env.VCAP_SERVICES) {
+  var services = JSON.parse(process.env.VCAP_SERVICES);
+  var mongo_data = services['mongodb-1.8'][0].credentials;
+  var mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
+                  '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
+}
+
+mongoose.connect(mongo_url);
 
 app.configure(function(){
   app.set('views', __dirname + '/www');
@@ -86,5 +94,9 @@ app.get('/pages/:page_id/bugs/', routes.getBugs);
 app.post('/bugs/', routes.postBug);
 app.get('/bugs/:bug_id', routes.getBug);
 
-var server = app.listen(3000);
-console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
+const PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
+const HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
+
+app.listen(PORT, HOST, function() {
+  console.log("Listening on http://" + HOST + ":" + PORT + "/");
+});
