@@ -121,7 +121,7 @@ function run(){
       newPanel.style.top = div.getBoundingClientRect().top + "px";
       newPanel.style.left = div.getBoundingClientRect().left + "px";
 
-      document.body.appendChild(newPanel);
+      div.parentNode.appendChild(newPanel);
     }
   }
 
