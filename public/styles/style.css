@@ -1,8 +1,9 @@
 body {
-  margin: 10px;
+  padding: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   height: 100%;
   background-color: #DBDBDB;
+  display: inline-block;
 }
 
 a {
@@ -19,6 +20,7 @@ a {
   left: 0;
   z-index: -5;
   background-repeat: no-repeat;
+  cursor: crosshair;
 }
 
 .background.hover {
