@@ -235,6 +235,7 @@ var AppView = Backbone.View.extend({
   showNewForm: function(e) {
     $('#mockup').hide();
     $('#page').hide();
+    $('body').css({'background-color': ""});
     $('#newMockup').show();
   },
 
