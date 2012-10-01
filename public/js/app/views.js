@@ -66,7 +66,7 @@ var PageView = Backbone.View.extend({
 
   clickBackground: function(e) {
     var bug = this.bugs.shift();
-    if (!bug) return;
+    if (!bug || (this.model.get('image') == '/images/default.png')) return;
 
     console.log('Adding bug '+bug+' at '+e.pageX+','+e.pageY);
     $('<div class="bug" id="bug-'+bug+'"></div>')
@@ -108,6 +108,8 @@ var PageView = Backbone.View.extend({
           .css({"background-image": "url('" + model.get('image') + "')"});
     loadImage(model.get('image'), function (img) {
       holder.css({"height": img.height, "width": img.width});
+      if (model.get('image') == '/images/default.png')
+        holder.css({'width': '100%', 'height': '100%', 'background-position': '45%'});
       ctx.drawImage(img, 1-img.width, 1-img.height);
       var imgData = ctx.getImageData(0, 0, 1, 1);
       var pixel = 'rgb('+imgData.data[0]+','+imgData.data[1]+','+imgData.data[2]+')';
