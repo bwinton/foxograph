@@ -9,7 +9,8 @@ var Bug = Backbone.Model.extend({
   defaults: {
     type: 'Bug',
     number: "0",
-    position: {x: 0, y: 0},
+    x: 0,
+    y: 0,
     page: ''
   },
 
@@ -26,7 +27,7 @@ var BugList = Backbone.Collection.extend({
   setParent: function(parent) {
     this.parent = parent;
     this.url = function () {
-      var url = parent.url() + parent.get('_id') + '/bugs/';
+      var url = parent.url() + '/bugs/';
       if (this.get('_id'))
         url += this.get('_id');
       return url;

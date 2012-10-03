@@ -116,7 +116,7 @@ exports.putPage = function(req, res) {
 // Bugs.
 
 exports.getBugs = function(req, res) {
-  console.log("Looking for bugs for mockup "+req.params.mockup_id+", page "+req.params.page_id);
+  console.log("Looking for bugs for page "+req.params.page_id);
   return Bug.find({page: req.params.page_id}, function(err, bugs) {
     if (err)
       return console.log("error: " + err);
@@ -130,7 +130,7 @@ exports.postBug = function(req, res) {
     return res.json({"error": "Missing number."});
   console.log("Creating bug:");
   console.log(req.body);
-  var bug = new Bug(number);
+  var bug = new Bug(req.body);
   console.log(bug);
   bug.save(function (err) {
     if (err)

@@ -23,6 +23,32 @@ function loadImage(imageSrc, callback)
 
 }
 
+
+// Bug View
+
+var BugView = Backbone.View.extend({
+  tagName: 'div',
+  className: 'bug',
+
+  initialize: function() {
+    // Debug events.
+    this.model.on('all', this.debug, this);
+  },
+
+  debug: function(eventName, extra) {
+    console.log('BugView sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
+  render: function() {
+    this.$el.attr('id', 'bug-'+this.model.get('number'))
+        .css({"top": this.model.get('y'),
+              "left": this.model.get('x')})
+        .appendTo($('#page'));
+    bugzillaMockup.run();
+  }
+});
+
+
 // Page View
 
 var PageView = Backbone.View.extend({
@@ -39,18 +65,21 @@ var PageView = Backbone.View.extend({
     var self = this;
     this.ctx = document.getElementById('background-canvas').getContext('2d');
 
-    this.model.fetch({success: function(model, response) {
-      self.render();
-    }});
-
     // Debug events.
     this.model.get('bugs').on('all', this.debugBugs, this);
     this.model.on('all', this.debug, this);
 
     this.model.on('change:image', this.changeBackground, this);
     this.model.on('sync', this.render, this);
+    this.model.get('bugs').on('add', this.addBug, this);
+    this.model.get('bugs').on('reset', this.resetBugs, this);
+
+    this.model.get('bugs').fetch();
+
     this.bugs = ['667235', '689543', '644169', '449299', '457270',
                  '650170', '667246', '605652', '679513', '509397'];
+    this.subViews = [];
+    this.render();
 
     return this;
   },
@@ -68,11 +97,26 @@ var PageView = Backbone.View.extend({
     var bug = this.bugs.shift();
     if (!bug || (this.model.get('image') == '/images/default.png')) return;
 
+    var self = this;
+
     console.log('Adding bug '+bug+' at '+e.pageX+','+e.pageY);
-    $('<div class="bug" id="bug-'+bug+'"></div>')
-      .css({"top": e.pageY, "left": e.pageX})
-      .appendTo($("#page"));
-    bugzillaMockup.run();
+    this.model.get('bugs').create({'number': bug, 'x': e.pageX, 'y': e.pageY,
+                                   'page': self.model.id});
+  },
+
+  resetBugs: function(bugs, extra, a) {
+    var self = this;
+    this.subViews = [];
+    bugs.each(function(bug) {
+      self.addBug(bug);
+    });
+    this.render();
+  },
+
+  addBug: function(bug) {
+    var bugView = new BugView({model: bug});
+    this.subViews.push(bugView);
+    bugView.render();
   },
 
   render: function() {
@@ -97,6 +141,12 @@ var PageView = Backbone.View.extend({
       return false;
     };
     this.changeBackground(this.model);
+
+    // Since we've replaced the whole page, we should re-render all the bugs, too.
+    _.each(this.subViews, function(view, i, l) {
+      view.render();
+    });
+
     return this;
   },
 
