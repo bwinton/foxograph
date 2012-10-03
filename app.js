@@ -19,11 +19,24 @@ var mongo_url = 'mongodb://localhost/my_database';
 if (process.env.VCAP_SERVICES) {
   var services = JSON.parse(process.env.VCAP_SERVICES);
   var mongo_data = services['mongodb-1.8'][0].credentials;
-  var mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
-                  '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
+  mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
+              '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
+}
+mongoose.connect(mongo_url);
+
+var session_secret = 'mytestsessionsecret';
+if (process.env.VCAP_SERVICES) {
+  session_secret = process.env.SESSION_SECRET;
 }
 
-mongoose.connect(mongo_url);
+const PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
+const HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
+
+var audience = 'http://' + HOST + ':' + PORT; // Must match your browser's address bar
+if (process.env.VMC_APP_INSTANCE) {
+  var instance = JSON.parse(process.env.VMC_APP_INSTANCE);
+  audience = 'https://' + instance.uris[0] + '/';
+}
 
 app.configure(function(){
   app.set('views', __dirname + '/www');
@@ -61,6 +74,8 @@ app.configure(function(){
     next();
   });
   app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session({secret: session_secret}));
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/www'));
@@ -94,9 +109,10 @@ app.get('/pages/:page_id/bugs/', routes.getBugs);
 app.post('/bugs/', routes.postBug);
 app.get('/bugs/:bug_id', routes.getBug);
 
-const PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
-const HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
+require('express-persona')(app, {
+  audience: audience
+});
 
 app.listen(PORT, HOST, function() {
-  console.log("Listening on http://" + HOST + ":" + PORT + "/");
+  console.log('Listening on http://' + HOST + ':' + PORT + '/');
 });
