@@ -87,15 +87,6 @@ function run(){
 
   window.scroll(0,0);
 
-  //set up the title and favicon
-  //modifyHead();
-
-  //add the navigation and action bar
-  //createNavBar();
-
-  //invoke analytics for the page
-  //googleAnalytics();
-
   //Find all of the new divs added in Fireworks and overlay new bug panels
   var newPanels = [];
   var panel;
@@ -133,7 +124,7 @@ function run(){
       //debug("found a panel div: " + panel.id);
 
       panel.className = "panel loading";
-      panel.innerHTML = "<img src='http://areweprettyyet.com/bugzillaMockup/loading.png'>";
+      panel.innerHTML = "<img src='/images/bugzilla-loading.png'>";
     }
 
   }
@@ -262,85 +253,6 @@ function fillData(bug){
   "<span class=" + blockingClass + ">" + blocking + "</span>, " +
 //  "<span class=" + plannedClass + ">" + plannedBeta + "</span>, " +
   "<span class=" + assignedClass + ">" + assigned + "</span>";
-}
-
-function createNavBar(){
-
-  var newBug = "https://bugzilla.mozilla.org/enter_bug.cgi?alias=&assigned_to=nobody%40mozilla.org&blocked=&bug_severity=normal&bug_status=NEW&cc=faaborg%40mozilla.com&comment=%5BFiled%20from%20the%20visual%20bug%20tracker.%20%20After%20a%20quick%20review%20this%20bug%20may%20appear%20on%20one%20of%20the%20annotated%20mockups%5D&component=General&contenttypeentry=&contenttypemethod=autodetect&contenttypeselection=text%2Fplain&data=&dependson=&description=&flag_type-203=X&flag_type-325=X&flag_type-37=X&flag_type-4=X&flag_type-5=X&flag_type-607=X&flag_type-625=X&flag_type-647=X&flag_type-691=X&flag_type-692=X&form_name=enter_bug&keywords=&maketemplate=Remember%20values%20as%20bookmarkable%20template&op_sys=All&priority=--&product=Firefox&qa_contact=general%40firefox.bugs&rep_platform=All&short_desc=&status_whiteboard=&target_milestone=---&version=unspecified";
-
-  var allBugs = "https://bugzilla.mozilla.org/buglist.cgi?quicksearch=";
-
-  var divs = document.getElementsByTagName("div");
-  for(var i=0; i < divs.length; i++){
-    var bugs = divs[i];
-
-    if(bugs.id.substr(0,4) == "bug-"){
-      var bugNumber = bugs.id.substr(4,6);
-
-      allBugs = allBugs + bugNumber + "%2C";
-    }
-  }
-
-  debug("allBugs: " + allBugs);
-
-  var bar = document.createElement("div");
-  bar.id = "header";
-  bar.innerHTML = ""+
-    "<div id='nav-main' role='navigation'>" +
-      "<ul>" +
-        "<li class='first'><a href=''>Clean Up</a>" +
-          "<ul>" +
-            "<li class='first'><a href='http://areweprettyyet.com/4/mainWindow'>Main Window</a></li>" +
-            "<li><a href='https://people.mozilla.com/~jboriss/livemockup/addons_manager.htm'>Add-ons Manager</a></li>" +
-            "<li><a href='http://areweprettyyet.com/4/firefoxMenu'>Firefox Menu</a></li>" +
-            "<li><a href='http://areweprettyyet.com/4/traditionalMenu'>Traditional Menus</a></li>" +
-            "<li><a href='http://areweprettyyet.com/4/notifications'>Notification</a></li>" +
-            "<li><a href='javascript:alert(\"Sync mockup is Coming Soon\")'>Coming Soon - Sync</a></li>" +
-            "<li><a href='http://areweprettyyet.com/4/syncJpake'>Sync JPAKE</a></li>" +
-            "<li><a href='http://areweprettyyet.com/4/panorama')'>Panorama</a></li>" +
-          "</ul>" +
-        "</li>" +
-        "<li class='first'><a href=''>New Projects</a>" +
-          "<ul>" +
-            "<li><a href='http://areweprettyyet.com/5/syncPromotion'>Sync Promotion</a></li>" +
-            "<li><a href='javascript:alert(\"Panorama mockup is Coming Soon\")'>Coming Soon - Panorama</a></li>" +
-          "</ul>" +
-        "</li>" +
-        "<li><a href=''>Actions</a>" +
-          "<ul>" +
-            "<li class='first'><a href='" + allBugs + "'>View all bugs in a Bugzilla Table</a></li>" +
-            "<li><a href='" + newBug + "'>File New Visual Bug</a></li>" +
-            "<li><a href='http://people.mozilla.com/~faaborg/files/firefox4Mockups/liveMockups.png'>About</a></li>" +
-          "</ul>" +
-        "</li>" +
-      "</ul>" +
-    "</div>";
-
-  document.body.appendChild(bar);
-}
-
-function modifyHead(){
-
-  //Title
-  document.title = "Are we Pretty Yet?";
-
-  //Favicon
-  var favicon = document.createElement("link");
-  favicon.innerHTML = "<link rel='icon' type='image/png' href='../../favicon.png' />";
-  document.head.appendChild(favicon);
-}
-
-
-function googleAnalytics(){
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-862218-4']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
 }
 
 
