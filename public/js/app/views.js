@@ -17,7 +17,7 @@ function loadImage(imageSrc, callback)
       img.onload=function(){};
     };
     img.onerror = function() {
-      alert("Could not load image.");
+      alert('Could not load image.');
     };
   }
 
@@ -41,8 +41,8 @@ var BugView = Backbone.View.extend({
 
   render: function() {
     this.$el.attr('id', 'bug-'+this.model.get('number'))
-        .css({"top": this.model.get('y'),
-              "left": this.model.get('x')})
+        .css({'top': this.model.get('y'),
+              'left': this.model.get('x')})
         .appendTo($('#page'));
     bugzillaMockup.run();
   }
@@ -155,9 +155,9 @@ var PageView = Backbone.View.extend({
     var ctx = this.ctx;
 
     holder.removeClass('hover')
-          .css({"background-image": "url('" + model.get('image') + "')"});
+          .css({'background-image': 'url("' + model.get('image') + '")'});
     loadImage(model.get('image'), function (img) {
-      holder.css({"height": img.height, "width": img.width});
+      holder.css({'height': img.height, 'width': img.width});
       if (model.get('image') == '/images/default.png')
         holder.css({'width': '100%', 'height': '100%', 'background-position': '45%'});
       ctx.drawImage(img, 1-img.width, 1-img.height);
@@ -263,7 +263,7 @@ var AppView = Backbone.View.extend({
     });
     this.menu.html(menu);
     if (this.subview)
-      $("option[data-id='"+this.subview.model.cid+"']").attr("selected", true);
+      $('option[data-id="'+this.subview.model.cid+'"]').attr('selected', true);
     return this;
   },
 
@@ -285,7 +285,7 @@ var AppView = Backbone.View.extend({
   showNewForm: function(e) {
     $('#mockup').hide();
     $('#page').hide();
-    $('body').css({'background-color': ""});
+    $('body').css({'background-color': ''});
     $('#newMockup').show();
   },
 

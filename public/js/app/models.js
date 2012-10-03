@@ -8,13 +8,13 @@ define(['backbone'], function(Backbone) {
 var Bug = Backbone.Model.extend({
   defaults: {
     type: 'Bug',
-    number: "0",
+    number: '0',
     x: 0,
     y: 0,
     page: ''
   },
 
-  idAttribute: "_id",
+  idAttribute: '_id',
   urlRoot : '/bugs/',
 
   initialize: function() {
@@ -46,7 +46,7 @@ var Page = Backbone.Model.extend({
     mockup: ''
   },
 
-  idAttribute: "_id",
+  idAttribute: '_id',
   urlRoot : '/pages/',
 
   initialize: function() {
@@ -83,7 +83,7 @@ var Mockup = Backbone.Model.extend({
     name: 'New Mockup',
   },
 
-  idAttribute: "_id",
+  idAttribute: '_id',
 
   initialize: function() {
     if (!this.get('pages'))
