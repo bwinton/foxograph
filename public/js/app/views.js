@@ -23,7 +23,6 @@ function loadImage(imageSrc, callback)
 
 }
 
-
 // Bug View
 
 var BugView = Backbone.View.extend({
@@ -76,8 +75,6 @@ var PageView = Backbone.View.extend({
 
     this.model.get('bugs').fetch();
 
-    this.bugs = ['667235', '689543', '644169', '449299', '457270',
-                 '650170', '667246', '605652', '679513', '509397'];
     this.subViews = [];
     this.render();
 
@@ -94,14 +91,27 @@ var PageView = Backbone.View.extend({
 
 
   clickBackground: function(e) {
-    var bug = this.bugs.shift();
+    var bug = prompt("Please enter a bug number");
+
     if (!bug || (this.model.get('image') == '/images/default.png')) return;
 
-    var self = this;
+    var page_id = this.model.id;
+    var model = this.model;
 
-    console.log('Adding bug '+bug+' at '+e.pageX+','+e.pageY);
-    this.model.get('bugs').create({'number': bug, 'x': e.pageX, 'y': e.pageY,
-                                   'page': self.model.id});
+    function bugExists()
+    {
+        console.log('Adding bug '+bug+' at '+e.pageX+','+e.pageY);
+        model.get('bugs').create({'number': bug, 'x': e.pageX, 'y': e.pageY,
+                                   'page': page_id});
+    }
+
+    function bugDoesNotExist()
+    {
+        alert("The bug number entered is not valid.\nPlease try again.");
+    }
+
+    //TODO this is not ideal, as it calls getBug twice, once to see if the bug exists, another time to populate the bug info
+    pageObjects.bugzilla.getBug(bug, bugExists, bugDoesNotExist);
   },
 
   resetBugs: function(bugs, extra, a) {
