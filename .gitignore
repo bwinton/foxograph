@@ -1,3 +1,5 @@
 www/
 npm-debug.log
 .DS_Store
+.*.swp
+.*.swo
