@@ -36,10 +36,12 @@ var Bugzilla = {
 
     function onLoad() {
       var response = JSON.parse(xhr.responseText);
-      if (!response.error)
+      if (!response.error) {
         options.success(response);
-      // TODO: We should really call some kind of error callback
-      // if this didn't work.
+      } else {
+        if (options.hasOwnProperty("failure") && typeof(options.failure) == "function")
+          options.failure(response);
+      }
     }
 
     var xhr = options.xhr ? options.xhr : new XMLHttpRequest();
@@ -54,9 +56,10 @@ var Bugzilla = {
     xhr.send(null);
     return xhr;
   },
-  getBug: function Bugzilla_getBug(id, cb) {
+  getBug: function Bugzilla_getBug(id, cb, eb) {
     return this.ajax({url: "/bug/" + id,
-                      success: cb});
+                      success: cb,
+                      failure: eb});
   },
   search: function Bugzilla_search(query, cb) {
     return this.ajax({url: "/bug",
@@ -64,6 +67,7 @@ var Bugzilla = {
                       success: cb});
   }
 };
+window.pageObjects.bugzilla = Bugzilla;
 
 //add an onload function to the existing mockup file
 function addLoadEvent(func) {

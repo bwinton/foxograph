@@ -1,3 +1,5 @@
+window.pageObjects = {};
+
 define(function (require) {
   var $ = require("jquery");
   require("persona");
