@@ -42,11 +42,11 @@
 
   <!-- Templates -->
   <script type="text/template" id="mockups-template">
-    <option data-id="<%=cid%>" value="<%= get('name') %>"><%= get('name') %></option>
+    <option data-id="<%=cid%>" value="<%= escape('name') %>"><%= escape('name') %></option>
   </script>
 
   <script type="text/template" id="mockup-template">
-    <h1><%= get('name') %></h1>
+    <h1><%= escape('name') %></h1>
     Page 1 of <%= get('pages').length %>
   </script>
 
