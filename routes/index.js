@@ -38,6 +38,8 @@ exports.getMockups = function(req, res) {
 };
 
 exports.postMockup = function(req, res) {
+  if (!req.session.email)
+    return res.json({'error': 'Not logged in.'});
   if (!req.body || !req.body.name)
     return res.json({'error': 'Missing name.'});
   console.log('Creating mockup:');
@@ -75,6 +77,8 @@ exports.getPages = function(req, res) {
 };
 
 exports.postPage = function(req, res) {
+  if (!req.session.email)
+    return res.json({'error': 'Not logged in.'});
   if (!req.body || !req.body.image)
     return res.json({'error': 'Missing image.'});
   console.log('Creating page:');
@@ -99,6 +103,8 @@ exports.getPage = function(req, res) {
 };
 
 exports.putPage = function(req, res) {
+  if (!req.session.email)
+    return res.json({'error': 'Not logged in.'});
   if (!req.body || !req.body.image)
     return res.json({'error': 'Missing image.'});
   console.log('Updating page:');
@@ -126,6 +132,8 @@ exports.getBugs = function(req, res) {
 };
 
 exports.postBug = function(req, res) {
+  if (!req.session.email)
+    return res.json({'error': 'Not logged in.'});
   if (!req.body || !req.body.number)
     return res.json({'error': 'Missing number.'});
   console.log('Creating bug:');

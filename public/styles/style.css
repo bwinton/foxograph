@@ -30,3 +30,7 @@ a {
 .bug {
   position: absolute;
 }
+
+#personaId {
+  display: none;
+}
