@@ -39,9 +39,9 @@ exports.getMockups = function(req, res) {
 
 exports.postMockup = function(req, res) {
   if (!req.session.email)
-    return res.json({'error': 'Not logged in.'});
+    return res.json(403, {'error': 'Not logged in.'});
   if (!req.body || !req.body.name)
-    return res.json({'error': 'Missing name.'});
+    return res.json(403, {'error': 'Missing name.'});
   console.log('Creating mockup:');
   console.log(req.body);
   var mockup = new Mockup(req.body);
@@ -78,9 +78,9 @@ exports.getPages = function(req, res) {
 
 exports.postPage = function(req, res) {
   if (!req.session.email)
-    return res.json({'error': 'Not logged in.'});
+    return res.json(403, {'error': 'Not logged in.'});
   if (!req.body || !req.body.image)
-    return res.json({'error': 'Missing image.'});
+    return res.json(403, {'error': 'Missing image.'});
   console.log('Creating page:');
   console.log(req.body);
   var page = new Page(req.body);
@@ -104,9 +104,9 @@ exports.getPage = function(req, res) {
 
 exports.putPage = function(req, res) {
   if (!req.session.email)
-    return res.json({'error': 'Not logged in.'});
+    return res.json(403, {'error': 'Not logged in.'});
   if (!req.body || !req.body.image)
-    return res.json({'error': 'Missing image.'});
+    return res.json(403, {'error': 'Missing image.'});
   console.log('Updating page:');
   console.log(req.body);
   var id = req.body._id;
@@ -133,9 +133,9 @@ exports.getBugs = function(req, res) {
 
 exports.postBug = function(req, res) {
   if (!req.session.email)
-    return res.json({'error': 'Not logged in.'});
+    return res.json(403, {'error': 'Not logged in.'});
   if (!req.body || !req.body.number)
-    return res.json({'error': 'Missing number.'});
+    return res.json(403, {'error': 'Missing number.'});
   console.log('Creating bug:');
   console.log(req.body);
   var bug = new Bug(req.body);
