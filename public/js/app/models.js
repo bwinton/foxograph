@@ -98,13 +98,22 @@ var MockupList = Backbone.Collection.extend({
   url: '/mockups/'
 });
 
+var User = Backbone.Model.extend({
+  idAttribute: '_id',
+  urlRoot : '/user',
+
+  initialize: function() {
+  }
+});
 
 // Instances.
 
 var mockups = new MockupList();
+var user = new User();
 
 return {
   'mockups': mockups,
+  'user': user
 };
 
 });

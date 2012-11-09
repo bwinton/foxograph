@@ -230,6 +230,66 @@ var MockupView = Backbone.View.extend({
 });
 
 
+// User View.
+
+var UserView = Backbone.View.extend({
+  el: '#user',
+
+  template: _.template($('#user-template').html()),
+
+  initialize: function() {
+    this.subview = null;
+
+    // Debug events.
+    this.model.on('all', this.debug, this);
+
+    this.model.on('change', this.render, this);
+
+    var self = this;
+
+    $(this.el).click(function() {
+      if (self.model.get('email') === '') {
+        navigator.id.get(function(assertion) {
+          if (!assertion) {
+            return;
+          }
+
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/persona/verify', true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.addEventListener('loadend', function(e) {
+            self.model.fetch();
+          }, false);
+          xhr.send(JSON.stringify({
+            assertion: assertion
+          }));
+        });
+      }
+    });
+
+    return this;
+  },
+
+  debug: function(eventName, extra) {
+    console.log('UserView sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
+  debugPages: function(eventName, extra) {
+    console.log('UserView.Pages sent '+eventName+'.  '+JSON.stringify(extra));
+  },
+
+  render: function() {
+    console.log('email = ' + this.model.get('email'));
+    if (this.model.get('email') === '')
+      $(this.el).html(this.template(this.model));
+    else
+      $(this.el).text('Hello ' + this.model.get('email'));
+    return this;
+  },
+
+});
+
+
 // App View.
 
 var AppView = Backbone.View.extend({
@@ -244,18 +304,23 @@ var AppView = Backbone.View.extend({
     'click #cancelMockup': 'hideNewForm'
   },
 
-  initialize: function() {
+  initialize: function(options, user) {
+    this.user = user;
     this.menu = this.$('#mockup-list');
     this.subview = null;
     this.mockup = null;
 
     this.model.on('reset', this.render, this);
     this.model.on('add', this.setMockup, this);
+    this.user.on('change', this.render, this);
 
     // Debug events.
     this.model.on('all', this.debug, this);
 
     this.model.fetch();
+    this.user.fetch();
+    this.userView = new UserView({model: this.user});
+
     return this;
   },
 
