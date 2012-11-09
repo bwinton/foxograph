@@ -245,23 +245,34 @@ var UserView = Backbone.View.extend({
 
     var self = this;
 
+    navigator.id.watch({
+      onlogin: function(assertion) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/persona/verify", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.addEventListener("loadend", function(e) {
+          self.model.fetch();
+        }, false);
+
+        xhr.send(JSON.stringify({
+          assertion: assertion
+        }));
+      },
+      onlogout: function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/persona/logout", true);
+        xhr.addEventListener("loadend", function(e) {
+          self.model.fetch();
+        });
+        xhr.send();
+      }
+    });
+
     $(this.el).click(function() {
       if (self.model.get('email') === '') {
-        navigator.id.get(function(assertion) {
-          if (!assertion) {
-            return;
-          }
-
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/persona/verify', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.addEventListener('loadend', function(e) {
-            self.model.fetch();
-          }, false);
-          xhr.send(JSON.stringify({
-            assertion: assertion
-          }));
-        });
+        navigator.id.request();
+      } else {
+        navigator.id.logout();
       }
     });
 
@@ -278,10 +289,14 @@ var UserView = Backbone.View.extend({
 
   render: function() {
     console.log('email = ' + this.model.get('email'));
-    if (this.model.get('email') === '')
+    if (this.model.get('email') === '') {
       $(this.el).html(this.template(this.model));
-    else
-      $(this.el).text('Hello ' + this.model.escape('email'));
+      $(this.el).removeAttr('title');
+    } else {
+      $(this.el).text('Hello ' + this.model.escape('email') + '.');
+      $(this.el).attr('title', 'Click to sign out.');
+    }
+
     return this;
   },
 

@@ -22,6 +22,7 @@ if (process.env.VCAP_SERVICES) {
   mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
               '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
 }
+console.log(mongo_url);
 mongoose.connect(mongo_url);
 
 var session_secret = 'mytestsessionsecret';
@@ -93,6 +94,7 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/user', routes.getUser);
+app.post('/logout', routes.logout);
 
 // Mockups.
 app.get('/mockups/', routes.getMockups);
@@ -109,6 +111,8 @@ app.put('/pages/:page_id', routes.putPage);
 app.get('/pages/:page_id/bugs/', routes.getBugs);
 app.post('/bugs/', routes.postBug);
 app.get('/bugs/:bug_id', routes.getBug);
+
+app.get('/deleteAll', routes.deleteAll);
 
 require('express-persona')(app, {
   audience: audience
