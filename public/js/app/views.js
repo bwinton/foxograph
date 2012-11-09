@@ -100,7 +100,6 @@ var PageView = Backbone.View.extend({
 
     function bugExists()
     {
-        console.log('Adding bug '+bug+' at '+e.pageX+','+e.pageY);
         model.get('bugs').create({'number': bug, 'x': e.pageX, 'y': e.pageY,
                                    'page': page_id});
     }
@@ -145,7 +144,6 @@ var PageView = Backbone.View.extend({
         self.model.set('image', event.target.result);
         self.model.save();
       };
-      console.log(file.name);
       reader.readAsDataURL(file);
 
       return false;
@@ -283,7 +281,7 @@ var UserView = Backbone.View.extend({
     if (this.model.get('email') === '')
       $(this.el).html(this.template(this.model));
     else
-      $(this.el).text('Hello ' + this.model.get('email'));
+      $(this.el).text('Hello ' + this.model.escape('email'));
     return this;
   },
 

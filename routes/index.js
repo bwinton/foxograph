@@ -29,6 +29,8 @@ exports.index = function(req, res) {
 // The current user.
 
 exports.getUser = function(req, res) {
+  console.log('Getting user');
+  console.log(JSON.stringify({'email': req.session.email || ''}));
   return res.json({'email': req.session.email || ''});
 };
 
