@@ -17,7 +17,6 @@ var Mockup = mongoose.model('Mockup', new mongoose.Schema({
   name: String
 }));
 
-
 /*
  * GET home page.
  */
@@ -26,6 +25,12 @@ exports.index = function(req, res) {
   res.sendfile('www/index.html');
 };
 
+
+// The current user.
+
+exports.getUser = function(req, res) {
+  return res.json({'email': req.session.email || ''});
+};
 
 // Mockups.
 
