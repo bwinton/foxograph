@@ -1,6 +1,32 @@
+@font-face{
+  font-family:'Open Sans';
+  font-style:normal;
+  font-weight:400;
+  src:url('../fonts/OpenSans-Regular.eot');
+  src:local('Open Sans'),local('OpenSans'),url('../fonts/OpenSans-Regular.eot') format('embedded-opentype'),url('../fonts/OpenSans-Regular.woff') format('woff'),url('../fonts/OpenSans-Regular.ttf') format('truetype')
+}
+
+@font-face{
+  font-family:'Open Sans';
+  font-style:normal;
+  font-weight:300;
+  src:url('../fonts/OpenSans-Light.eot');
+  src:local('Open Sans Light'),local('OpenSans-Light'),url('../fonts/OpenSans-Light.eot') format('embedded-opentype'),url('../fonts/OpenSans-Light.woff') format('woff'),url('../fonts/OpenSans-Light.ttf') format('truetype')
+}
+
+@font-face{
+  font-family:'Open Sans';
+  font-style:normal;
+  font-weight:700;
+  src:url('../fonts/OpenSans-Bold.eot');
+  src:local('Open Sans Bold'),local('OpenSans-Bold'),url('../fonts/OpenSans-Bold.eot') format('embedded-opentype'),url('../fonts/OpenSans-Bold.woff') format('woff'),url('../fonts/OpenSans-Bold.ttf') format('truetype')
+}
+
+
+
 body {
   padding: 10px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px/21px 'Open Sans',"Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
   height: 100%;
   background-color: #DBDBDB;
   display: inline-block;
@@ -8,6 +34,11 @@ body {
 
 a {
   color: #00B7FF;
+}
+
+canvas {
+  margin: 0;
+  padding: 0;
 }
 
 #newMockup {
@@ -31,6 +62,55 @@ a {
   position: absolute;
 }
 
-#personaId {
-  display: none;
+.button.login {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 14px;
+  width: 3em;
+  border: 0;
+  color: #fff;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.3), 0 1px 0 rgba(0, 0, 0, 0.2);
+
+  padding: 6px 45px 7px 10px;
+  background-color: #4eb5e5;
+  background-image:url('../images/button-arrow.png');
+  background-image:url('../images/button-arrow.png'),-webkit-gradient(linear,left top,left bottom,from(#4eb5e5),to(#3196cf));
+  background-image:url('../images/button-arrow.png'),-webkit-linear-gradient(top,#4eb5e5,#3196cf);
+  background-image:url('../images/button-arrow.png'),-moz-linear-gradient(top,#4eb5e5,#3196cf);
+  background-image:url('../images/button-arrow.png'),-ms-linear-gradient(top,#4eb5e5,#3196cf);
+  background-image:url('../images/button-arrow.png'),-o-linear-gradient(top,#4eb5e5,#3196cf);
+  background-image: url('../images/button-arrow.png'), linear-gradient(top, #4eb5e5, #3196cf);
+  background-repeat: no-repeat, no-repeat;
+  background-position: center right, center;
 }
+
+.button.login:hover, .button.login:focus {
+  background-color:#4aafe5;
+  background-image:url('../images/button-arrow-hover.png');
+  background-image:url('../images/button-arrow-hover.png'),-webkit-gradient(linear,left top,left bottom,from(#4aafe5),to(#2c89c8));
+  background-image:url('../images/button-arrow-hover.png'),-webkit-linear-gradient(top,#4aafe5,#2c89c8);
+  background-image:url('../images/button-arrow-hover.png'),-moz-linear-gradient(top,#4aafe5,#2c89c8);
+  background-image:url('../images/button-arrow-hover.png'),-ms-linear-gradient(top,#4aafe5,#2c89c8);
+  background-image:url('../images/button-arrow-hover.png'),-o-linear-gradient(top,#4aafe5,#2c89c8);
+  background-image: url('../images/button-arrow-hover.png'), linear-gradient(top, #4aafe5, #2c89c8);
+}
+
+.button.login:active {
+  background-color:#184a73;
+  background-image:url('../images/button-arrow-active.png'),-webkit-gradient(linear,left top,left bottom,from(#184a73),to(#276084));
+  background-image:url('../images/button-arrow-active.png'),-webkit-linear-gradient(top,#184a73,#276084);
+  background-image:url('../images/button-arrow-active.png'),-moz-linear-gradient(top,#184a73,#276084);
+  background-image:url('../images/button-arrow-active.png'),-ms-linear-gradient(top,#184a73,#276084);
+  background-image:url('../images/button-arrow-active.png'),-o-linear-gradient(top,#184a73,#276084);
+  background-image: url('../images/button-arrow-active.png'), linear-gradient(top, #184a73, #276084);
+}
+
+
+#user {
+  margin-bottom: 10px;
+}
+
