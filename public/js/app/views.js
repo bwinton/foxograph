@@ -91,7 +91,7 @@ var PageView = Backbone.View.extend({
 
 
   clickBackground: function(e) {
-    var bug = prompt("Please enter a bug number");
+    var bug = prompt('Please enter a bug number');
 
     if (!bug || (this.model.get('image') == '/images/default.png')) return;
 
@@ -107,7 +107,7 @@ var PageView = Backbone.View.extend({
 
     function bugDoesNotExist()
     {
-        alert("The bug number entered is not valid.\nPlease try again.");
+        alert('The bug number entered is not valid.\nPlease try again.');
     }
 
     //TODO this is not ideal, as it calls getBug twice, once to see if the bug exists, another time to populate the bug info
