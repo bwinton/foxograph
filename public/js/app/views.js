@@ -330,9 +330,12 @@ var AppView = Backbone.View.extend({
 
   render: function() {
     var self = this;
-    var menu = '<option value="addMockup">Add a new mockup…</option>';
-    if (this.model.length)
-      menu += '<optgroup label="---"></optgroup>';
+    var menu = '';
+    if (this.user.get('email') !== '') {
+      menu += '<option value="addMockup">Add a new mockup…</option>';
+      if (this.model.length)
+        menu += '<optgroup label="---"></optgroup>';
+    }
     this.model.each(function(model, i, l) {
       menu += self.template(model);
     });
