@@ -93,6 +93,7 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
+app.get('/m/:mockup_id', routes.index);
 app.get('/user', routes.getUser);
 app.post('/logout', routes.logout);
 

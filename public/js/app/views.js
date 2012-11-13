@@ -317,8 +317,10 @@ var AppView = Backbone.View.extend({
     'click #cancelMockup': 'hideNewForm'
   },
 
-  initialize: function(options, user) {
+  initialize: function(options, user, router) {
+    var self = this;
     this.user = user;
+    this.router = router;
     this.menu = this.$('#mockup-list');
     this.subview = null;
     this.mockup = null;
@@ -326,6 +328,11 @@ var AppView = Backbone.View.extend({
     this.model.on('reset', this.render, this);
     this.model.on('add', this.setMockup, this);
     this.user.on('change', this.render, this);
+    this.router.on('route:getMockup', function (mid) {
+      self.model.fetch({'success': function(model, response, options){
+        self.setMockup(self.model.get(mid));
+      }});
+    });
 
     // Debug events.
     this.model.on('all', this.debug, this);
@@ -383,7 +390,7 @@ var AppView = Backbone.View.extend({
   clickMockup: function(e) {
     var id = $(e.currentTarget).data('id');
     var mockup = this.model.getByCid(id);
-    this.setMockup(mockup);
+    this.router.navigate("m/" + mockup.id, {'trigger': true});
   },
 
   hideNewForm: function(e) {
