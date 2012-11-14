@@ -29,16 +29,16 @@ var BugView = Backbone.View.extend({
   tagName: 'div',
   className: 'bug',
 
-  initialize: function() {
+  initialize: function BugView_initialize() {
     // Debug events.
     this.model.on('all', this.debug, this);
   },
 
-  debug: function(eventName, extra) {
+  debug: function BugView_debug(eventName, extra) {
     console.log('BugView sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  render: function() {
+  render: function BugView_render() {
     this.$el.attr('id', 'bug-'+this.model.get('number'))
         .css({'top': this.model.get('y'),
               'left': this.model.get('x')})
@@ -60,7 +60,7 @@ var PageView = Backbone.View.extend({
   },
 
 
-  initialize: function() {
+  initialize: function PageView_initialize() {
     var self = this;
     this.ctx = document.getElementById('background-canvas').getContext('2d');
 
@@ -81,16 +81,16 @@ var PageView = Backbone.View.extend({
     return this;
   },
 
-  debug: function(eventName, extra) {
+  debug: function PageView_debug(eventName, extra) {
     console.log('PageView sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  debugBugs: function(eventName, extra) {
+  debugBugs: function PageView_debugBugs(eventName, extra) {
     console.log('PageView.Bugs sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
 
-  clickBackground: function(e) {
+  clickBackground: function PageView_clickBackground(e) {
     var bug = prompt('Please enter a bug number');
 
     if (!bug || (this.model.get('image') == '/images/default.png')) return;
@@ -113,7 +113,7 @@ var PageView = Backbone.View.extend({
     pageObjects.bugzilla.getBug(bug, bugExists, bugDoesNotExist);
   },
 
-  resetBugs: function(bugs, extra, a) {
+  resetBugs: function PageView_resetBugs(bugs, extra, a) {
     var self = this;
     this.subViews = [];
     bugs.each(function(bug) {
@@ -122,20 +122,20 @@ var PageView = Backbone.View.extend({
     this.render();
   },
 
-  addBug: function(bug) {
+  addBug: function PageView_addBugs(bug) {
     var bugView = new BugView({model: bug});
     this.subViews.push(bugView);
     bugView.render();
   },
 
-  render: function() {
+  render: function PageView_render() {
     var self = this;
     $(this.el).html(this.template(this.model));
     var holder = $('.background');
 
-    holder[0].ondragover = function () { holder.addClass('hover'); return false; };
-    holder[0].ondragleave = function () { holder.removeClass('hover'); return false; };
-    holder[0].ondrop = function (e) {
+    holder[0].ondragover = function  PageView_ondragover() { holder.addClass('hover'); return false; };
+    holder[0].ondragleave = function  PageView_ondragleave() { holder.removeClass('hover'); return false; };
+    holder[0].ondrop = function  PageView_ondrop(e) {
       e.preventDefault();
 
       var file = e.dataTransfer.files[0],
@@ -158,13 +158,13 @@ var PageView = Backbone.View.extend({
     return this;
   },
 
-  changeBackground: function(model) {
+  changeBackground: function PageView_changeBackground(model) {
     var holder = $('.background');
     var ctx = this.ctx;
 
     holder.removeClass('hover')
           .css({'background-image': 'url("' + model.get('image') + '")'});
-    loadImage(model.get('image'), function (img) {
+    loadImage(model.get('image'), function  PageView_loadImage(img) {
       holder.css({'height': img.height, 'width': img.width});
       if (model.get('image') == '/images/default.png')
         holder.css({'width': '100%', 'height': '100%', 'background-position': '45%'});
@@ -185,7 +185,7 @@ var MockupView = Backbone.View.extend({
 
   template: _.template($('#mockup-template').html()),
 
-  initialize: function() {
+  initialize: function MockupView_initialize() {
     this.subview = null;
 
     // Debug events.
@@ -196,7 +196,7 @@ var MockupView = Backbone.View.extend({
     this.model.get('pages').on('add', this.setPage, this);
 
     var self = this;
-    this.model.get('pages').fetch({success: function() {
+    this.model.get('pages').fetch({success: function MockupView_getPages() {
       var pages = self.model.get('pages');
       if (pages.length === 0)
         pages.create({'mockup': self.model.id}, {wait: true});
@@ -207,20 +207,20 @@ var MockupView = Backbone.View.extend({
     return this;
   },
 
-  debug: function(eventName, extra) {
+  debug: function MockupView_debug(eventName, extra) {
     console.log('MockupView sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  debugPages: function(eventName, extra) {
+  debugPages: function MockupView_debugPages(eventName, extra) {
     console.log('MockupView.Pages sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  render: function() {
+  render: function MockupView_render() {
     $(this.el).html(this.template(this.model));
     return this;
   },
 
-  setPage: function(page) {
+  setPage: function MockupView_setPage(page) {
     this.page = page;
     this.subview = new PageView({model: page});
     this.render();
@@ -235,7 +235,7 @@ var UserView = Backbone.View.extend({
 
   template: _.template($('#user-template').html()),
 
-  initialize: function() {
+  initialize: function UserView_initialize() {
     this.subview = null;
 
     // Debug events.
@@ -246,11 +246,11 @@ var UserView = Backbone.View.extend({
     var self = this;
 
     navigator.id.watch({
-      onlogin: function(assertion) {
+      onlogin: function UserView_onLogin(assertion) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/persona/verify", true);
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.addEventListener("loadend", function(e) {
+        xhr.addEventListener("loadend", function UserView_onLogin_loadEnd(e) {
           self.model.fetch();
         }, false);
 
@@ -258,17 +258,17 @@ var UserView = Backbone.View.extend({
           assertion: assertion
         }));
       },
-      onlogout: function() {
+      onlogout: function UserView_onLogout() {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/persona/logout", true);
-        xhr.addEventListener("loadend", function(e) {
+        xhr.addEventListener("loadend", function UserView_onLogout_loadEnd(e) {
           self.model.fetch();
         });
         xhr.send();
       }
     });
 
-    $(this.el).click(function() {
+    $(this.el).click(function UserView_click() {
       if (self.model.get('email') === '') {
         navigator.id.request();
       } else {
@@ -279,15 +279,15 @@ var UserView = Backbone.View.extend({
     return this;
   },
 
-  debug: function(eventName, extra) {
+  debug: function UserView_debug(eventName, extra) {
     console.log('UserView sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  debugPages: function(eventName, extra) {
+  debugPages: function UserView_debugPages(eventName, extra) {
     console.log('UserView.Pages sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  render: function() {
+  render: function UserView_render() {
     console.log('email = ' + this.model.get('email'));
     if (this.model.get('email') === '') {
       $(this.el).html(this.template(this.model));
@@ -317,7 +317,7 @@ var AppView = Backbone.View.extend({
     'click #cancelMockup': 'hideNewForm'
   },
 
-  initialize: function(options, user, router) {
+  initialize: function AppView_initialize(options, user, router) {
     var self = this;
     this.user = user;
     this.router = router;
@@ -328,8 +328,8 @@ var AppView = Backbone.View.extend({
     this.model.on('reset', this.render, this);
     this.model.on('add', this.setMockup, this);
     this.user.on('change', this.render, this);
-    this.router.on('route:getMockup', function (mid) {
-      self.model.fetch({'success': function(model, response, options){
+    this.router.on('route:getMockup', function AppView_getMockup(mid) {
+      self.model.fetch({'success': function AppView_getMockup_success(model, response, options){
         self.setMockup(self.model.get(mid));
       }});
     });
@@ -344,11 +344,11 @@ var AppView = Backbone.View.extend({
     return this;
   },
 
-  debug: function(eventName, extra) {
+  debug: function AppView_debug(eventName, extra) {
     console.log('AppView sent '+eventName+'.  '+JSON.stringify(extra));
   },
 
-  render: function() {
+  render: function AppView_render() {
     var self = this;
     var menu = '';
     if (this.user.get('email') !== '') {
@@ -356,7 +356,7 @@ var AppView = Backbone.View.extend({
       if (this.model.length)
         menu += '<optgroup label="---"></optgroup>';
     }
-    this.model.each(function(model, i, l) {
+    this.model.each(function AppView_eachModel(model, i, l) {
       menu += self.template(model);
     });
     this.menu.html(menu);
@@ -368,7 +368,7 @@ var AppView = Backbone.View.extend({
 
   // Utility Methods.
 
-  setMockup: function(mockup) {
+  setMockup: function AppView_setMockup(mockup) {
     this.mockup = mockup;
     $('#mockup').show();
     $('#page').show();
@@ -380,26 +380,26 @@ var AppView = Backbone.View.extend({
 
   // Event Handlers.
 
-  showNewForm: function(e) {
+  showNewForm: function AppView_showNewForm(e) {
     $('#mockup').hide();
     $('#page').hide();
     $('body').css({'background-color': ''});
     $('#newMockup').show();
   },
 
-  clickMockup: function(e) {
+  clickMockup: function AppView_clickMockup(e) {
     var id = $(e.currentTarget).data('id');
     var mockup = this.model.getByCid(id);
     this.router.navigate("m/" + mockup.id, {'trigger': true});
   },
 
-  hideNewForm: function(e) {
+  hideNewForm: function AppView_hideNewForm(e) {
     if (e) e.preventDefault();
     $('#inputName').val('');
     $('#newMockup').hide();
   },
 
-  createMockup: function(e) {
+  createMockup: function AppView_createMockup(e) {
     e.preventDefault();
     if (!$('#inputName').val())
       return;
