@@ -14,7 +14,9 @@ var Page = mongoose.model('Page', new mongoose.Schema({
 }));
 
 var Mockup = mongoose.model('Mockup', new mongoose.Schema({
-  name: String
+  name: String,
+  creationDate: Date,
+  user: String
 }));
 
 
@@ -65,6 +67,8 @@ exports.postMockup = function(req, res) {
   if (!req.body || !req.body.name)
     return returnError(res, 'Missing name.');
   console.log('Creating mockup:');
+  req.body.user = req.session.email;
+  req.body.creationDate = new Date();
   console.log(req.body);
   var mockup = new Mockup(req.body);
   console.log(mockup);

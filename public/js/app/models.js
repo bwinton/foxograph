@@ -53,7 +53,6 @@ var Page = Backbone.Model.extend({
     if (!this.get('bugs'))
       this.set('bugs', new BugList());
     this.get('bugs').setParent(this);
-    //this.set('mockup', this.collection.parent.id);
   }
 
 });
@@ -81,6 +80,8 @@ var Mockup = Backbone.Model.extend({
   defaults: {
     type: 'Mockup',
     name: 'New Mockup',
+    creationDate: '',
+    user: 'unsetUser'
   },
 
   idAttribute: '_id',
@@ -95,7 +96,11 @@ var Mockup = Backbone.Model.extend({
 
 var MockupList = Backbone.Collection.extend({
   model: Mockup,
-  url: '/mockups/'
+  url: '/mockups/',
+
+  comparator: function MockupList_comparator(mockup) {
+    return mockup.get('user') + '-' + mockup.get('creationDate');
+  }
 });
 
 var User = Backbone.Model.extend({
