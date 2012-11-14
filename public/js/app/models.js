@@ -99,7 +99,7 @@ var MockupList = Backbone.Collection.extend({
   url: '/mockups/',
 
   comparator: function MockupList_comparator(mockup) {
-    return mockup.get('user') + '-' + mockup.get('creationDate');
+    return mockup.get('user') + '-' + mockup.get('name');
   }
 });
 
