@@ -357,6 +357,7 @@ var AppView = Backbone.View.extend({
         menu += '<optgroup label="---"></optgroup>';
     }
     this.model.each(function AppView_eachModel(model, i, l) {
+      model.set('shortuser', model.get('user').replace("@mozilla.com", ""));
       menu += self.template(model);
     });
     this.menu.html(menu);
