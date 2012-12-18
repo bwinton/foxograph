@@ -14,6 +14,12 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
   "use strict";
 
+  var appView;
+  var userView;
+  var mockupView;
+  var pageView;
+
+
   function loadImage(imageSrc, callback)
   {
     var img = new Image();
@@ -75,17 +81,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       var self = this;
       this.ctx = document.getElementById('background-canvas').getContext('2d');
 
-      // Debug events.
-      this.model.get('bugs').on('all', this.debugBugs, this);
-      this.model.on('all', this.debug, this);
-
-      this.model.on('change:image', this.changeBackground, this);
-      this.model.on('sync', this.render, this);
-      this.model.get('bugs').on('add', this.addBug, this);
-      this.model.get('bugs').on('reset', this.resetBugs, this);
-
-      this.model.get('bugs').fetch();
-
       this.subViews = [];
       this.render();
 
@@ -100,6 +95,24 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       console.log('PageView.Bugs sent ' + eventName + '.  ' + JSON.stringify(extra));
     },
 
+    setModel: function PageView_setModel(model) {
+      // Clear out the old stuff.
+
+      this.model = model;
+      if (!this.model)
+        return;
+
+      // Debug events.
+      this.model.get('bugs').on('all', this.debugBugs, this);
+      this.model.on('all', this.debug, this);
+
+      this.model.on('change:image', this.changeBackground, this);
+      this.model.on('sync', this.render, this);
+      this.model.get('bugs').on('add', this.addBug, this);
+      this.model.get('bugs').on('reset', this.resetBugs, this);
+
+      this.model.get('bugs').fetch();
+    },
 
     clickBackground: function PageView_clickBackground(e) {
       var bug = prompt('Please enter a bug number');
@@ -172,6 +185,9 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       $('#background-canvas').show();
       var ctx = this.ctx;
 
+      if (!this.model)
+        return;
+
       holder.removeClass('hover')
             .css({'background-image': 'url("' + model.get('image') + '")'});
       loadImage(model.get('image'), function  PageView_loadImage(img) {
@@ -201,24 +217,7 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     initialize: function MockupView_initialize() {
-      this.subview = null;
-
-      // Debug events.
-      this.model.get('pages').on('all', this.debugPages, this);
-      this.model.on('all', this.debug, this);
-
-      this.model.on('sync', this.render, this);
-      this.model.get('pages').on('add', this.setPage, this);
-
-      var self = this;
-      this.model.get('pages').fetch({success: function MockupView_getPages() {
-        var pages = self.model.get('pages');
-        if (pages.length === 0)
-          pages.create({'mockup': self.model.id}, {wait: true});
-        else
-          self.setPage(pages.at(0));
-      }});
-
+      this.setModel(this.model);
       return this;
     },
 
@@ -235,17 +234,38 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       return this;
     },
 
+    setModel: function MockupView_setModel(model) {
+      // Clear out the old stuff.
+
+      this.model = model;
+      if (!this.model)
+        return;
+
+      // Debug events.
+      this.model.get('pages').on('all', this.debugPages, this);
+      this.model.on('all', this.debug, this);
+
+      this.model.on('sync', this.render, this);
+      this.model.get('pages').on('add', this.setPage, this);
+
+      var self = this;
+      this.model.get('pages').fetch({success: function MockupView_getPages() {
+        var pages = self.model.get('pages');
+        if (pages.length === 0)
+          pages.create({'mockup': self.model.id}, {wait: true});
+        else
+          self.setPage(pages.at(0));
+      }});
+    },
+
     setPage: function MockupView_setPage(page) {
-      this.page = page;
-      if (this.subview)
-        this.subview.remove();
-      this.subview = new PageView({model: page});
+      pageView.setModel(page);
       this.render();
     },
 
     deleteMockup: function MockupView_deleteMockup(e) {
       alert(JSON.stringify(this.model));
-      this.model.destroy();
+      this.model.destroy({wait: true});
       return false;
     }
   });
@@ -260,11 +280,9 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     emptyTemplate: _.template($('#nouser-template').html()),
 
     initialize: function UserView_initialize() {
-      this.subview = null;
 
       // Debug events.
       this.model.on('all', this.debug, this);
-
       this.model.on('change', this.render, this);
 
       var self = this;
@@ -312,9 +330,12 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     render: function UserView_render() {
-      console.log('email = ' + this.model.get('email'));
+      var email = '';
+      if (this.model)
+        email = this.model.get('email');
+      console.log('email = ' + email);
       var template = this.userTemplate;
-      if (this.model.get('email') === '')
+      if (email === '')
         template = this.emptyTemplate;
       $(this.el).html(template(this.model));
 
@@ -343,13 +364,18 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       this.user = user;
       this.router = router;
       this.menu = this.$('#mockup-list');
-      this.subview = null;
-      this.mockup = null;
 
       this.model.on('reset', this.render, this);
-      this.model.on('remove', this.render, this);
-      this.model.on('add', this.setMockup, this);
+      this.model.on('remove', this.removeMockup, this);
+      this.model.on('add', this.addMockup, this);
       this.user.on('change', this.render, this);
+      this.router.on('route:default', function () {
+        alert("Got default!");
+        if (self.menu) {
+          self.menu.children('option[data-id]').first().click();
+          self.render();
+        }
+      });
       this.router.on('route:getMockup', function AppView_getMockup(mid) {
         self.model.fetch({'success': function AppView_getMockup_success(model, response, options) {
           self.setMockup(self.model.get(mid));
@@ -364,7 +390,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
       this.model.fetch();
       this.user.fetch();
-      this.userView = new UserView({model: this.user});
 
       return this;
     },
@@ -386,8 +411,9 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
         menu += self.template(model);
       });
       this.menu.html(menu);
-      if (this.subview)
-        $('option[data-id="' + this.subview.model.cid + '"]').attr('selected', true);
+      alert(document.location.pathname + ", " + this.menu.children('option[data-id]').first().data('id'));
+      if (mockupView.model)
+        $('option[data-id="' + mockupView.model.cid + '"]').attr('selected', true);
       else if (document.location.pathname === '/')
         this.menu.children('option[data-id]').first().click();
       return this;
@@ -397,12 +423,9 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     // Utility Methods.
 
     setMockup: function AppView_setMockup(mockup) {
-      this.mockup = mockup;
       $('#page').show();
       this.hideNewForm();
-      if (this.subview)
-        this.subview.remove();
-      this.subview = new MockupView({model: this.mockup});
+      mockupView.setModel(mockup);
       this.render();
     },
 
@@ -414,6 +437,14 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       $('#page').hide();
       $('body').css({'background-color': ''});
       $('#newMockup').show();
+    },
+
+    addMockup: function AppView_addMockup(mockup) {
+      this.router.navigate("m/" + mockup.id, {'trigger': true});
+    },
+
+    removeMockup: function AppView_removeMockup(mockup) {
+      this.router.navigate("/", {'trigger': true});
     },
 
     clickMockup: function AppView_clickMockup(e) {
@@ -442,8 +473,16 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
   });
 
 
-  // Instances.
+  function init(mockups, user, router) {
+    appView = new AppView({model: mockups}, user, router);
+    userView = new UserView({model: user});
+    mockupView = new MockupView();
+    pageView = new PageView();
 
-  return {'AppView': AppView};
+    Backbone.history.start({'pushState': true});
+  }
+
+  // Instances.
+  return {'init': init};
 
 });
