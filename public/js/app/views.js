@@ -368,6 +368,8 @@ var AppView = Backbone.View.extend({
     this.menu.html(menu);
     if (this.subview)
       $('option[data-id="'+this.subview.model.cid+'"]').attr('selected', true);
+    else if (document.location.pathname === '/')
+      this.menu.children('option[data-id]').first().click();
     return this;
   },
 
