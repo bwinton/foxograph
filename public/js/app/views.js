@@ -160,6 +160,7 @@ var PageView = Backbone.View.extend({
 
   changeBackground: function PageView_changeBackground(model) {
     var holder = $('.background');
+    $('#background-canvas').show();
     var ctx = this.ctx;
 
     holder.removeClass('hover')
@@ -172,6 +173,7 @@ var PageView = Backbone.View.extend({
       var imgData = ctx.getImageData(0, 0, 1, 1);
       var pixel = 'rgb('+imgData.data[0]+','+imgData.data[1]+','+imgData.data[2]+')';
       $('body').css({'background-color': pixel});
+      $('#background-canvas').hide();
     });
   }
 });
@@ -311,7 +313,7 @@ var AppView = Backbone.View.extend({
   template: _.template($('#mockups-template').html()),
 
   events: {
-    'click option[value="addMockup"]': 'showNewForm',
+    'click option[value="addMockup"]': 'clickNewForm',
     'click option[data-id]': 'clickMockup',
     'click #createMockup': 'createMockup',
     'click #cancelMockup': 'hideNewForm'
@@ -333,6 +335,9 @@ var AppView = Backbone.View.extend({
         self.setMockup(self.model.get(mid));
       }});
     });
+    this.router.on('route:newMockup', function AppView_newMockups() {
+      self.showNewForm();
+    })
 
     // Debug events.
     this.model.on('all', this.debug, this);
@@ -363,6 +368,8 @@ var AppView = Backbone.View.extend({
     this.menu.html(menu);
     if (this.subview)
       $('option[data-id="'+this.subview.model.cid+'"]').attr('selected', true);
+    else if (document.location.pathname === '/')
+      this.menu.children('option[data-id]').first().click();
     return this;
   },
 
@@ -371,7 +378,6 @@ var AppView = Backbone.View.extend({
 
   setMockup: function AppView_setMockup(mockup) {
     this.mockup = mockup;
-    $('#mockup').show();
     $('#page').show();
     this.hideNewForm();
     this.subview = new MockupView({model: this.mockup});
@@ -381,8 +387,8 @@ var AppView = Backbone.View.extend({
 
   // Event Handlers.
 
-  showNewForm: function AppView_showNewForm(e) {
-    $('#mockup').hide();
+  showNewForm: function AppView_showNewForm() {
+    $('#mockup').html('<h1>Create a new Mockup</h1>');
     $('#page').hide();
     $('body').css({'background-color': ''});
     $('#newMockup').show();
@@ -392,6 +398,10 @@ var AppView = Backbone.View.extend({
     var id = $(e.currentTarget).data('id');
     var mockup = this.model.getByCid(id);
     this.router.navigate("m/" + mockup.id, {'trigger': true});
+  },
+
+  clickNewForm: function AppView_clickNewForm(e) {
+    this.router.navigate("m/new", {'trigger': true});
   },
 
   hideNewForm: function AppView_hideNewForm(e) {
