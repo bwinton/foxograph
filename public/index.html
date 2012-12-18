@@ -9,15 +9,19 @@
     <script data-main="/js/app" src="/js/lib/require.js"></script>
   </head>
   <body>
-    <canvas id="background-canvas" width="1" height="1"></canvas>
+    <div class="main-header">
+      <!-- Mockup Menu -->
+      <div id="mockups">
+        <select id="mockup-list">
+        </select>
+      </div>
 
-    <!-- User box -->
-    <div id="user"></div>
+      <!-- Current Mockup, and page. -->
+      <div id="mockup"></div>
 
-    <!-- Mockup Menu -->
-    <div id="mockups">
-      <select id="mockup-list">
-      </select>
+      <!-- User box -->
+      <div id="user"></div>
+
     </div>
 
     <!-- New Mockup Form -->
@@ -36,8 +40,6 @@
       </div>
     </form>
 
-    <!-- Current Mockup, and page. -->
-    <div id="mockup"></div>
     <div id="page"></div>
 
   </body>
@@ -53,11 +55,13 @@
 
   <script type="text/template" id="mockup-template">
     <h1><%= escape('name') %></h1>
-    Page 1 of <%= get('pages').length %>
+    <!-- Page 1 of <%= get('pages').length %> -->
   </script>
 
   <script type="text/template" id="page-template">
     <div class="background">&nbsp;</div>
   </script>
+
+  <canvas id="background-canvas" width="1" height="1"></canvas>
 
 </html>

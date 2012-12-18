@@ -160,6 +160,7 @@ var PageView = Backbone.View.extend({
 
   changeBackground: function PageView_changeBackground(model) {
     var holder = $('.background');
+    $('#background-canvas').show();
     var ctx = this.ctx;
 
     holder.removeClass('hover')
@@ -172,6 +173,7 @@ var PageView = Backbone.View.extend({
       var imgData = ctx.getImageData(0, 0, 1, 1);
       var pixel = 'rgb('+imgData.data[0]+','+imgData.data[1]+','+imgData.data[2]+')';
       $('body').css({'background-color': pixel});
+      $('#background-canvas').hide();
     });
   }
 });

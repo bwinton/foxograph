@@ -25,11 +25,38 @@
 
 
 body {
-  padding: 10px;
   font: 14px/21px 'Open Sans',"Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
   height: 100%;
   background-color: #DBDBDB;
+}
+
+.main-header {
+  position: relative;
+  width: calc(100% - 40px);
+  padding: 0 20px;
+  background: #eee;
+}
+
+.main-header > div {
   display: inline-block;
+  width: 33%;
+  vertical-align: baseline;
+}
+
+#mockup {
+  text-align: center;
+}
+
+#user {
+  margin: 28px 0;
+  cursor: pointer;
+  text-align: right;
+  float: right;
+  width: auto;
+}
+
+#user > .button {
+  margin-top: -5px;
 }
 
 a {
@@ -39,6 +66,7 @@ a {
 canvas {
   margin: 0;
   padding: 0;
+  display: none;
 }
 
 #newMockup {
@@ -46,7 +74,7 @@ canvas {
 }
 
 .background {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   z-index: -5;
@@ -107,10 +135,3 @@ canvas {
   background-image:url('../images/button-arrow-active.png'),-o-linear-gradient(top,#184a73,#276084);
   background-image: url('../images/button-arrow-active.png'), linear-gradient(top, #184a73, #276084);
 }
-
-
-#user {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
