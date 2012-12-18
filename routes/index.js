@@ -101,7 +101,7 @@ exports.deleteMockup = function(req, res) {
       Bug.find({page: page.page_id}).remove();
     });
   }).remove();
-  Mockup.findOne({_id: req.params.mockup_id}, function(err, mockup) {
+  Mockup.findOneAndRemove({_id: req.params.mockup_id}, function(err, mockup) {
     if (err)
       return returnError(res, err, console);
     console.log(JSON.stringify(mockup));
