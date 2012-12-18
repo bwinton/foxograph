@@ -264,7 +264,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     deleteMockup: function MockupView_deleteMockup(e) {
-      alert(JSON.stringify(this.model));
       this.model.destroy({wait: true});
       return false;
     }
@@ -370,7 +369,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       this.model.on('add', this.addMockup, this);
       this.user.on('change', this.render, this);
       this.router.on('route:default', function () {
-        alert("Got default!");
         if (self.menu) {
           self.menu.children('option[data-id]').first().click();
           self.render();
@@ -411,7 +409,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
         menu += self.template(model);
       });
       this.menu.html(menu);
-      alert(document.location.pathname + ", " + this.menu.children('option[data-id]').first().data('id'));
       if (mockupView.model)
         $('option[data-id="' + mockupView.model.cid + '"]').attr('selected', true);
       else if (document.location.pathname === '/')
