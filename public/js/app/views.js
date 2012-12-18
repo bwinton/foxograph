@@ -313,7 +313,7 @@ var AppView = Backbone.View.extend({
   template: _.template($('#mockups-template').html()),
 
   events: {
-    'click option[value="addMockup"]': 'showNewForm',
+    'click option[value="addMockup"]': 'clickNewForm',
     'click option[data-id]': 'clickMockup',
     'click #createMockup': 'createMockup',
     'click #cancelMockup': 'hideNewForm'
@@ -335,6 +335,9 @@ var AppView = Backbone.View.extend({
         self.setMockup(self.model.get(mid));
       }});
     });
+    this.router.on('route:newMockup', function AppView_newMockups() {
+      self.showNewForm();
+    })
 
     // Debug events.
     this.model.on('all', this.debug, this);
@@ -382,7 +385,7 @@ var AppView = Backbone.View.extend({
 
   // Event Handlers.
 
-  showNewForm: function AppView_showNewForm(e) {
+  showNewForm: function AppView_showNewForm() {
     $('#mockup').html('<h1>Create a new Mockup</h1>');
     $('#page').hide();
     $('body').css({'background-color': ''});
@@ -393,6 +396,10 @@ var AppView = Backbone.View.extend({
     var id = $(e.currentTarget).data('id');
     var mockup = this.model.getByCid(id);
     this.router.navigate("m/" + mockup.id, {'trigger': true});
+  },
+
+  clickNewForm: function AppView_clickNewForm(e) {
+    this.router.navigate("m/new", {'trigger': true});
   },
 
   hideNewForm: function AppView_hideNewForm(e) {
