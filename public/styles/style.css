@@ -71,6 +71,7 @@ canvas {
 
 #newMockup {
   display: none;
+  padding-top: 20px;
 }
 
 .background {

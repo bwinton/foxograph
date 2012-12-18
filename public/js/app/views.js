@@ -373,7 +373,6 @@ var AppView = Backbone.View.extend({
 
   setMockup: function AppView_setMockup(mockup) {
     this.mockup = mockup;
-    $('#mockup').show();
     $('#page').show();
     this.hideNewForm();
     this.subview = new MockupView({model: this.mockup});
@@ -384,7 +383,7 @@ var AppView = Backbone.View.extend({
   // Event Handlers.
 
   showNewForm: function AppView_showNewForm(e) {
-    $('#mockup').hide();
+    $('#mockup').html('<h1>Create a new Mockup</h1>');
     $('#page').hide();
     $('body').css({'background-color': ''});
     $('#newMockup').show();
