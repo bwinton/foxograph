@@ -96,6 +96,7 @@ define(['backbone'], function (Backbone) {
     },
 
     idAttribute: '_id',
+    urlRoot : '/mockups/',
 
     initialize: function Mockup_initialize() {
       if (!this.get('pages'))

@@ -14,6 +14,7 @@ define(['backbone'], function (Backbone) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
+      "": "default",
       "m/new": "newMockup",
       "m/:mid": "getMockup",
       "m/:mid/p/:pid": "getPage"

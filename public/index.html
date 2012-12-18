@@ -45,8 +45,12 @@
   </body>
 
   <!-- Templates -->
-  <script type="text/template" id="user-template">
+  <script type="text/template" id="nouser-template">
     <div class="button login" title="Click to sign in.">sign in</div>
+  </script>
+
+  <script type="text/template" id="user-template">
+    <div class="link" title="Click to sign out.">Hello <%= escape('email')%>.</div>
   </script>
 
   <script type="text/template" id="mockups-template">
@@ -54,7 +58,7 @@
   </script>
 
   <script type="text/template" id="mockup-template">
-    <h1><%= escape('name') %></h1>
+    <h1><%= escape('name') %></h1><a class="link" id="deleteMockup"><i class="icon-trash"></i></a>
     <!-- Page 1 of <%= get('pages').length %> -->
   </script>
 

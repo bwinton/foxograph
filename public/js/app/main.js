@@ -15,12 +15,10 @@ define(function (require) {
   "use strict";
 
   var $ = require('jquery');
-  var Backbone = require('Backbone');
   require('persona');
   var models = require('./models');
   var views = require('./views');
   var routes = require('./routes');
 
-  var appView = new views.AppView({model: models.mockups}, models.user, routes.router);
-  Backbone.history.start({'pushState': true});
+  views.init(models.mockups, models.user, routes.router);
 });
