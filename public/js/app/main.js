@@ -15,7 +15,7 @@ define(function (require) {
   "use strict";
 
   var $ = require('jquery');
-  var Backbone = require('Backbone');
+  var Backbone = require('backbone');
   require('persona');
   var models = require('./models');
   var views = require('./views');

@@ -101,6 +101,7 @@ app.post('/logout', routes.logout);
 app.get('/mockups/', routes.getMockups);
 app.post('/mockups/', routes.postMockup);
 app.get('/mockups/:mockup_id', routes.getMockup);
+app.delete('/mockups/:mockup_id', routes.deleteMockup);
 
 // Pages.
 app.get('/mockups/:mockup_id/pages/', routes.getPages);

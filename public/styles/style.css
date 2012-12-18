@@ -55,7 +55,7 @@ body {
   width: auto;
 }
 
-#user > .button {
+#user > * {
   margin-top: -5px;
 }
 
@@ -72,6 +72,45 @@ canvas {
 #newMockup {
   display: none;
   padding-top: 20px;
+}
+
+.main-header h1 {
+  display: inline-block;
+}
+
+.main-header .link {
+  background-repeat: no-repeat;
+  background-position: left top;
+
+  margin: 10px 1px;
+  padding: 6px 6px;
+  vertical-align: top;
+  white-space: normal;
+  background: transparent padding-box;
+  border: 1px solid transparent;
+  border-radius: 2.5px;
+  color: #525c66;
+  cursor: pointer;
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 150ms;
+}
+
+.main-header .link:hover {
+  background-color: hsla(211,79%,6%,.03);
+  border-color: hsla(210,54%,20%,.15) hsla(210,54%,20%,.17) hsla(210,54%,20%,.2);
+}
+
+.main-header .link:hover:active {
+  background-image: -moz-linear-gradient(hsla(211,79%,6%,.02), hsla(211,79%,6%,.05));
+  border-color: hsla(210,54%,20%,.2) hsla(210,54%,20%,.23) hsla(210,54%,20%,.25);
+  box-shadow: 0 1px 1px hsla(211,79%,6%,.05) inset,
+              0 0 1px hsla(211,79%,6%,.1) inset;
+  transition-duration: 0ms;
+}
+
+#deleteMockup {
+  vertical-align: baseline;
+
 }
 
 .background {

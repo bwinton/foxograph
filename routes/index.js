@@ -91,6 +91,24 @@ exports.getMockup = function(req, res) {
   });
 };
 
+exports.deleteMockup = function(req, res) {
+  console.log('Deleting mockup '+req.params.mockup_id);
+  Page.find({mockup: req.params.mockup_id}, function(err, pages) {
+    if (err)
+      return returnError(res, err, console);
+    pages.forEach(function (page) {
+      console.log('  Deleting page '+page.page_id);
+      Bug.find({page: page.page_id}).remove();
+    });
+  }).remove();
+  Mockup.findOne({_id: req.params.mockup_id}, function(err, mockup) {
+    if (err)
+      return returnError(res, err, console);
+    console.log(JSON.stringify(mockup));
+    return res.json(mockup);
+  });
+};
+
 
 // Pages.
 

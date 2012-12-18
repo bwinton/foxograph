@@ -196,6 +196,10 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
     template: _.template($('#mockup-template').html()),
 
+    events: {
+      'click #deleteMockup': 'deleteMockup',
+    },
+
     initialize: function MockupView_initialize() {
       this.subview = null;
 
@@ -233,8 +237,16 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
     setPage: function MockupView_setPage(page) {
       this.page = page;
+      if (this.subview)
+        this.subview.remove();
       this.subview = new PageView({model: page});
       this.render();
+    },
+
+    deleteMockup: function MockupView_deleteMockup(e) {
+      alert(JSON.stringify(this.model));
+      this.model.destroy();
+      return false;
     }
   });
 
@@ -244,7 +256,8 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
   var UserView = Backbone.View.extend({
     el: '#user',
 
-    template: _.template($('#user-template').html()),
+    userTemplate: _.template($('#user-template').html()),
+    emptyTemplate: _.template($('#nouser-template').html()),
 
     initialize: function UserView_initialize() {
       this.subview = null;
@@ -300,13 +313,10 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
     render: function UserView_render() {
       console.log('email = ' + this.model.get('email'));
-      if (this.model.get('email') === '') {
-        $(this.el).html(this.template(this.model));
-        $(this.el).removeAttr('title');
-      } else {
-        $(this.el).text('Hello ' + this.model.escape('email') + '.');
-        $(this.el).attr('title', 'Click to sign out.');
-      }
+      var template = this.userTemplate;
+      if (this.model.get('email') === '')
+        template = this.emptyTemplate;
+      $(this.el).html(template(this.model));
 
       return this;
     },
@@ -337,6 +347,7 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       this.mockup = null;
 
       this.model.on('reset', this.render, this);
+      this.model.on('remove', this.render, this);
       this.model.on('add', this.setMockup, this);
       this.user.on('change', this.render, this);
       this.router.on('route:getMockup', function AppView_getMockup(mid) {
@@ -389,6 +400,8 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       this.mockup = mockup;
       $('#page').show();
       this.hideNewForm();
+      if (this.subview)
+        this.subview.remove();
       this.subview = new MockupView({model: this.mockup});
       this.render();
     },
