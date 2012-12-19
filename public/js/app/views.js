@@ -125,7 +125,7 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       var model = this.model;
 
       function bugExists() {
-        model.get('bugs').create({'number': bug, 'x': e.pageX, 'y': e.pageY,
+        model.get('bugs').create({'number': bug, 'x': e.pageX, 'y': e.pageY - 60,
                                   'page': page_id});
       }
 

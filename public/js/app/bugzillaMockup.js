@@ -113,8 +113,8 @@ function run(){
       newPanel.className = "panel";
 
       //set the location of the panel based on the Fireworks div
-      newPanel.style.top = div.getBoundingClientRect().top + "px";
-      newPanel.style.left = div.getBoundingClientRect().left + "px";
+      newPanel.style.top = div.style.top;
+      newPanel.style.left = div.style.left;
 
       div.parentNode.appendChild(newPanel);
     }
