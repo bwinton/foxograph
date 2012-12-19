@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Module dependencies.
  */
@@ -10,8 +12,8 @@ var url = require('url');
 
 var app = module.exports = express();
 
-const logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
-                            '<%= status %> <%= method %> <%= url %>');
+var logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
+                          '<%= status %> <%= method %> <%= url %>');
 
 // Configuration
 
@@ -31,8 +33,8 @@ if (process.env.VCAP_SERVICES) {
   session_secret = process.env.SESSION_SECRET;
 }
 
-const PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
-const HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
+var PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
+var HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
 
 var audience = 'http://' + HOST + ':' + PORT; // Must match your browser's address bar
 if (process.env.VMC_APP_INSTANCE) {
