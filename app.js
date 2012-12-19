@@ -21,8 +21,9 @@ if (process.env.VCAP_SERVICES) {
   var mongo_data = services['mongodb-1.8'][0].credentials;
   mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
               '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
+} else if (process.env.MONGO_URL) {
+  mongo_url = process.env.MONGO_URL;
 }
-console.log(mongo_url);
 mongoose.connect(mongo_url);
 
 var session_secret = 'mytestsessionsecret';
@@ -37,6 +38,8 @@ var audience = 'http://' + HOST + ':' + PORT; // Must match your browser's addre
 if (process.env.VMC_APP_INSTANCE) {
   var instance = JSON.parse(process.env.VMC_APP_INSTANCE);
   audience = 'https://' + instance.uris[0] + '/';
+} else if (process.env.AUDIENCE) {
+  audience = process.env.AUDIENCE;
 }
 
 app.configure(function(){
