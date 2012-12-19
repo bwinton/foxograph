@@ -35,5 +35,13 @@ define(function (require) {
         });
       }
     },
+    deploy: {
+      flags: {
+        //Does not print the build output.
+        'q': 'quiet'
+      },
+      depends: ['build'],
+      run: 'jitsu deploy'
+    },
   };
 });

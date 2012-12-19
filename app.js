@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Module dependencies.
  */
@@ -10,8 +12,8 @@ var url = require('url');
 
 var app = module.exports = express();
 
-const logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
-                            '<%= status %> <%= method %> <%= url %>');
+var logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
+                          '<%= status %> <%= method %> <%= url %>');
 
 // Configuration
 
@@ -21,8 +23,9 @@ if (process.env.VCAP_SERVICES) {
   var mongo_data = services['mongodb-1.8'][0].credentials;
   mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
               '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
+} else if (process.env.MONGO_URL) {
+  mongo_url = process.env.MONGO_URL;
 }
-console.log(mongo_url);
 mongoose.connect(mongo_url);
 
 var session_secret = 'mytestsessionsecret';
@@ -30,13 +33,15 @@ if (process.env.VCAP_SERVICES) {
   session_secret = process.env.SESSION_SECRET;
 }
 
-const PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
-const HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
+var PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
+var HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
 
 var audience = 'http://' + HOST + ':' + PORT; // Must match your browser's address bar
 if (process.env.VMC_APP_INSTANCE) {
   var instance = JSON.parse(process.env.VMC_APP_INSTANCE);
   audience = 'https://' + instance.uris[0] + '/';
+} else if (process.env.AUDIENCE) {
+  audience = process.env.AUDIENCE;
 }
 
 app.configure(function(){

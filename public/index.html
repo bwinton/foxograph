@@ -58,7 +58,9 @@
   </script>
 
   <script type="text/template" id="mockup-template">
-    <h1><%= escape('name') %></h1><a class="link" id="deleteMockup"><i class="icon-trash"></i></a>
+    <h1><%= escape('name') || '&nbsp;' %></h1><% if (get('owner')) { %><a
+      class="link" id="deleteMockup"><i class="icon-trash"></i></a
+    ><% } %>
     <!-- Page 1 of <%= get('pages').length %> -->
   </script>
 
