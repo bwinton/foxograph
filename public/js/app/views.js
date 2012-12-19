@@ -72,7 +72,10 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     el: '#page',
 
     events: {
-      'click': 'clickBackground'
+      'click': 'clickBackground',
+      'dragover': 'dragOver',
+      'dragleave': 'dragLeave',
+      'drop': 'drop'
     },
 
 
@@ -82,28 +85,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
       this.subViews = [];
       this.render();
-
-      this.$el.on('dragover', function PageView_ondragover() {
-        self.$el.addClass('hover');
-        return false;
-      });
-      this.$el.on('dragleave', function PageView_ondragover() {
-        self.$el.removeClass('hover');
-        return false;
-      });
-      this.$el.on('drop', function PageView_ondragover(e) {
-        self.$el.removeClass('hover');
-
-        var file = e.originalEvent.dataTransfer.files[0],
-            reader = new FileReader();
-        reader.onload = function (event) {
-          self.model.set('image', event.target.result);
-          self.model.save();
-        };
-        reader.readAsDataURL(file);
-
-        return false;
-      });
 
       return this;
     },
@@ -154,6 +135,31 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
       //TODO this is not ideal, as it calls getBug twice, once to see if the bug exists, another time to populate the bug info
       window.pageObjects.bugzilla.getBug(bug, bugExists, bugDoesNotExist);
+    },
+
+    dragOver: function PageView_ondragover() {
+      this.$el.addClass('hover');
+      return false;
+    },
+
+    dragLeave: function PageView_ondragover() {
+      this.$el.removeClass('hover');
+      return false;
+    },
+
+    drop: function PageView_ondragover(e) {
+      var self = this;
+      this.$el.removeClass('hover');
+
+      var file = e.originalEvent.dataTransfer.files[0];
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        self.model.set('image', event.target.result);
+        self.model.save();
+      };
+      reader.readAsDataURL(file);
+
+      return false;
     },
 
     resetBugs: function PageView_resetBugs(bugs, extra, a) {

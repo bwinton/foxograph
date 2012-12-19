@@ -116,11 +116,11 @@ canvas {
 }
 
 #page {
+  width: 100%;
   height: calc(100% - 60px);
   position: relative;
   top: 0;
   left: 0;
-  z-index: -5;
   background-repeat: no-repeat;
   cursor: crosshair;
 }
