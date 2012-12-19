@@ -71,10 +71,8 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
   var PageView = Backbone.View.extend({
     el: '#page',
 
-    template: _.template($('#page-template').html()),
-
     events: {
-      'click .background': 'clickBackground'
+      'click': 'clickBackground'
     },
 
 
@@ -84,6 +82,28 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
       this.subViews = [];
       this.render();
+
+      this.$el.on('dragover', function PageView_ondragover() {
+        self.$el.addClass('hover');
+        return false;
+      });
+      this.$el.on('dragleave', function PageView_ondragover() {
+        self.$el.removeClass('hover');
+        return false;
+      });
+      this.$el.on('drop', function PageView_ondragover(e) {
+        self.$el.removeClass('hover');
+
+        var file = e.originalEvent.dataTransfer.files[0],
+            reader = new FileReader();
+        reader.onload = function (event) {
+          self.model.set('image', event.target.result);
+          self.model.save();
+        };
+        reader.readAsDataURL(file);
+
+        return false;
+      });
 
       return this;
     },
@@ -153,24 +173,6 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
     render: function PageView_render() {
       var self = this;
-      $(this.el).html(this.template(this.model));
-      var holder = $('.background');
-
-      holder[0].ondragover = function  PageView_ondragover() { holder.addClass('hover'); return false; };
-      holder[0].ondragleave = function  PageView_ondragleave() { holder.removeClass('hover'); return false; };
-      holder[0].ondrop = function  PageView_ondrop(e) {
-        e.preventDefault();
-
-        var file = e.dataTransfer.files[0],
-            reader = new FileReader();
-        reader.onload = function (event) {
-          self.model.set('image', event.target.result);
-          self.model.save();
-        };
-        reader.readAsDataURL(file);
-
-        return false;
-      };
       this.changeBackground(this.model);
 
       // Since we've replaced the whole page, we should re-render all the bugs, too.
@@ -182,19 +184,19 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     changeBackground: function PageView_changeBackground(model) {
-      var holder = $('.background');
       $('#background-canvas').show();
       var ctx = this.ctx;
+      var self = this;
 
       if (!this.model)
         return;
 
-      holder.removeClass('hover')
-            .css({'background-image': 'url("' + model.get('image') + '")'});
+      this.$el.removeClass('hover')
+            .css({'background-image': 'url("' + self.model.get('image') + '")'});
       loadImage(model.get('image'), function  PageView_loadImage(img) {
-        holder.css({'height': img.height, 'width': img.width});
-        if (model.get('image') === '/images/default.png')
-          holder.css({'width': '100%', 'height': '100%', 'background-position': '45%'});
+        self.$el.css({'height': img.height, 'width': img.width});
+        if (self.model.get('image') === '/images/default.png')
+          self.$el.css({'width': '', 'height': '', 'background-position': 'center'});
         ctx.drawImage(img, 1 - img.width, 1 - img.height);
         var imgData = ctx.getImageData(0, 0, 1, 1);
         var pixel = 'rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ')';
