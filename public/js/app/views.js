@@ -14,6 +14,7 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
   "use strict";
 
+  var models;
   var appView;
   var userView;
   var mockupView;
@@ -218,6 +219,7 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
 
     initialize: function MockupView_initialize() {
       this.setModel(this.model);
+      this.render();
       return this;
     },
 
@@ -230,7 +232,9 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     render: function MockupView_render() {
-      $(this.el).html(this.template(this.model));
+      var data = this.model || new models.Mockup();
+      data.set('owner', data.get('user') === userView.model.get('email'));
+      $(this.el).html(this.template(data));
       return this;
     },
 
@@ -447,7 +451,10 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     clickMockup: function AppView_clickMockup(e) {
       var id = $(e.currentTarget).data('id');
       var mockup = this.model.getByCid(id);
-      this.router.navigate("m/" + mockup.id, {'trigger': true});
+      var url = "/";
+      if (mockup)
+        url = "m/" + mockup.id;
+      this.router.navigate(url, {'trigger': true});
     },
 
     clickNewForm: function AppView_clickNewForm(e) {
@@ -470,11 +477,12 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
   });
 
 
-  function init(mockups, user, router) {
-    appView = new AppView({model: mockups}, user, router);
-    userView = new UserView({model: user});
-    mockupView = new MockupView();
+  function init(aModels, routes) {
+    models = aModels;
+    userView = new UserView({model: models.user});
     pageView = new PageView();
+    mockupView = new MockupView();
+    appView = new AppView({model: models.mockups}, models.user, routes.router);
 
     Backbone.history.start({'pushState': true});
   }

@@ -90,7 +90,7 @@ define(['backbone'], function (Backbone) {
   var Mockup = Backbone.Model.extend({
     defaults: {
       type: 'Mockup',
-      name: 'New Mockup',
+      name: '',
       creationDate: '',
       user: 'unsetUser'
     },
@@ -130,7 +130,8 @@ define(['backbone'], function (Backbone) {
 
   return {
     'mockups': mockups,
-    'user': user
+    'user': user,
+    'Mockup': Mockup
   };
 
 });
