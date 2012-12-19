@@ -1,12 +1,12 @@
 {
-  "name": "application-name",
-  "version": "0.0.1",
+  "name": "foxography",
+  "version": "0.0.1-6",
   "private": true,
   "dependencies": {
     "express": "3.0.0rc4",
     "express-persona": "0.0.7",
     "ejs": "0.8.3",
-    "mongoose": "3.3.1"
+    "mongoose": "3.2.1"
   },
   "scripts": {
     "start": "node app.js"
@@ -21,5 +21,9 @@
       "persona": "https://login.persona.org/include.orig.js",
       "require": "http://requirejs.org/docs/release/2.0.6/comments/require.js"
     }
+  },
+  "subdomain": "foxography",
+  "engines": {
+    "node": "0.8.x"
   }
 }
