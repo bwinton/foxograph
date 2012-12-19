@@ -22,7 +22,9 @@
   src:local('Open Sans Bold'),local('OpenSans-Bold'),url('../fonts/OpenSans-Bold.eot') format('embedded-opentype'),url('../fonts/OpenSans-Bold.woff') format('woff'),url('../fonts/OpenSans-Bold.ttf') format('truetype')
 }
 
-
+html {
+  height: 100%;
+}
 
 body {
   font: 14px/21px 'Open Sans',"Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
@@ -113,16 +115,17 @@ canvas {
 
 }
 
-.background {
+#page {
+  width: 100%;
+  height: calc(100% - 60px);
   position: relative;
   top: 0;
   left: 0;
-  z-index: -5;
   background-repeat: no-repeat;
   cursor: crosshair;
 }
 
-.background.hover {
+#page.hover {
   opacity: .1;
 }
 
