@@ -229,6 +229,21 @@ exports.getBug = function(req, res) {
   });
 };
 
+exports.deleteBug = function(req, res) {
+  if (!req.session.email)
+    return error(res, 'Not logged in.');
+  console.log('Deleting bug '+req.params.bug_id);
+  Bug.findOne({_id: req.params.bug_id}, function(err, bug) {
+    Page.findOne({_id: bug.page}, function(err, page) {
+      Mockup.findOne({_id: page.mockup}, function(err, mockup) {
+        if (mockup.user !== req.session.email)
+          return error(res, 'Cannot delete a bug from a mockup you didn’t create!');
+        bug.remove();
+      });
+    });
+  });
+};
+
 
 // Admin-ish stuff.
 
