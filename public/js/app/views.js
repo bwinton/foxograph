@@ -299,6 +299,8 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     deleteMockup: function MockupView_deleteMockup(e) {
+      if (this.model.get('user') !== userView.model.get('email')) return;
+
       this.model.destroy({wait: true});
       return false;
     }
