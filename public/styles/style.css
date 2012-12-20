@@ -112,7 +112,6 @@ canvas {
 
 #deleteMockup {
   vertical-align: baseline;
-
 }
 
 #page {
@@ -131,6 +130,10 @@ canvas {
 
 .bug {
   position: absolute;
+}
+
+.deleteBug {
+  float: right;
 }
 
 .button.login {

@@ -93,57 +93,31 @@ function run(){
 
   //Find all of the new divs added in Fireworks and overlay new bug panels
   var newPanels = [];
-  var panel;
   var bugNumber;
+  var div;
   var divs =  document.getElementsByTagName("div");
   for(var i = 0; i < divs.length; i++){
-    var div = divs[i];
+    div = divs[i];
 
     if(div.id.substr(0,4) == "bug-"){
       //debug("found a bug div: " + div.id);
+      if (div.classList.contains("panel")) continue;
 
-      bugNumber = div.id.substr(4,6);
+      newPanels.push(div);
 
-      if (document.getElementById("panel-" + bugNumber)) continue;
-
-      var newPanel = document.createElement("div");
-      newPanels.push(newPanel);
-
-      newPanel.id = "panel-" + bugNumber;
-      newPanel.className = "panel";
-
-      //set the location of the panel based on the Fireworks div
-      newPanel.style.top = div.style.top;
-      newPanel.style.left = div.style.left;
-
-      div.parentNode.appendChild(newPanel);
+      div.classList.add("panel");
     }
   }
 
   //Set all of the panels to the loading state so they fade in
   for(var j = 0; j < newPanels.length; j++){
-    panel = newPanels[j];
+    div = newPanels[j];
+    div.classList.add("loading");
+    div.innerHTML = "<img src='/images/bugzilla-loading.png'>";
 
-    if(panel.id.substr(0,6) == "panel-"){
-      //debug("found a panel div: " + panel.id);
-
-      panel.className = "panel loading";
-      panel.innerHTML = "<img src='/images/bugzilla-loading.png'>";
-    }
-
-  }
-
-  //Populate each panel with live data from bugzilla
-  for(var k = 0; k < newPanels.length; k++){
-    panel = newPanels[k];
-
-    if(panel.id.substr(0,6) == "panel-"){
-      //debug("found a panel div: " + panel.id);
-
-      bugNumber = panel.id.substr(6,6);
-
-      var bug = Bugzilla.getBug(bugNumber,fillData);
-    }
+    //Populate each panel with live data from bugzilla
+    bugNumber = div.id.substr(4,6);
+    var bug = Bugzilla.getBug(bugNumber,fillData);
   }
 
   //set the scroll position if the URL had a hash
@@ -158,7 +132,7 @@ addLoadEvent(run);
 //Populate a specific panel with bug data
 function fillData(bug){
 
-  var panel = document.getElementById("panel-" + bug.id);
+  var div = document.getElementById("bug-" + bug.id);
   var panelClass;
   var blockingClass = "inactive";
   var assignedClass = "inactive";
@@ -224,39 +198,16 @@ function fillData(bug){
     panelClass = "atRisk";
   }
 
-//  //grab the planned beta from the whiteboard
-//  var plannedBeta = "No Target";
-//  var plannedClass = "inactive"
-//  var whiteboard = bug.whiteboard;
-//  if(whiteboard != null){
-//    if(whiteboard.match("target-beta9") != null){
-//      plannedBeta = "Beta 9";
-//      plannedClass = "active";
-//    }
-//    if(whiteboard.match("target-beta10")){
-//      plannedBeta = "Beta 10";
-//      plannedClass = "active";
-//    }
-//    if(whiteboard.match("target-beta11")){
-//      plannedBeta = "Beta 11";
-//      plannedClass = "active";
-//    }
-//    if(whiteboard.match("target-beta12")){
-//      plannedBeta = "Beta 12";
-//      plannedClass = "active";
-//    }
-//  }
+  div.className = "panel done " + panelClass;
 
-
-
-
-  panel.className = "panel done " + panelClass;
-
-  panel.innerHTML = "<a href='https://bugzilla.mozilla.org/show_bug.cgi?id=" + bug.id + "'>" + bug.id + ", " + bug.summary + "</a><br>" +
+  var inner = "<a href='https://bugzilla.mozilla.org/show_bug.cgi?id=" + bug.id + "'>" + bug.id + ", " + bug.summary + "</a><br>" +
   "<span class=" + panelClass + ">" + status + ":</span> " +
   "<span class=" + blockingClass + ">" + blocking + "</span>, " +
-//  "<span class=" + plannedClass + ">" + plannedBeta + "</span>, " +
   "<span class=" + assignedClass + ">" + assigned + "</span>";
+
+  if (div.getAttribute('owned') === 'true')
+    inner += '<a class="link deleteBug"><i class="icon-trash icon-white"></i></a>';
+  div.innerHTML = inner;
 }
 
 
