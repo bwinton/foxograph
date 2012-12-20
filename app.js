@@ -120,6 +120,7 @@ app.post('/bugs/', routes.postBug);
 app.get('/bugs/:bug_id', routes.getBug);
 
 app.get('/deleteAll', routes.deleteAll);
+app.get('/dump', routes.dump);
 
 require('express-persona')(app, {
   audience: audience
