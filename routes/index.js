@@ -106,8 +106,8 @@ exports.deleteMockup = function(req, res) {
       if (err)
         return error(res, err, console);
       pages.forEach(function (page) {
-        console.log('  Deleting page '+page.page_id);
-        Bug.find({page: page.page_id}).remove();
+        console.log('  Deleting page '+page._id);
+        Bug.find({page: page._id}).remove();
       });
     }).remove();
 
