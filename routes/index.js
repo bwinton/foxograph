@@ -106,8 +106,8 @@ exports.deleteMockup = function(req, res) {
       if (err)
         return error(res, err, console);
       pages.forEach(function (page) {
-        console.log('  Deleting page '+page.page_id);
-        Bug.find({page: page.page_id}).remove();
+        console.log('  Deleting page '+page._id);
+        Bug.find({page: page._id}).remove();
       });
     }).remove();
 
@@ -139,14 +139,18 @@ exports.postPage = function(req, res) {
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.image)
     return error(res, 'Missing image.');
-  console.log('Creating page:');
-  console.log(req.body);
-  var page = new Page(req.body);
-  console.log(page);
-  page.save(function (err) {
-    if (err)
-      return error(res, err, console);
-    return res.json(page);
+  Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
+    if (mockup.user !== req.session.email)
+      return error(res, 'Cannot add page to a mockup you didn’t create!');
+    console.log('Creating page:');
+    console.log(req.body);
+    var page = new Page(req.body);
+    console.log(page);
+    page.save(function (err) {
+      if (err)
+        return error(res, err, console);
+      return res.json(page);
+    });
   });
 };
 
@@ -165,14 +169,18 @@ exports.putPage = function(req, res) {
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.image)
     return error(res, 'Missing image.');
-  console.log('Updating page:');
-  console.log(req.body);
-  var id = req.body._id;
-  delete req.body._id;
-  Page.update({_id:id}, req.body, function(err, num) {
-    if (err)
-      return error(res, err, console);
-    return res.json({});
+  Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
+    if (mockup.user !== req.session.email)
+      return error(res, 'Cannot update page in a mockup you didn’t create!');
+    console.log('Updating page:');
+    console.log(req.body);
+    var id = req.body._id;
+    delete req.body._id;
+    Page.update({_id:id}, req.body, function(err, num) {
+      if (err)
+        return error(res, err, console);
+      return res.json({});
+    });
   });
 };
 
@@ -194,14 +202,20 @@ exports.postBug = function(req, res) {
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.number)
     return error(res, 'Missing number.');
-  console.log('Creating bug:');
-  console.log(req.body);
-  var bug = new Bug(req.body);
-  console.log(bug);
-  bug.save(function (err) {
-    if (err)
-      return error(res, err, console);
-    return res.json(bug);
+  Page.findOne({_id: req.body.page}, function(err, page) {
+    Mockup.findOne({_id: page.mockup}, function(err, mockup) {
+      if (mockup.user !== req.session.email)
+        return error(res, 'Cannot add bug to a mockup you didn’t create!');
+      console.log('Creating bug:');
+      console.log(req.body);
+      var bug = new Bug(req.body);
+      console.log(bug);
+      bug.save(function (err) {
+        if (err)
+          return error(res, err, console);
+        return res.json(bug);
+      });
+    });
   });
 };
 
@@ -215,11 +229,57 @@ exports.getBug = function(req, res) {
   });
 };
 
+
+// Admin-ish stuff.
+
 exports.deleteAll = function(req, res) {
   console.log('Deleting everything!');
   if (!req.session.email || req.session.email !== 'bwinton@mozilla.com')
     return error(res, 'Not logged in.');
   mongoose.connection.db.dropDatabase(function(err, result) {
     return res.json(err === null ? 200 : 500, {'result': result});
+  });
+};
+
+exports.dump = function(req, res) {
+  Bug.find(function (err, bugs) {
+    if (err)
+      return error(res, err, console);
+    Page.find(function (err, pages) {
+      if (err)
+        return error(res, err, console);
+      Mockup.find().sort('creationDate').exec(function(err, mockups) {
+        if (err)
+          return error(res, err, console);
+        var rv = [];
+        mockups.forEach(function (mockup) {
+          var currentMockup = {};
+          currentMockup.name = mockup.name;
+          currentMockup.creationDate = mockup.creationDate;
+          currentMockup.user = mockup.user;
+          currentMockup.pages = [];
+          pages.filter(function (page) {
+            return page.mockup == mockup._id;
+          }).forEach(function (page) {
+            var currentPage = {};
+            currentPage.image = page.image;
+            currentPage.bugs = [];
+            bugs.filter(function (bug) {
+              return bug.page == page._id;
+            }).forEach(function (bug) {
+              var currentBug = {};
+              currentBug.number = bug.number;
+              currentBug.x = bug.x;
+              currentBug.y = bug.y;
+              currentPage.bugs.push(currentBug);
+            });
+            currentMockup.pages.push(currentPage);
+          });
+          rv.push(currentMockup);
+        });
+        console.log(JSON.stringify(rv));
+        return res.json(rv);
+      });
+    });
   });
 };
