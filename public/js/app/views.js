@@ -47,6 +47,10 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     tagName: 'div',
     className: 'bug',
 
+    events: {
+      'click .deleteBug': 'deleteBug',
+    },
+
     initialize: function BugView_initialize() {
       // Debug events.
       this.model.on('all', this.debug, this);
@@ -56,11 +60,20 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       console.log('BugView sent ' + eventName + '.  ' + JSON.stringify(extra));
     },
 
+    deleteBug: function BugView_deleteBug(e) {
+      if (mockupView.model.get('user') !== userView.model.get('email')) return;
+
+      this.model.destroy({wait: true});
+      return false;
+    },
+
     render: function BugView_render() {
       this.$el.attr('id', 'bug-' + this.model.get('number'))
           .css({'top': this.model.get('y'),
                 'left': this.model.get('x')})
           .appendTo($('#page'));
+      if (mockupView.model.get('user') === userView.model.get('email'))
+        this.$el.attr('owned', 'true');
       bugzillaMockup.run();
     }
   });
@@ -286,6 +299,8 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
     },
 
     deleteMockup: function MockupView_deleteMockup(e) {
+      if (this.model.get('user') !== userView.model.get('email')) return;
+
       this.model.destroy({wait: true});
       return false;
     }

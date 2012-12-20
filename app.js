@@ -118,6 +118,7 @@ app.put('/pages/:page_id', routes.putPage);
 app.get('/pages/:page_id/bugs/', routes.getBugs);
 app.post('/bugs/', routes.postBug);
 app.get('/bugs/:bug_id', routes.getBug);
+app.delete('/bugs/:bug_id', routes.deleteBug);
 
 app.get('/deleteAll', routes.deleteAll);
 app.get('/dump', routes.dump);
