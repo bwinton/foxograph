@@ -99,7 +99,7 @@ exports.deleteMockup = function(req, res) {
   console.log('Deleting mockup '+req.params.mockup_id);
   Mockup.findOne({_id: req.params.mockup_id}, function(err, mockup) {
     if (mockup.user !== req.session.email)
-      return error(res, 'Cannot delete mockup you didn’t create!');
+      return error(res, 'Cannot delete a mockup you didn’t create!');
 
     // Delete all the pages and bugs for this mockup.
     Page.find({mockup: req.params.mockup_id}, function(err, pages) {
@@ -141,7 +141,7 @@ exports.postPage = function(req, res) {
     return error(res, 'Missing image.');
   Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
     if (mockup.user !== req.session.email)
-      return error(res, 'Cannot add page to a mockup you didn’t create!');
+      return error(res, 'Cannot add a page to a mockup you didn’t create!');
     console.log('Creating page:');
     console.log(req.body);
     var page = new Page(req.body);
@@ -171,7 +171,7 @@ exports.putPage = function(req, res) {
     return error(res, 'Missing image.');
   Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
     if (mockup.user !== req.session.email)
-      return error(res, 'Cannot update page in a mockup you didn’t create!');
+      return error(res, 'Cannot update a page in a mockup you didn’t create!');
     console.log('Updating page:');
     console.log(req.body);
     var id = req.body._id;
@@ -205,7 +205,7 @@ exports.postBug = function(req, res) {
   Page.findOne({_id: req.body.page}, function(err, page) {
     Mockup.findOne({_id: page.mockup}, function(err, mockup) {
       if (mockup.user !== req.session.email)
-        return error(res, 'Cannot add bug to a mockup you didn’t create!');
+        return error(res, 'Cannot add a bug to a mockup you didn’t create!');
       console.log('Creating bug:');
       console.log(req.body);
       var bug = new Bug(req.body);
