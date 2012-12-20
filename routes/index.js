@@ -139,14 +139,18 @@ exports.postPage = function(req, res) {
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.image)
     return error(res, 'Missing image.');
-  console.log('Creating page:');
-  console.log(req.body);
-  var page = new Page(req.body);
-  console.log(page);
-  page.save(function (err) {
-    if (err)
-      return error(res, err, console);
-    return res.json(page);
+  Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
+    if (mockup.user !== req.session.email)
+      return error(res, 'Cannot add page to a mockup you didn’t create!');
+    console.log('Creating page:');
+    console.log(req.body);
+    var page = new Page(req.body);
+    console.log(page);
+    page.save(function (err) {
+      if (err)
+        return error(res, err, console);
+      return res.json(page);
+    });
   });
 };
 
@@ -165,14 +169,18 @@ exports.putPage = function(req, res) {
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.image)
     return error(res, 'Missing image.');
-  console.log('Updating page:');
-  console.log(req.body);
-  var id = req.body._id;
-  delete req.body._id;
-  Page.update({_id:id}, req.body, function(err, num) {
-    if (err)
-      return error(res, err, console);
-    return res.json({});
+  Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
+    if (mockup.user !== req.session.email)
+      return error(res, 'Cannot update page in a mockup you didn’t create!');
+    console.log('Updating page:');
+    console.log(req.body);
+    var id = req.body._id;
+    delete req.body._id;
+    Page.update({_id:id}, req.body, function(err, num) {
+      if (err)
+        return error(res, err, console);
+      return res.json({});
+    });
   });
 };
 
@@ -194,14 +202,20 @@ exports.postBug = function(req, res) {
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.number)
     return error(res, 'Missing number.');
-  console.log('Creating bug:');
-  console.log(req.body);
-  var bug = new Bug(req.body);
-  console.log(bug);
-  bug.save(function (err) {
-    if (err)
-      return error(res, err, console);
-    return res.json(bug);
+  Page.findOne({_id: req.body.page}, function(err, page) {
+    Mockup.findOne({_id: page.mockup}, function(err, mockup) {
+      if (mockup.user !== req.session.email)
+        return error(res, 'Cannot add bug to a mockup you didn’t create!');
+      console.log('Creating bug:');
+      console.log(req.body);
+      var bug = new Bug(req.body);
+      console.log(bug);
+      bug.save(function (err) {
+        if (err)
+          return error(res, err, console);
+        return res.json(bug);
+      });
+    });
   });
 };
 

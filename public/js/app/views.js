@@ -112,14 +112,17 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       this.model.on('sync', this.render, this);
       this.model.get('bugs').on('add', this.addBug, this);
       this.model.get('bugs').on('reset', this.resetBugs, this);
+      this.model.get('bugs').on('error', this.bugError, this);
 
       this.model.get('bugs').fetch();
     },
 
     clickBackground: function PageView_clickBackground(e) {
-      var bug = prompt('Please enter a bug number');
+      if ((this.model.get('image') === '/images/default.png')) return;
+      if (mockupView.model.get('user') !== userView.model.get('email')) return;
 
-      if (!bug || (this.model.get('image') === '/images/default.png')) return;
+      var bug = prompt('Please enter a bug number');
+      if (!bug) return;
 
       var page_id = this.model.id;
       var model = this.model;
@@ -162,8 +165,15 @@ define(['jquery', 'underscore', 'backbone', './bugzillaMockup', 'bootstrap'],
       return false;
     },
 
+    bugError: function PageView_bugError(bug) {
+      this.model.get('bugs').fetch();
+    },
+
     resetBugs: function PageView_resetBugs(bugs, extra, a) {
       var self = this;
+      _.each(this.subViews, function (subView) {
+        subView.remove();
+      });
       this.subViews = [];
       bugs.each(function (bug) {
         self.addBug(bug);
