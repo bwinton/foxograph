@@ -1,6 +1,6 @@
 {
   "name": "foxography",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "dependencies": {
     "express": "3.0.0rc4",
