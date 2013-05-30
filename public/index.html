@@ -1,69 +1,17 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-    <link href="/styles/bootstrap.min.css" type="text/css" rel="stylesheet">
-    <link href="/styles/style.css" type="text/css" rel="stylesheet">
-    <link href="/styles/bugzillaMockup.css" type="text/css" rel="stylesheet">
-    <script data-main="/js/app" src="/js/lib/require.js"></script>
-  </head>
-  <body>
-    <div class="main-header">
-      <!-- Mockup Menu -->
-      <div id="mockups">
-        <select id="mockup-list">
-        </select>
-      </div>
-
-      <!-- Current Mockup, and page. -->
-      <div id="mockup"></div>
-
-      <!-- User box -->
-      <div id="user"></div>
-
-    </div>
-
-    <!-- New Mockup Form -->
-    <form id="newMockup" class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label" for="inputName">Mockup name</label>
-        <div class="controls">
-          <input type="text" id="inputName" placeholder="New Mockup">
-        </div>
-      </div>
-      <div class="control-group">
-        <div class="controls">
-          <button id="createMockup" type="submit" class="btn btn-primary">Create Mockup</button>
-          <button id="cancelMockup" type="submit" class="btn">Cancel</button>
-        </div>
-      </div>
-    </form>
-
-    <div id="page">&nbsp;</div>
-
-  </body>
-
-  <!-- Templates -->
-  <script type="text/template" id="nouser-template">
-    <div class="button login" title="Click to sign in.">sign in</div>
-  </script>
-
-  <script type="text/template" id="user-template">
-    <div class="link" title="Click to sign out.">Hello <%= escape('email')%>.</div>
-  </script>
-
-  <script type="text/template" id="mockups-template">
-    <option data-id="<%=cid%>" value="<%= escape('name') %>">[<%= escape('shortuser')%>] <%= escape('name') %></option>
-  </script>
-
-  <script type="text/template" id="mockup-template">
-    <h1><%= escape('name') || '&nbsp;' %></h1><% if (get('owner')) { %><a
-      class="link" id="deleteMockup"><i class="icon-trash"></i></a
-    ><% } %>
-    <!-- Page 1 of <%= get('pages').length %> -->
-  </script>
-
-  <canvas id="background-canvas" width="1" height="1"></canvas>
-
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Angular-RequireJS sample app</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script data-main="/app/js/main" src="/app/js/lib/require/require.js"></script>
+		<link rel="stylesheet" type="text/css" media="all" href="/app/css/app.css" />
+	</head>
+	<body >
+		<h1>AngularJS + RequireJS</h1>
+		<ul class="menu">
+			<li><a href="#/view1">View 1</a></li>
+			<li><a href="#/view2">View 2</a></li>
+		</ul>
+		<div ng-view></div>
+	</body>
 </html>

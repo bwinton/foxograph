@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+  <head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="/styles/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="/styles/style.css" type="text/css" rel="stylesheet">
+    <link href="/styles/bugzillaMockup.css" type="text/css" rel="stylesheet">
+    <script data-main="/js/app" src="/js/lib/require.js"></script>
+  </head>
+  <body ng-controller="MockupsController">
+    <div class="main-header">
+      <!-- Mockup Menu -->
+      <div id="mockups">
+        <select id="mockup-list">
+          <option ng-repeat="mockup in mockups" value="{{mockup.slug}}"
+            >[{{mockup.shortuser}}] {{mockup.name}}</option>
+        </select>
+        <p>1 + 2 = {{ 1 + 2 }}</p>
+      </div>
+
+      <!-- Current Mockup, and page. -->
+      <div id="mockup"></div>
+
+      <!-- User box -->
+      <div id="user"></div>
+
+    </div>
+
+    <!-- New Mockup Form -->
+    <form id="newMockup" class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="inputName">Mockup name</label>
+        <div class="controls">
+          <input type="text" id="inputName" placeholder="New Mockup">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button id="createMockup" type="submit" class="btn btn-primary">Create Mockup</button>
+          <button id="cancelMockup" type="submit" class="btn">Cancel</button>
+        </div>
+      </div>
+    </form>
+
+    <div id="page">&nbsp;</div>
+
+  </body>
+
+  <!-- Templates -->
+  <script type="text/template" id="nouser-template">
+    <div class="button login" title="Click to sign in.">sign in</div>
+  </script>
+
+  <script type="text/template" id="user-template">
+    <div class="link" title="Click to sign out.">Hello <%= escape('email')%>.</div>
+  </script>
+
+  <script type="text/template" id="mockups-template">
+  </script>
+
+  <script type="text/template" id="mockup-template">
+    <h1><%= escape('name') || '&nbsp;' %></h1><% if (get('owner')) { %><a
+      class="link" id="deleteMockup"><i class="icon-trash"></i></a
+    ><% } %>
+    <!-- Page 1 of <%= get('pages').length %> -->
+  </script>
+
+  <canvas id="background-canvas" width="1" height="1"></canvas>
+
+</html>

@@ -15,10 +15,8 @@ define(function (require) {
   "use strict";
 
   var $ = require('jquery');
-  require('persona');
-  var models = require('./models');
-  var routes = require('./routes');
-  var views = require('./views');
+  require('angular');
+  //require('persona');
+  var controllers = require('./controllers');
 
-  views.init(models, routes);
 });

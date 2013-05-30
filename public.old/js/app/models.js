@@ -9,7 +9,7 @@
 
 /*global self:true, addon:true, define:true */
 
-define(['backbone'], function (Backbone) {
+define(['angular'], function (Angular) {
 
   "use strict";
 
