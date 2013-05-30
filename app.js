@@ -98,6 +98,8 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
+app.get('/view1', routes.index);
+app.get('/view2', routes.index);
 app.get('/m/:mockup_id', routes.index);
 app.get('/user', routes.getUser);
 app.post('/logout', routes.logout);

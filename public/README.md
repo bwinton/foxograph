@@ -113,7 +113,7 @@ fetch the changes and merge them into your project with git.
 ## Directory Layout
 
     app/                --> all of the files to be used in production
-      css/              --> css files
+      styles/              --> css files
         app.css         --> default stylesheet
       img/              --> image files
       index.html        --> app layout file (the main html template file of the app)
