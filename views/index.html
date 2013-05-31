@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+  <!-- Do I need class="ng-scope" ? -->
+  <head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="/styles/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="/styles/style.css" type="text/css" rel="stylesheet">
+    <link href="/styles/bugzillaMockup.css" type="text/css" rel="stylesheet">
+  </head>
+  <body class="ng-scope" ng-controller="AppCtrl">
+    <div class="main-header">
+      <!-- Mockup Menu -->
+      <div id="mockups">
+        <select id="mockup-list">
+          <option ng-repeat="mockup in mockups" value="{{mockup.slug}}"
+            >[{{mockup.shortuser}}] {{mockup.name}}</option>
+        </select>
+        <p>1 + 2 = {{ 1 + 2 }}</p>
+        <ul class="menu">
+          <li><a href="view1">view1</a></li>
+          <li><a href="view2">view2</a></li>
+        </ul>
+
+      </div>
+
+      <!-- Current Mockup, and page. -->
+      <div id="mockup">
+        <h1 class="ng-binding">name || &amp;nbsp;</h1>
+      </div>
+
+      <!-- User box -->
+      <div id="user">
+        <div ng-view="">
+          <p class="ng-scope">This is the partial for view 1.</p>
+        </div>
+
+        <div>
+          Angular seed app: v<span app-version="">0.1</span>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="js/lib/angular/angular.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+    <script src="js/services.js" type="text/javascript"></script>
+    <script src="js/controllers.js" type="text/javascript"></script>
+    <script src="js/filters.js" type="text/javascript"></script>
+    <script src="js/directives.js" type="text/javascript"></script>
+  </body>
+
+  <canvas id="background-canvas" width="1" height="1"></canvas>
+</html>

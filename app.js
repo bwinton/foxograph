@@ -45,7 +45,7 @@ if (process.env.VMC_APP_INSTANCE) {
 }
 
 app.configure(function(){
-  app.set('views', __dirname + '/www');
+  app.set('views', __dirname + '/views');
   app.engine('html', ejs.renderFile);
   app.use(function(req, res, next) {
     var rEnd = res.end;
@@ -103,6 +103,9 @@ app.get('/view2', routes.index);
 app.get('/m/:mockup_id', routes.index);
 app.get('/user', routes.getUser);
 app.post('/logout', routes.logout);
+
+app.get('/partials/:name', routes.partials);
+
 
 // Mockups.
 app.get('/mockups/', routes.getMockups);
