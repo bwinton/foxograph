@@ -12,7 +12,8 @@
     <div class="main-header">
       <!-- Mockup Menu -->
       <div id="mockups">
-        <select ng-model="mockup" ng-options="c.name for c in mockups">
+        <select id="mockup-list" ng-model="mockup"
+                ng-options="c.name for c in mockups">
           <option value="">Please select a mockup</option>
         </select>
       </div>
@@ -24,13 +25,13 @@
 
       <!-- User box -->
       <div id="user">
-        <div ng-view="">
-          <p class="ng-scope">This is the partial for view 1.</p>
-        </div>
-
         <div>
           Angular seed app: v<span app-version="">0.1</span>
         </div>
+      </div>
+
+      <div id="page" ng-view="">
+        <p class="ng-scope"></p>
       </div>
 
     </div>
