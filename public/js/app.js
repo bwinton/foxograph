@@ -7,13 +7,13 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true*/
 
-/*global angular:true, MyCtrl1:true */
+/*global angular:true, MockupCtrl:true */
 
 'use strict';
 
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $routeProvider.when('/m/:mid', {templateUrl: '/partials/partial1', controller: MyCtrl1});
+    $routeProvider.when('/m/:mid', {templateUrl: '/partials/mockup', controller: MockupCtrl});
     $locationProvider.html5Mode(true);
   }]);

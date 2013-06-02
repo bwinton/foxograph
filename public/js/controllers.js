@@ -33,6 +33,6 @@ function MockupsCtrl($scope, $location) {
   });
 }
 
-function MyCtrl1() {
+function MockupCtrl() {
 }
-MyCtrl1.$inject = [];
+MockupCtrl.$inject = [];
