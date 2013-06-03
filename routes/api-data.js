@@ -98,7 +98,7 @@ exports.getPages = function(req, res) {
   return Page.find({mockup: req.params.mockup_id}, function(err, pages) {
     if (err)
       return error(res, err, console);
-    console.log(JSON.stringify(pages));
+    // console.log(JSON.stringify(pages));
     return res.json(pages);
   });
 };
