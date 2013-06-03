@@ -12,8 +12,8 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives'])
+angular.module('myApp', ['ngResource', 'myApp.filters', 'myApp.services', 'myApp.directives'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $routeProvider.when('/m/:mid', {templateUrl: '/partials/mockup', controller: MockupCtrl});
+    $routeProvider.when('/m/:m_id', {templateUrl: '/partials/mockup', controller: MockupCtrl});
     $locationProvider.html5Mode(true);
   }]);
