@@ -116,12 +116,15 @@ canvas {
   vertical-align: baseline;
 }
 
-#page {
+#page-wrapper {
   width: 100%;
   height: calc(100% - 60px);
   position: relative;
   top: 60px;
   left: 0;
+}
+
+#page {
   background-repeat: no-repeat;
   cursor: crosshair;
 }
