@@ -106,25 +106,25 @@ app.get('/partials/:name', routes.partials);
 
 
 // Mockups.
-app.get('/mockups/', routes.getMockups);
-app.post('/mockups/', routes.postMockup);
-app.get('/mockups/:mockup_id', routes.getMockup);
-app.delete('/mockups/:mockup_id', routes.deleteMockup);
+app.get('/api/mockups', routes.getMockups);
+app.post('/api/mockups', routes.postMockup);
+app.get('/api/mockups/:mockup_id', routes.getMockup);
+app.delete('/api/mockups/:mockup_id', routes.deleteMockup);
 
 // Pages.
-app.get('/mockups/:mockup_id/pages/', routes.getPages);
-app.post('/pages/', routes.postPage);
-app.get('/pages/:page_id', routes.getPage);
-app.put('/pages/:page_id', routes.putPage);
+app.get('/api/mockups/:mockup_id/pages', routes.getPages);
+app.post('/api/pages', routes.postPage);
+app.get('/api/pages/:page_id', routes.getPage);
+app.put('/api/pages/:page_id', routes.putPage);
 
 // Bugs
-app.get('/pages/:page_id/bugs/', routes.getBugs);
-app.post('/bugs/', routes.postBug);
-app.get('/bugs/:bug_id', routes.getBug);
-app.delete('/bugs/:bug_id', routes.deleteBug);
+app.get('/api/pages/:page_id/bugs', routes.getBugs);
+app.post('/api/bugs', routes.postBug);
+app.get('/api/bugs/:bug_id', routes.getBug);
+app.delete('/api/bugs/:bug_id', routes.deleteBug);
 
-app.get('/deleteAll', routes.deleteAll);
-app.get('/dump', routes.dump);
+app.get('/api/deleteAll', routes.deleteAll);
+app.get('/api/dump', routes.dump);
 
 require('express-persona')(app, {
   audience: audience
