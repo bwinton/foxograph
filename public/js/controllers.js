@@ -48,59 +48,60 @@ function loadImage(imageSrc, callback)
 
 /* Controllers */
 
-function MockupsCtrl($scope, $location, $resource) {
-  $scope.mockup = null;
-  mockups($resource).query(function (mockupList) {
-    $scope.mockups = mockupList;
-    var m_id = $location.path().slice(3);
-    $scope.mockup = _.findWhere(mockupList, {_id: m_id});
+foxographApp.controller({
+  'MockupsCtrl': function MockupsCtrl($scope, $location, $resource) {
+    $scope.mockup = null;
+    //$scope.$id = "Mockups";
+    mockups($resource).query(function (mockupList) {
+      $scope.mockups = mockupList;
+      var m_id = $location.path().slice(3);
+      $scope.mockup = _.findWhere(mockupList, {_id: m_id});
 
-    $scope.$watch('mockup', function (mockup) {
-      if (mockup) {
-        $location.path('/m/' + mockup._id);
-      } else {
-        $location.path('/');
-        $scope.background = '';
-      }
-    });
-
-    $scope.setBackground = function (background) {
-      $scope.background = background;
-    };
-  });
-
-}
-
-function MockupCtrl($scope, $resource) {
-  $scope.$watch('mockup', function (mockup) {
-    if (mockup) {
-      pages($resource).query({m_id: mockup._id}, function (pageList) {
-        $scope.pages = pageList;
-        if (pageList.length > 0) {
-          $scope.page = pageList[0];
-          $scope.image = 'background-image: url("/images/bugzilla-loading.png");';
-          $scope.width = 'width: 100%;';
-          $scope.height = 'height: 100%;';
-          $scope.position = 'background-position: 45%;';
-          var image = pageList[0].image;
-          var ctx = document.getElementById('background-canvas').getContext('2d');
-          loadImage(image, function PageView_loadImage(img) {
-            ctx.drawImage(img, 1 - img.width, 1 - img.height);
-            var imgData = ctx.getImageData(0, 0, 1, 1);
-            var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
-            $scope.$apply(function () {
-              $scope.image = 'background-image: url("' + image + '");';
-              if (image !== '/images/default.png') {
-                $scope.width = 'width: ' + img.width + 'px;';
-                $scope.height = 'height: ' + img.height + 'px;';
-                $scope.position = '';
-              }
-              $scope.setBackground(pixel);
-            });
-          });
+      $scope.$watch('mockup', function (mockup) {
+        if (mockup) {
+          $location.path('/m/' + mockup._id);
+        } else {
+          $location.path('/');
+          $scope.background = '';
         }
       });
-    }
-  });
-}
-MockupCtrl.$inject = ['$scope', '$resource'];
+
+      $scope.setBackground = function (background) {
+        $scope.background = background;
+      };
+    });
+  },
+  'MockupCtrl': function MockupCtrl($scope, $resource) {
+    //$scope.$id = "Mockup";
+    $scope.$watch('mockup', function (mockup) {
+      if (mockup) {
+        pages($resource).query({m_id: mockup._id}, function (pageList) {
+          $scope.pages = pageList;
+          if (pageList.length > 0) {
+            $scope.page = pageList[0];
+            $scope.image = 'background-image: url("/images/bugzilla-loading.png");';
+            $scope.width = 'width: 100%;';
+            $scope.height = 'height: 100%;';
+            $scope.position = 'background-position: 45%;';
+            var image = pageList[0].image;
+            var ctx = document.getElementById('background-canvas').getContext('2d');
+            loadImage(image, function PageView_loadImage(img) {
+              ctx.drawImage(img, 1 - img.width, 1 - img.height);
+              var imgData = ctx.getImageData(0, 0, 1, 1);
+              var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
+              $scope.$apply(function () {
+                $scope.image = 'background-image: url("' + image + '");';
+                if (image !== '/images/default.png') {
+                  $scope.width = 'width: ' + img.width + 'px;';
+                  $scope.height = 'height: ' + img.height + 'px;';
+                  $scope.position = '';
+                }
+                $scope.setBackground(pixel);
+              });
+            });
+          }
+        });
+      }
+    });
+  }
+});
