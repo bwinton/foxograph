@@ -7,13 +7,14 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true*/
 
-/*global angular:true, MockupCtrl:true */
+/*global angular:true */
 
 'use strict';
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['ngResource', 'myApp.filters', 'myApp.services', 'myApp.directives'])
+var foxographApp = angular.module('foxographApp',
+  ['ngResource', 'foxographApp.filters', 'foxographApp.services', 'foxographApp.directives'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $routeProvider.when('/m/:m_id', {templateUrl: '/partials/mockup', controller: MockupCtrl});
+    $routeProvider.when('/m/:m_id', {templateUrl: '/partials/mockup', controller: 'MockupCtrl'});
     $locationProvider.html5Mode(true);
   }]);
