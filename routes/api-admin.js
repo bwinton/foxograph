@@ -33,37 +33,37 @@ exports.dump = function(req, res) {
   Bug.find(function (err, bugs) {
     if (err)
       return error(res, err, console);
-    Page.find(function (err, pages) {
+    Mockup.find(function (err, mockups) {
       if (err)
         return error(res, err, console);
-      Mockup.find().sort('creationDate').exec(function(err, mockups) {
+      Project.find().sort('creationDate').exec(function(err, projects) {
         if (err)
           return error(res, err, console);
         var rv = [];
-        mockups.forEach(function (mockup) {
-          var currentMockup = {};
-          currentMockup.name = mockup.name;
-          currentMockup.creationDate = mockup.creationDate;
-          currentMockup.user = mockup.user;
-          currentMockup.pages = [];
-          pages.filter(function (page) {
-            return page.mockup == mockup._id;
-          }).forEach(function (page) {
-            var currentPage = {};
-            currentPage.image = page.image;
-            currentPage.bugs = [];
+        projects.forEach(function (project) {
+          var currentProject = {};
+          currentProject.name = project.name;
+          currentProject.creationDate = project.creationDate;
+          currentProject.user = project.user;
+          currentProject.mockups = [];
+          mockups.filter(function (mockup) {
+            return mockup.project == project._id;
+          }).forEach(function (mockup) {
+            var currentMockup = {};
+            currentMockup.image = mockup.image;
+            currentMockup.bugs = [];
             bugs.filter(function (bug) {
-              return bug.page == page._id;
+              return bug.mockup == mockup._id;
             }).forEach(function (bug) {
               var currentBug = {};
               currentBug.number = bug.number;
               currentBug.x = bug.x;
               currentBug.y = bug.y;
-              currentPage.bugs.push(currentBug);
+              currentMockup.bugs.push(currentBug);
             });
-            currentMockup.pages.push(currentPage);
+            currentProject.mockups.push(currentMockup);
           });
-          rv.push(currentMockup);
+          rv.push(currentProject);
         });
         console.log(JSON.stringify(rv));
         return res.json(rv);

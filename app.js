@@ -98,27 +98,27 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
-app.get('/m/:mockup_id', routes.index);
+app.get('/p/:project_id', routes.index);
 app.get('/user', routes.getUser);
 app.post('/logout', routes.logout);
 
 app.get('/partials/:name', routes.partials);
 
 
+// Projects.
+app.get('/api/projects', routes.getProjects);
+app.post('/api/projects', routes.postProject);
+app.get('/api/projects/:project_id', routes.getProject);
+app.delete('/api/projects/:project_id', routes.deleteProject);
+
 // Mockups.
-app.get('/api/mockups', routes.getMockups);
+app.get('/api/projects/:project_id/mockups', routes.getMockups);
 app.post('/api/mockups', routes.postMockup);
 app.get('/api/mockups/:mockup_id', routes.getMockup);
-app.delete('/api/mockups/:mockup_id', routes.deleteMockup);
-
-// Pages.
-app.get('/api/mockups/:mockup_id/pages', routes.getPages);
-app.post('/api/pages', routes.postPage);
-app.get('/api/pages/:page_id', routes.getPage);
-app.put('/api/pages/:page_id', routes.putPage);
+app.put('/api/mockups/:mockup_id', routes.putMockup);
 
 // Bugs
-app.get('/api/pages/:page_id/bugs', routes.getBugs);
+app.get('/api/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
 app.delete('/api/bugs/:bug_id', routes.deleteBug);

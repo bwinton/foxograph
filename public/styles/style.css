@@ -46,7 +46,7 @@ body {
   vertical-align: baseline;
 }
 
-#mockup {
+#project {
   text-align: center;
 }
 
@@ -73,7 +73,7 @@ canvas {
   display: none;
 }
 
-#newMockup {
+#newProject {
   display: none;
   padding-top: 20px;
 }
@@ -112,11 +112,11 @@ canvas {
   transition-duration: 0ms;
 }
 
-#deleteMockup {
+#deleteProject {
   vertical-align: baseline;
 }
 
-#page-wrapper {
+#mockup-wrapper {
   width: 100%;
   height: calc(100% - 60px);
   position: relative;
@@ -124,12 +124,12 @@ canvas {
   left: 0;
 }
 
-#page {
+#mockup {
   background-repeat: no-repeat;
   cursor: crosshair;
 }
 
-#page.hover {
+#mockup.hover {
   opacity: .1;
 }
 

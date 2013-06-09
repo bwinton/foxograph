@@ -15,6 +15,6 @@
 var foxographApp = angular.module('foxographApp',
   ['ngResource', 'foxographApp.filters', 'foxographApp.services', 'foxographApp.directives'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $routeProvider.when('/m/:m_id', {templateUrl: '/partials/mockup', controller: 'MockupCtrl'});
+    $routeProvider.when('/p/:p_id', {templateUrl: '/partials/project', controller: 'ProjectCtrl'});
     $locationProvider.html5Mode(true);
   }]);
