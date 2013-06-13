@@ -84,7 +84,6 @@ app.configure(function(){
   app.use(express.session({secret: session_secret}));
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '/www'));
 });
 
 app.configure('development', function(){
@@ -95,36 +94,41 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-// Routes
 
-app.get('/', routes.index);
-app.get('/p/:project_id', routes.index);
-app.get('/user', routes.getUser);
-app.post('/logout', routes.logout);
-
-app.get('/partials/:name', routes.partials);
-
-
-// Projects.
+// API Projects.
 app.get('/api/projects', routes.getProjects);
 app.post('/api/projects', routes.postProject);
 app.get('/api/projects/:project_id', routes.getProject);
 app.delete('/api/projects/:project_id', routes.deleteProject);
 
-// Mockups.
+// API Mockups.
 app.get('/api/projects/:project_id/mockups', routes.getMockups);
 app.post('/api/mockups', routes.postMockup);
 app.get('/api/mockups/:mockup_id', routes.getMockup);
 app.put('/api/mockups/:mockup_id', routes.putMockup);
 
-// Bugs
+// API Bugs
 app.get('/api/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
 app.delete('/api/bugs/:bug_id', routes.deleteBug);
 
+// API Admin
 app.get('/api/deleteAll', routes.deleteAll);
 app.get('/api/dump', routes.dump);
+
+// Persona API.
+app.get('/user', routes.getUser);
+app.post('/logout', routes.logout);
+
+// Static files.
+app.use('/r', express.static(__dirname + '/www'));
+
+// User-facing routes.
+app.get('/', routes.index);
+app.get('/:project_id', routes.index);
+app.get('/:project_id/:mockup_id', routes.index);
+
 
 require('express-persona')(app, {
   audience: audience

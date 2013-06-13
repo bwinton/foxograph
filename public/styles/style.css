@@ -133,6 +133,15 @@ canvas {
   opacity: .1;
 }
 
+#bugs {
+  background: #DDD;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  padding: 1em;
+}
+
 .bug {
   position: absolute;
 }
