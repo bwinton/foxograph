@@ -71,37 +71,40 @@ foxographApp.controller({
       };
     });
   },
-  'ProjectCtrl': function ProjectCtrl($scope, $resource) {
+  'MockupCtrl': function MockupCtrl($scope, $resource) {
     //$scope.$id = "Project";
     $scope.$watch('project', function (project) {
-      if (project) {
-        mockups($resource).query({p_id: project._id}, function (mockupList) {
-          $scope.mockups = mockupList;
-          if (mockupList.length > 0) {
-            $scope.mockup = mockupList[0];
-            $scope.image = 'background-image: url("/images/bugzilla-loading.png");';
-            $scope.width = 'width: 100%;';
-            $scope.height = 'height: 100%;';
-            $scope.position = 'background-position: 45%;';
-            var image = mockupList[0].image;
-            var ctx = document.getElementById('background-canvas').getContext('2d');
-            loadImage(image, function MockupView_loadImage(img) {
-              ctx.drawImage(img, 1 - img.width, 1 - img.height);
-              var imgData = ctx.getImageData(0, 0, 1, 1);
-              var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
-              $scope.$apply(function () {
-                $scope.image = 'background-image: url("' + image + '");';
-                if (image !== '/images/default.png') {
-                  $scope.width = 'width: ' + img.width + 'px;';
-                  $scope.height = 'height: ' + img.height + 'px;';
-                  $scope.position = '';
-                }
-                $scope.setBackground(pixel);
-              });
-            });
-          }
-        });
+      if (!project) {
+        $scope.mockups = null;
+        $scope.mockup = null;
+        return;
       }
+      mockups($resource).query({p_id: project._id}, function (mockupList) {
+        $scope.mockups = mockupList;
+        if (mockupList.length > 0) {
+          $scope.mockup = {};
+          $scope.mockup.image = 'background-image: url("/images/bugzilla-loading.png");';
+          $scope.mockup.width = 'width: 100%;';
+          $scope.mockup.height = 'height: 100%;';
+          $scope.mockup.position = 'background-position: 45%;';
+          var image = mockupList[0].image;
+          var ctx = document.getElementById('background-canvas').getContext('2d');
+          loadImage(image, function MockupView_loadImage(img) {
+            ctx.drawImage(img, 1 - img.width, 1 - img.height);
+            var imgData = ctx.getImageData(0, 0, 1, 1);
+            var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
+            $scope.$apply(function () {
+              $scope.mockup.image = 'background-image: url("' + image + '");';
+              if (image !== '/images/default.png') {
+                $scope.mockup.width = 'width: ' + img.width + 'px;';
+                $scope.mockup.height = 'height: ' + img.height + 'px;';
+                $scope.mockup.position = '';
+              }
+              $scope.setBackground(pixel);
+            });
+          });
+        }
+      });
     });
   }
 });

@@ -15,6 +15,6 @@
 var foxographApp = angular.module('foxographApp',
   ['ngResource', 'foxographApp.filters', 'foxographApp.services', 'foxographApp.directives'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $routeProvider.when('/p/:p_id', {templateUrl: '/partials/project', controller: 'ProjectCtrl'});
+    $routeProvider.when('/:p_id').when('/:p_id/:m_id').otherwise({redirectTo: '/'});
     $locationProvider.html5Mode(true);
   }]);
