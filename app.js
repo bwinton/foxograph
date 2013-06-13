@@ -108,6 +108,7 @@ app.get('/api/mockups/:mockup_id', routes.getMockup);
 app.put('/api/mockups/:mockup_id', routes.putMockup);
 
 // API Bugs
+app.get('/api/projects/:project_id/bugs', routes.getBugs);
 app.get('/api/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);

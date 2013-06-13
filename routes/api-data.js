@@ -155,16 +155,30 @@ exports.putMockup = function(req, res) {
 
 
 // Bugs.
-
-exports.getBugs = function(req, res) {
-  console.log('Looking for bugs for mockup '+req.params.mockup_id);
-  return Bug.find({mockup: req.params.mockup_id}, function(err, bugs) {
+function returnBugsForMockups(mockups, res) {
+  console.log('Looking for bugs for mockups ' + mockups);
+  return Bug.find({mockup: {$in: mockups}}, function(err, bugs) {
     if (err)
       return error(res, err, console);
-    console.log(JSON.stringify(bugs));
     return res.json(bugs);
   });
+}
+
+exports.getBugs = function(req, res) {
+  if (req.params.mockup_id) {
+    return returnBugsForMockups([req.params.mockup_id], res);
+  } else if (req.params.project_id) {
+    return Mockup.find({project: req.params.project_id}, function(err, mockups) {
+      if (err)
+        return error(res, err, console);
+      var keys = mockups.map(function (mockup) {
+        return mockup._id;
+      });
+      return returnBugsForMockups(keys, res);
+    });
+  }
 };
+
 
 exports.postBug = function(req, res) {
   if (!req.session.email)
