@@ -25,6 +25,10 @@ var bugs = function ($resource) {
   return $resource('/api/mockups/:m_id/bugs/:b_id');
 };
 
+var projectBugs = function ($resource) {
+  return $resource('/api/projects/:p_id/bugs/:b_id');
+}
+
 function loadImage(imageSrc, callback)
 {
   var img = new Image();
@@ -86,9 +90,13 @@ foxographApp.controller({
       if (!project) {
         $scope.mockups = null;
         $scope.mockup = null;
+        $scope.bugs = null;
         //$scope.setBackground('');
         return;
       }
+      projectBugs($resource).query({p_id: project._id}, function (bugList) {
+        $scope.bugs = bugList;
+      });
       mockups($resource).query({p_id: project._id}, function (mockupList) {
         $scope.mockups = mockupList;
         if (mockupList.length > 0) {
@@ -125,12 +133,6 @@ foxographApp.controller({
     // Handle changes to the currently selected mockup.
     $scope.$watch('mockup', function (mockup) {
       console.log("Got mockup of " + mockup);
-
-      if (!mockup) {
-        $scope.bugs = null;
-        return;
-      }
-
       bugs($resource).query({m_id: mockup._id}, function (bugList) {
         $scope.mockup.bugs = bugList;
       });

@@ -36,10 +36,10 @@
     <div id="mockup-wrapper" ng-show="mockup" ng-controller="MockupCtrl">
       <p id="mockup" style="{{mockup.width}} {{mockup.height}} {{mockup.position}} {{mockup.image}}"></p>
       <div id="bugs">
-        <div ng-repeat="mockupsummary in mockups">
+        <div ng-repeat="mockupsummary in mockups"  class="bugList">
           <h4>{{mockupsummary.name}}</h4>
           <ul>
-            <li ng-repeat="bug in mockup.bugs"><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">bug {{bug.number}}</a> (at {{bug.x}}x{{bug.y}})</li>
+            <li ng-repeat="bug in bugs | filter:{mockup:mockupsummary._id}"><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">bug {{bug.number}}</a> (at {{bug.x}}x{{bug.y}})</li>
           </ul>
         </div>
       </div>
