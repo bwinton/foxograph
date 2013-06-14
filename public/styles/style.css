@@ -146,6 +146,15 @@ canvas {
   position: absolute;
 }
 
+.bug-line {
+    width: 1px;
+    height: 1px;
+    background: black;
+    position: absolute;
+    -webkit-transform-origin: 0 0 0;
+    transform-origin: 0 0 0;
+}
+
 .deleteBug {
   float: right;
 }
