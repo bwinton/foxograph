@@ -75,11 +75,17 @@ foxographApp.controller({
     // Handle a change in project id by setting the project.
     var changeProject = function changeProject() {
       if (!$scope.projects) {
-        // console.log("No projects yet.  Skipping " + $scope.p_id + "…");
+        console.log("No projects yet.  Skipping " + $scope.p_id + "…");
+        return;
+      }
+      if (!$scope.p_id) {
+        console.log("No p_id, setting to " + $scope.projects[0]._id);
+        $scope.p_id = $scope.projects[0]._id;
+        console.log("Done setting p_id to " + $scope.p_id);
         return;
       }
       $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
-      // console.log("$scope.project = " + $scope.project);
+      console.log("$scope.project = " + $scope.project);
     };
     $scope.$watch('p_id', changeProject);
 
@@ -87,11 +93,17 @@ foxographApp.controller({
     // Handle a change in mockup id by setting the mockup.
     var changeMockup = function changeMockup() {
       if (!$scope.mockups) {
-        //console.log("No mockups yet.  Skipping " + $scope.m_id + "…");
+        console.log("No mockups yet.  Skipping " + $scope.m_id + "…");
+        return;
+      }
+      if (!$scope.m_id) {
+        console.log("No m_id, setting to " + $scope.mockups[0]._id);
+        $scope.m_id = $scope.mockups[0]._id;
+        console.log("Done setting m_id to " + $scope.m_id);
         return;
       }
       $scope.mockup = _.findWhere($scope.mockups, {_id: $scope.m_id});
-      // console.log("$scope.mockup = " + $scope.mockup);
+      console.log("$scope.mockup = " + $scope.mockup);
     };
     $scope.$watch('m_id', changeMockup);
 
@@ -102,7 +114,7 @@ foxographApp.controller({
       changeProject();
     });
 
-
+    // If we get a project, load in the mockups.
     $scope.$watch('project', function (project) {
       if (!project) {
         $scope.mockups = null;
@@ -127,7 +139,6 @@ foxographApp.controller({
       $location.path('/' + (project ? project._id : ''));
     };
 
-
   },
 
   'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, $resource) {
@@ -146,37 +157,44 @@ foxographApp.controller({
         }, 15);
       });
     });
-    $scope.$watch('mockups', function (mockupList) {
-      if (mockupList && mockupList.length > 0) {
-        console.log("(Sub) Got mockups!!!");
-        // $scope.mockup = {};
-        // $scope.mockup._id = mockupList[0]._id;
-        // $scope.mockup.name = mockupList[0].name;
-        // $scope.mockup.image = 'background-image: url("/r/images/bugzilla-loading.png");';
-        // $scope.mockup.width = 'width: 100%;';
-        // $scope.mockup.height = 'height: 100%;';
-        // $scope.mockup.position = 'background-position: 45%;';
-        // var image = mockupList[0].image;
-        // if (!image) {
-        //   image = '/r/images/default.png';
-        // }
-        // var ctx = document.getElementById('background-canvas').getContext('2d');
-        // loadImage(image, function MockupView_loadImage(img) {
-        //   ctx.drawImage(img, 1 - img.width, 1 - img.height);
-        //   var imgData = ctx.getImageData(0, 0, 1, 1);
-        //   var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
-        //   $scope.$apply(function () {
-        //     $scope.mockup.image = 'background-image: url("' + image + '");';
-        //     if (mockupList[0].image) {
-        //       $scope.mockup.width = 'width: ' + img.width + 'px;';
-        //       $scope.mockup.height = 'height: ' + img.height + 'px;';
-        //       $scope.mockup.position = '';
-        //     }
-        //     $scope.setBackground(pixel);
-        //   });
-        // });
+
+    var getMockupStyle = function (mockup, $scope) {
+      if (!mockup) {
+        $scope.mockupStyle = '';
+        $scope.setBackground('');
+        return;
       }
-    });
+
+      var width = 'width: 100%; ';
+      var height = 'height: 100%; ';
+      var position = 'background-position: 45%; ';
+      var image = '"/r/images/default.png"';
+      if (mockup.image) {
+        image = '"/r/images/bugzilla-loading.png"';
+      }
+      image = 'background-image: url(' + image + ');';
+
+      $scope.mockupStyle = width + height + position + image;
+      $scope.setBackground('');
+
+      if (mockup.image) {
+        loadImage(mockup.image, function MockupView_loadImage(img) {
+          var ctx = document.getElementById('background-canvas').getContext('2d');
+          ctx.drawImage(img, 1 - img.width, 1 - img.height);
+          var imgData = ctx.getImageData(0, 0, 1, 1);
+          var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
+          $scope.$apply(function () {
+            width = 'width: ' + img.width + 'px;';
+            height = 'height: ' + img.height + 'px;';
+            position = '';
+            image = 'background-image: url("' + mockup.image + '");';
+
+            $scope.mockupStyle = width + height + position + image;
+            $scope.setBackground(pixel);
+          });
+        });
+      }
+    };
 
     // Handle changes to the currently selected mockup.
     $scope.$watch('mockup', function (mockup) {
@@ -184,6 +202,8 @@ foxographApp.controller({
       if (!mockup) {
         return;
       }
+      getMockupStyle(mockup, $scope);
+
       setTimeout(function () {
         $scope.$apply(function () {
           //console.log("Running!  2");

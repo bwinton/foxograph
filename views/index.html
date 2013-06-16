@@ -34,11 +34,11 @@
     </div>
 
     <div id="mockup-wrapper" ng-show="project" ng-controller="MockupCtrl":>
-      <p id="mockup" style="{{mockup | style}}">
+      <p id="mockup" style="{{mockupStyle}}">
         <span>{{mockup.name}}</span>
         <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}">
-          <div style="top:{{bug.y}}px; left:{{bug.x}}px;" id="bug-{{bug.number}}"></div>
-          <span class="bug-line" style="top:{{bug.y}}px; left:{{bug.x}}px;"></span>
+          <div style="top:{{bug.endY}}px; left:{{bug.endX}}px;" id="bug-{{bug.number}}"></div>
+          <span class="bug-line" style="top:{{bug.startY}}px; left:{{bug.startX}}px;"></span>
           <!-- When showing bugs, use something like:
                http://jsfiddle.net/aBjp7/3/
                Or better, jsfiddle.net/aBjp7/8/ !  :)
@@ -51,7 +51,7 @@
           <ul>
             <li ng-repeat="bug in bugs | filter:{mockup:mockupsummary._id}">{{$index + 1}}:
               <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">bug
-                {{bug.number}}</a> (at {{bug.x}}x{{bug.y}})
+                {{bug.number}}</a> (at {{bug.endX}}x{{bug.endY}})
             </li>
           </ul>
         </div>

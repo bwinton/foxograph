@@ -13,8 +13,8 @@
 
 /* Filters */
 
-foxographApp.filter('style', function styleFactory() {
-  return function style(mockup) {
+foxographApp.filter('mockupStyle', function styleFactory() {
+  return function mockupStyle(mockup) {
     if (!mockup) {
       return "";
     }
