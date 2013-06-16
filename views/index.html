@@ -46,7 +46,11 @@
       </p>
       <div id="bugs">
         <div ng-repeat="mockupsummary in mockups"  class="bugList">
-          <h4><a href="/{{project._id}}/{{mockupsummary._id}}">{{mockupsummary.name}}</a></h4>
+          <h4>
+            <a ng-hide="mockupsummary._id==mockup._id"
+               href="/{{project._id}}/{{mockupsummary._id}}">{{mockupsummary.name}}</a>
+            <span ng-show="mockupsummary._id==mockup._id">» {{mockupsummary.name}}</span>
+          </h4>
           <ul>
             <li ng-repeat="bug in bugs | filter:{mockup:mockupsummary._id}">{{$index + 1}}:
               <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">bug
