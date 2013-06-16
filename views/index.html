@@ -34,7 +34,8 @@
     </div>
 
     <div id="mockup-wrapper" ng-show="project" ng-controller="MockupCtrl":>
-      <p id="mockup" style="{{mockup.width}} {{mockup.height}} {{mockup.position}} {{mockup.image}}">
+      <p id="mockup" style="{{mockup | style}}">
+        <span>{{mockup.name}}</span>
         <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}">
           <div style="top:{{bug.y}}px; left:{{bug.x}}px;" id="bug-{{bug.number}}"></div>
           <span class="bug-line" style="top:{{bug.y}}px; left:{{bug.x}}px;"></span>

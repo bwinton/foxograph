@@ -7,15 +7,30 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true*/
 
-/*global angular:true */
+/*global _:true, foxographApp:true */
 
 'use strict';
 
 /* Filters */
 
-angular.module('foxographApp.filters', [])
-  .filter('interpolate', ['version', function (version) {
-    return function (text) {
-      return String(text).replace(/\%VERSION\%/mg, version);
-    };
-  }]);
+foxographApp.filter('style', function styleFactory() {
+  return function style(mockup) {
+    if (!mockup) {
+      return "";
+    }
+
+    var width = 'width: 100%; ';
+    var height = 'height: 100%; ';
+    var position = 'background-position: 45%; ';
+    var image = '"/r/images/bugzilla-loading.png"';
+    if (!mockup.image) {
+      image = '"/r/images/default.png"';
+    }
+
+    image = 'background-image: url(' + image + ');'
+
+    // {{mockup.width}} {{mockup.height}} {{mockup.position}} {{mockup.image}}
+    var out = width + height + position + image;
+    return out;
+  };
+});
