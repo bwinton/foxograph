@@ -17,8 +17,7 @@
                style="padding-bottom: 0; margin-bottom: 0"><br>
         <select id="project-list" ng-model="selectedProject" ng-change="onProjectSelect()"
                 style="padding-top: 0; margin-top: 0"
-                ng-options="'[' + c.user + '] ' + c.name for c in projects | orderBy:['name','user'] | filter:projectSearch">
-          <option value="">Please select a project</option>
+                ng-options="'[' + c.user + '] ' + c.name for c in projects | filter:projectSearch">
         </select>
       </div>
 

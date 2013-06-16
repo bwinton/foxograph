@@ -61,7 +61,7 @@ foxographApp.controller({
   // The ProjectsCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'ProjectsCtrl': function ProjectsCtrl($scope, $location, $route, $routeParams, $resource) {
+  'ProjectsCtrl': function ProjectsCtrl($scope, $location, $route, $routeParams, $resource, $filter) {
 
     // Handle the change in route by setting the various ids.
     var routeChange = function routeChange() {
@@ -85,6 +85,7 @@ foxographApp.controller({
         return;
       }
       $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
+      $scope.selectedProject = $scope.project;
       console.log("$scope.project = " + $scope.project);
     };
     $scope.$watch('p_id', changeProject);
@@ -110,7 +111,8 @@ foxographApp.controller({
 
     // Load in the projects.
     projects($resource).query(function (projectList) {
-      $scope.projects = projectList;
+      // Sort the projects by ['name','user'].
+      $scope.projects = $filter('orderBy')(projectList, ['name','user']);
       changeProject();
     });
 
@@ -120,7 +122,7 @@ foxographApp.controller({
         $scope.mockups = null;
         $scope.mockup = null;
         $scope.bugs = null;
-        //$scope.setBackground('');
+        $scope.setBackground('');
         return;
       }
       mockups($resource).query({p_id: project._id}, function (mockupList) {
