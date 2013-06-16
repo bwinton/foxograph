@@ -204,14 +204,9 @@ foxographApp.controller({
       }
       getMockupStyle(mockup, $scope);
 
-      setTimeout(function () {
-        $scope.$apply(function () {
-          //console.log("Running!  2");
-          run();
-        });
-      }, 15);
       bugs($resource).query({m_id: mockup._id}, function (bugList) {
         $scope.mockup.bugs = bugList;
+        run();
       });
     });
   }

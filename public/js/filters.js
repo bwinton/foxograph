@@ -13,24 +13,29 @@
 
 /* Filters */
 
-foxographApp.filter('mockupStyle', function styleFactory() {
-  return function mockupStyle(mockup) {
-    if (!mockup) {
-      return "";
+foxographApp.filter('bugLineStyle', function styleFactory() {
+  return function bugLineStyle(bug) {
+    if (!bug) {
+      return '';
     }
 
-    var width = 'width: 100%; ';
-    var height = 'height: 100%; ';
-    var position = 'background-position: 45%; ';
-    var image = '"/r/images/bugzilla-loading.png"';
-    if (!mockup.image) {
-      image = '"/r/images/default.png"';
-    }
+    // Move the ending line down a little so that it ends up near the middle of the div.
+    var endX = bug.endX + 25;
+    var endY = bug.endY + 50;
 
-    image = 'background-image: url(' + image + ');'
+    // Set up some intermediate variables to calculate with.
+    var width = endX - bug.startX;
+    var height = endY - bug.startY;
+    var length = Math.sqrt(width * width + height * height);
+    var angle = Math.atan2(height, width);
 
-    // {{mockup.width}} {{mockup.height}} {{mockup.position}} {{mockup.image}}
-    var out = width + height + position + image;
+    // And finally make the css rules.
+    var top = 'top:' + bug.startY + 'px; ';
+    var left = 'left:' + bug.startX + 'px; ';
+    var transform = 'transform:rotate(' + angle + 'rad) scaleX(' + length + '); ';
+
+    // top:{{bug.startY}}px; left:{{bug.startX}}px; transform: rotate({{angle}}rad) scaleX({{length}});
+    var out = top + left + transform;
     return out;
   };
 });

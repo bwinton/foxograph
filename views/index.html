@@ -38,7 +38,7 @@
         <span>{{mockup.name}}</span>
         <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}">
           <div style="top:{{bug.endY}}px; left:{{bug.endX}}px;" id="bug-{{bug.number}}"></div>
-          <span class="bug-line" style="top:{{bug.startY}}px; left:{{bug.startX}}px;"></span>
+          <span class="bug-line" style="{{bug | bugLineStyle}}"></span>
           <!-- When showing bugs, use something like:
                http://jsfiddle.net/aBjp7/3/
                Or better, jsfiddle.net/aBjp7/8/ !  :)
