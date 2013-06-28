@@ -124,6 +124,13 @@ canvas {
   left: 0;
 }
 
+#mockup-wrapper > svg {
+  position: absolute;
+  top: 6px;
+  width: 1500px;
+  height: 900px;
+}
+
 #mockup {
   background-repeat: no-repeat;
   cursor: crosshair;

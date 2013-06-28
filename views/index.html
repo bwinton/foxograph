@@ -24,6 +24,11 @@
       <!-- Current Project, and mockup. -->
       <div id="project">
         <h1 class="ng-binding">{{project.name || "Please select a project."}}</h1>
+        <span ng-repeat="mockupsummary in mockups">
+          <a ng-hide="mockupsummary._id==mockup._id"
+             href="/{{project._id}}/{{mockupsummary._id}}">{{mockupsummary.name}}</a>
+          <span ng-show="mockupsummary._id==mockup._id">» {{mockupsummary.name}}</span>
+        </span>
       </div>
 
       <!-- User box -->
@@ -32,14 +37,20 @@
     </div>
 
     <div id="mockup-wrapper" ng-show="project" ng-controller="MockupCtrl":>
+      <svg viewbox="0 0 1500 900" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <line ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
+              x1="{{bug.startX}}" y1="{{bug.startY}}"
+              x2="{{bug.endX + 150}}" y2="{{bug.endY + 30}}"
+              style="stroke: #000000; stroke-width:2"></line>
+      </svg>
+
       <p id="mockup" style="{{mockupStyle}}">
         <span>{{mockup.name}}</span>
-        <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}">
-          <div style="top:{{bug.endY}}px; left:{{bug.endX}}px;" id="bug-{{bug.number}}"></div>
-          <span class="bug-line" style="{{bug | bugLineStyle}}"></span>
+        <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
+             style="top:{{bug.endY}}px; left:{{bug.endX}}px;" id="bug-{{bug.number}}">
         </div>
       </p>
-      <div id="bugs">
+      <div id="bugs" ng-show="listMode">
         <div ng-repeat="mockupsummary in mockups"  class="bugList">
           <h4>
             <a ng-hide="mockupsummary._id==mockup._id"
