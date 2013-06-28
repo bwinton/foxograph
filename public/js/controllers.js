@@ -27,7 +27,7 @@ var bugs = function ($resource) {
 
 var projectBugs = function ($resource) {
   return $resource('/api/projects/:p_id/bugs/:b_id');
-}
+};
 
 function loadImage(imageSrc, callback)
 {
@@ -112,7 +112,7 @@ foxographApp.controller({
     // Load in the projects.
     projects($resource).query(function (projectList) {
       // Sort the projects by ['name','user'].
-      $scope.projects = $filter('orderBy')(projectList, ['name','user']);
+      $scope.projects = $filter('orderBy')(projectList, ['name', 'user']);
       changeProject();
     });
 
