@@ -13,7 +13,7 @@
 
 // Declare app level module which depends on filters, and services
 var foxographApp = angular.module('foxographApp',
-  ['ngResource', 'foxographApp.services', 'foxographApp.directives'])
+  ['ngResource', 'foxographApp.services', 'angular-tools.persona'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $routeProvider.when('/').when('/:p_id').when('/:p_id/:m_id').otherwise({redirectTo: '/'});
