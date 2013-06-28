@@ -136,5 +136,5 @@ require('express-persona')(app, {
 });
 
 app.listen(PORT, HOST, function() {
-  console.log('Listening on http://' + HOST + ':' + PORT + '/');
+  console.log('Listening on ' + audience);
 });

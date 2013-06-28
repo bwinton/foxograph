@@ -16,5 +16,5 @@ var foxographApp = angular.module('foxographApp',
   ['ngResource', 'foxographApp.services', 'foxographApp.directives'])
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
-    $routeProvider.when('/:p_id').when('/:p_id/:m_id').otherwise({redirectTo: '/'});
+    $routeProvider.when('/').when('/:p_id').when('/:p_id/:m_id').otherwise({redirectTo: '/'});
   }]);
