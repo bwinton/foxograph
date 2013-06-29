@@ -104,6 +104,18 @@ foxographApp.controller({
         return;
       }
       $scope.mockup = _.findWhere($scope.mockups, {_id: $scope.m_id});
+      if (!$scope.mockup) {
+        // Probably an old m_id from a previously-selected project.
+        console.log("m_id not found, setting to " + $scope.mockups[0]._id);
+        $scope.m_id = $scope.mockups[0]._id;
+        console.log("Done setting m_id to " + $scope.m_id);
+        return;
+      }
+      var mockupIndex = _.indexOf($scope.mockups, $scope.mockup);
+      $scope.prevMockupId = (mockupIndex > 0) ?
+                            $scope.mockups[mockupIndex - 1]._id : null;
+      $scope.nextMockupId = (mockupIndex < $scope.mockups.length - 1) ?
+                            $scope.mockups[mockupIndex + 1]._id : null;
       console.log("$scope.mockup = " + $scope.mockup);
     };
     $scope.$watch('m_id', changeMockup);
@@ -121,6 +133,8 @@ foxographApp.controller({
       if (!project) {
         $scope.mockups = null;
         $scope.mockup = null;
+        $scope.prevMockupId = null;
+        $scope.nextMockupId = null;
         $scope.bugs = null;
         $scope.setBackground('');
         return;

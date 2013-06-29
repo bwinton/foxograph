@@ -63,7 +63,7 @@ body {
   margin-top: -5px;
 }
 
-a {
+#project a {
   color: #00B7FF;
 }
 
@@ -124,11 +124,16 @@ canvas {
   left: 0;
 }
 
-#mockup-wrapper > svg {
+#mockup-wrapper svg {
   position: absolute;
   top: 6px;
   width: 1500px;
   height: 900px;
+}
+
+#mockup-wrapper line {
+  stroke: #000000;
+  stroke-width:1;
 }
 
 #mockup {
