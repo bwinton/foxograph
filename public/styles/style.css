@@ -43,7 +43,7 @@ body {
 .main-header > div {
   display: inline-block;
   width: 33%;
-  vertical-align: baseline;
+  vertical-align: text-bottom;
 }
 
 #project {
@@ -86,9 +86,9 @@ canvas {
   background-repeat: no-repeat;
   background-position: left top;
 
-  margin: 10px 1px;
-  padding: 6px 6px;
-  vertical-align: top;
+  margin: 4px;
+  padding: 0px 4px;
+  vertical-align: baseline;
   white-space: normal;
   background: transparent padding-box;
   border: 1px solid transparent;
