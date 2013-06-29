@@ -152,7 +152,8 @@ foxographApp.controller({
 
     $scope.onProjectSelect = function onProjectSelect() {
       var project = $scope.selectedProject;
-      $location.path('/' + (project ? project._id : ''));
+      // If we have no project, that means they selected the "Create New Project" option!
+      $location.path('/' + (project ? project._id : 'create'));
     };
 
   },

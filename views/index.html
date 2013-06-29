@@ -18,6 +18,7 @@
         <select id="project-list" ng-model="selectedProject" ng-change="onProjectSelect()"
                 style="padding-top: 0; margin-top: 0"
                 ng-options="'[' + c.user + '] ' + c.name for c in projects | filter:projectSearch">
+          <option ng-show="email" value="">Create New Project</option>
         </select>
       </div>
 
