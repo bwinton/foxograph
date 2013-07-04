@@ -29,28 +29,6 @@ var projectBugs = function ($resource) {
   return $resource('/api/projects/:p_id/bugs/:b_id');
 };
 
-function loadImage(imageSrc, callback)
-{
-  var img = new Image();
-  img.src = imageSrc;
-  if (img.complete) {
-    setTimeout(function () {
-      callback(img);
-    }, 0);
-    img.onload = function () {};
-  } else {
-    img.onload = function () {
-      callback(img);
-      // clear onLoad, IE behaves erratically with animated gifs otherwise
-      img.onload = function () {};
-    };
-    img.onerror = function () {
-      alert('Could not load image.');
-    };
-  }
-}
-
-
 // http://www.jacopretorius.net/2013/04/using-ngresource-with-angularjs.html
 // projects.save($scope.newProject, backToList);
 
@@ -158,7 +136,7 @@ foxographApp.controller({
 
   },
 
-  'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, $resource) {
+  'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, $resource, Image) {
     // Handle changes to the currently selected project.
     $scope.$watch('project', function (project) {
       if (!project) {
@@ -195,20 +173,15 @@ foxographApp.controller({
       $scope.setBackground('');
 
       if (mockup.image) {
-        loadImage(mockup.image, function MockupView_loadImage(img) {
-          var ctx = document.getElementById('background-canvas').getContext('2d');
-          ctx.drawImage(img, 1 - img.width, 1 - img.height);
-          var imgData = ctx.getImageData(0, 0, 1, 1);
-          var pixel = 'background-color: rgb(' + imgData.data[0] + ',' + imgData.data[1] + ',' + imgData.data[2] + ');';
-          $scope.$apply(function () {
-            width = 'width: ' + img.width + 'px;';
-            height = 'height: ' + img.height + 'px;';
-            position = '';
-            image = 'background-image: url("' + mockup.image + '");';
+        Image.load(mockup.image).then(function (img) {
+          width = 'width: ' + img.width + 'px;';
+          height = 'height: ' + img.height + 'px;';
+          position = '';
+          image = 'background-image: url("' + mockup.image + '");';
+          $scope.mockupStyle = width + height + position + image;
 
-            $scope.mockupStyle = width + height + position + image;
-            $scope.setBackground(pixel);
-          });
+          var pixel = 'background-color: rgb(' + img.r + ',' + img.g + ',' + img.b + ');';
+          $scope.setBackground(pixel);
         });
       }
     };
