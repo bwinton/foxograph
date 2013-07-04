@@ -8,6 +8,9 @@
     "ejs": "0.8.3",
     "mongoose": "3.2.1"
   },
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  },
   "scripts": {
     "start": "node app.js"
   },
