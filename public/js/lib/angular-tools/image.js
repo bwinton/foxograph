@@ -13,9 +13,9 @@
 /* Directives */
 
 angular.module('angular-tools.image', [])
-  .factory('Image', function ($q, $timeout) {
+  .factory('Image', function ($q) {
 
-    var load = function (imageSrc) {
+    var load = function (imageSrc, scope) {
       var deferred = $q.defer();
       var img = new Image();
 
@@ -30,6 +30,7 @@ angular.module('angular-tools.image', [])
           g: bottomLeftPixel.data[1],
           b: bottomLeftPixel.data[2]
         });
+        scope.$apply();
         img.onload = function () {};
       }.bind(null, img, deferred);
 
