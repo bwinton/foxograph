@@ -43,7 +43,7 @@
 
     </div>
 
-    <div id="mockup-wrapper" ng-show="project" ng-controller="MockupCtrl":>
+    <div id="mockup-wrapper" ng-show="project" ng-controller="MockupCtrl" data-mockup-image>
       <svg viewbox="0 0 1500 900" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <line ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
               x1="{{bug.startX}}" y1="{{bug.startY}}"
@@ -84,6 +84,7 @@
     <script src="/r/js/services.js" type="text/javascript"></script>
     <script src="/r/js/controllers.js" type="text/javascript"></script>
     <script src="/r/js/filters.js" type="text/javascript"></script>
+    <script src="/r/js/directives.js" type="text/javascript"></script>
   </body>
 
   <canvas id="background-canvas" width="1" height="1"></canvas>

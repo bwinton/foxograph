@@ -52,13 +52,12 @@ foxographApp.controller({
     // Handle a change in project id by setting the project.
     var changeProject = function changeProject() {
       if (!$scope.projects) {
-        console.log("No projects yet.  Skipping " + $scope.p_id + "…");
+        // console.log("No projects yet.  Skipping " + $scope.p_id + "…");
         return;
       }
       if (!$scope.p_id) {
-        console.log("No p_id, setting to " + $scope.projects[0]._id);
+        // console.log("No p_id, setting to " + $scope.projects[0]._id);
         $scope.p_id = $scope.projects[0]._id;
-        console.log("Done setting p_id to " + $scope.p_id);
         return;
       }
       $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
@@ -71,21 +70,19 @@ foxographApp.controller({
     // Handle a change in mockup id by setting the mockup.
     var changeMockup = function changeMockup() {
       if (!$scope.mockups) {
-        console.log("No mockups yet.  Skipping " + $scope.m_id + "…");
+        // console.log("No mockups yet.  Skipping " + $scope.m_id + "…");
         return;
       }
       if (!$scope.m_id) {
-        console.log("No m_id, setting to " + $scope.mockups[0]._id);
+        // console.log("No m_id, setting to " + $scope.mockups[0]._id);
         $scope.m_id = $scope.mockups[0]._id;
-        console.log("Done setting m_id to " + $scope.m_id);
         return;
       }
       $scope.mockup = _.findWhere($scope.mockups, {_id: $scope.m_id});
       if (!$scope.mockup) {
         // Probably an old m_id from a previously-selected project.
-        console.log("m_id not found, setting to " + $scope.mockups[0]._id);
+        // console.log("m_id not found, setting to " + $scope.mockups[0]._id);
         $scope.m_id = $scope.mockups[0]._id;
-        console.log("Done setting m_id to " + $scope.m_id);
         return;
       }
       var mockupIndex = _.indexOf($scope.mockups, $scope.mockup);
@@ -152,51 +149,52 @@ foxographApp.controller({
       });
     });
 
-    var getMockupStyle = function (mockup, $scope) {
-      if (!mockup) {
-        $scope.mockupStyle = '';
-        $scope.setBackground('');
-        return;
-      }
-
+    var getMockupStyle = function (mockupImage, $scope) {
       var width = 'width: 100%; ';
       var height = 'height: 100%; ';
       var position = 'background-position: 45%; ';
-      var image = '"/r/images/default.png"';
-      if (mockup.image) {
-        image = '"/r/images/bugzilla-loading.png"';
+      var imageUrl = '"/r/images/default.png"';
+      if (mockupImage) {
+        imageUrl = '"/r/images/bugzilla-loading.png"';
       }
-      image = 'background-image: url(' + image + ');';
+      imageUrl = 'background-image: url(' + imageUrl + ');';
 
-      $scope.mockupStyle = width + height + position + image;
+      $scope.mockupStyle = width + height + position + imageUrl;
       $scope.setBackground('');
 
-      if (mockup.image) {
-        Image.load(mockup.image).then(function (img) {
+      if (mockupImage) {
+        Image.load(mockupImage, $scope).then(function (img) {
           width = 'width: ' + img.width + 'px;';
           height = 'height: ' + img.height + 'px;';
           position = '';
-          image = 'background-image: url("' + mockup.image + '");';
-          $scope.mockupStyle = width + height + position + image;
+          imageUrl = 'background-image: url("' + mockupImage + '");';
+          $scope.mockupStyle = width + height + position + imageUrl;
 
           var pixel = 'background-color: rgb(' + img.r + ',' + img.g + ',' + img.b + ');';
           $scope.setBackground(pixel);
+        }, function (err) {
+          console.log("Image errored!!!  " + err);
         });
       }
     };
 
     // Handle changes to the currently selected mockup.
     $scope.$watch('mockup', function (mockup) {
-      //console.log("Got mockup of " + mockup);
+      console.log("Got mockup of " + mockup);
       if (!mockup) {
         return;
       }
-      getMockupStyle(mockup, $scope);
 
       bugs($resource).query({m_id: mockup._id}, function (bugList) {
         $scope.mockup.bugs = bugList;
         run();
       });
     });
+
+    $scope.$watch('mockup.image', function (image) {
+      console.log("Got mockup image of " + (image ? "something" : "nothing"));
+      getMockupStyle(image, $scope);
+    });
+
   }
 });

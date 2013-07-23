@@ -141,7 +141,7 @@ canvas {
   cursor: crosshair;
 }
 
-#mockup.hover {
+#mockup-wrapper.hover #mockup {
   opacity: .1;
 }
 
