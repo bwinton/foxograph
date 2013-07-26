@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false */
+/*global _:false, foxographApp:false, bugzilla:false */
 
 'use strict';
 
@@ -18,6 +18,46 @@ foxographApp.directive('mockupImage', function ($http) {
     scope: false,
 
     link: function userPostLink(scope, iElement, iAttrs) {
+      var startX = null;
+      var startY = null;
+      iElement.on('mousedown', function (e) {
+        if ((scope.email !== scope.project.user) ||
+            !scope.background) {
+          return false;
+        }
+        startX = e.pageX;
+        startY = e.pageY;
+      });
+      iElement.on('mouseup', function (e) {
+        if ((scope.email !== scope.project.user) ||
+            !scope.background) {
+          return false;
+        }
+        var bug = prompt('Please enter a bug number');
+        if (!bug) {
+          return;
+        }
+
+        function bugExists()
+        {
+          var data = {'number': bug,
+                      'startX': startX, 'startY': startY,
+                      'endX': e.pageX, 'endY': e.pageY,
+                      'mockup': scope.m_id};
+          startX = null;
+          startY = null;
+          scope.$apply(function () {
+            scope.bugs.push(data);
+          });
+        }
+        function bugDoesNotExist()
+        {
+          alert('The bug number entered is not valid.\nPlease try again.');
+        }
+        bugzilla.getBug(bug, bugExists, bugDoesNotExist);
+        return false;
+      });
+
       iElement.on('dragover', function () {
         if (scope.email !== scope.project.user) {
           return false;
