@@ -19,15 +19,24 @@ foxographApp.directive('mockupImage', function ($http) {
 
     link: function userPostLink(scope, iElement, iAttrs) {
       iElement.on('dragover', function () {
+        if (scope.email !== scope.project.user) {
+          return false;
+        }
         iElement.addClass('hover');
         return false;
       });
       iElement.on('dragleave', function () {
+        if (scope.email !== scope.project.user) {
+          return false;
+        }
         iElement.removeClass('hover');
         return false;
       });
       iElement.on('drop', function (e) {
         e.preventDefault();
+        if (scope.email !== scope.project.user) {
+          return false;
+        }
 
         iElement.removeClass('hover');
 
