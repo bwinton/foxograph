@@ -134,18 +134,20 @@ foxographApp.controller({
 
   'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, $resource, Image) {
     // Handle changes to the currently selected project.
+    $scope.$watch('bugs', function (bugs) {
+      setTimeout(function () {
+        $scope.$apply(function () {
+          console.log("Running!  1");
+          run();
+        });
+      }, 15);
+    }, true);
     $scope.$watch('project', function (project) {
       if (!project) {
         return;
       }
       projectBugs($resource).query({p_id: project._id}, function (bugList) {
         $scope.bugs = bugList;
-        setTimeout(function () {
-          $scope.$apply(function () {
-            //console.log("Running!  1");
-            run();
-          });
-        }, 15);
       });
     });
 
