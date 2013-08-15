@@ -47,37 +47,41 @@ angular.module('angular-tools.persona', [])
               return;
             }
 
-            $http.post('/persona/verify', {assertion: assertion}, personaOptions)
-              .success(function (data, status, headers, config) {
-                if (data.status === 'okay') {
-                  console.log(data.email);
-                  scope.email = data.email;
-                } else {
-                  console.log('Login failed because ' + data.reason);
+            scope.$apply(function (e) {
+              $http.post('/persona/verify', {assertion: assertion}, personaOptions)
+                .success(function (data, status, headers, config) {
+                  if (data.status === 'okay') {
+                    console.log(data.email);
+                    scope.email = data.email;
+                  } else {
+                    console.log('Login failed because ' + data.reason);
+                    scope.email = null;
+                  }
+                }).error(function (data, status, headers, config) {
+                  console.log('Login failed (' + status + ') with data ' + data);
                   scope.email = null;
-                }
-              }).error(function (data, status, headers, config) {
-                console.log('Login failed (' + status + ') with data ' + data);
-                scope.email = null;
-              });
+                });
+            });
           });
         });
 
         // Log out when we click the email address.
         iElement.find('.email').on('click', function () {
-          $http.post('/persona/logout', {}, personaOptions)
-            .success(function (data, status, headers, config) {
-              if (data.status === 'okay') {
-                console.log('Logout succeeded.');
+          scope.$apply(function (e) {
+            $http.post('/persona/logout', {}, personaOptions)
+              .success(function (data, status, headers, config) {
+                if (data.status === 'okay') {
+                  console.log('Logout succeeded.');
+                  scope.email = null;
+                } else {
+                  console.log('Login failed because ' + data.reason);
+                  scope.email = null;
+                }
+              }).error(function (data, status, headers, config) {
+                console.log('Logout failed (' + status + ') with data ' + JSON.stringify(data));
                 scope.email = null;
-              } else {
-                console.log('Login failed because ' + data.reason);
-                scope.email = null;
-              }
-            }).error(function (data, status, headers, config) {
-              console.log('Logout failed (' + status + ') with data ' + JSON.stringify(data));
-              scope.email = null;
-            });
+              });
+          });
         });
 
       }
