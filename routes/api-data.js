@@ -11,6 +11,8 @@ var Bug = mongoose.model('Bug', new mongoose.Schema({
 }));
 
 var Mockup = mongoose.model('Mockup', new mongoose.Schema({
+  name: String,
+  slug: String,
   image: String,
   project: String
 }));
@@ -40,12 +42,11 @@ exports.postProject = function(req, res) {
   console.log('Creating project:');
   req.body.user = req.session.email;
   req.body.creationDate = new Date();
-  console.log(req.body);
   var project = new Project(req.body);
   console.log(project);
-  console.log(mongoose);
   project.save(function (err) {
     if (err) {
+      console.error(err);
       return error(res, err, console);
     }
     return res.json(project);
@@ -106,13 +107,19 @@ exports.getMockups = function(req, res) {
 exports.postMockup = function(req, res) {
   if (!req.session.email)
     return error(res, 'Not logged in.');
-  if (!req.body || !req.body.image)
-    return error(res, 'Missing image.');
-  Project.findOne({_id: req.body.project}, function(err, project) {
+  if (!req.body || !req.body.name) {
+    console.log("error2!");
+    return error(res, 'Missing name.');
+  }
+  Project.findOne({_id: req.params.project_id}, function(err, project) {
+    if (err)
+      return error(res, err, console);
     if (project.user !== req.session.email)
       return error(res, 'Cannot add a mockup to a project you didn’t create!');
     console.log('Creating mockup:');
     console.log(req.body);
+    req.body.project = req.params.project_id;
+    // req.body.slug = makeSlug(req.body.name);
     var mockup = new Mockup(req.body);
     console.log(mockup);
     mockup.save(function (err) {

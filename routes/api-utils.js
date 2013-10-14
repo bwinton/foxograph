@@ -2,6 +2,7 @@
 
 exports.error = function (res, err, console) {
   if (console) {
+    console.error(err);
     console.trace(err);
   }
   res.json(console ? 403 : 500, {'error': err});

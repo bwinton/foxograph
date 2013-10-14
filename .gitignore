@@ -5,3 +5,4 @@ npm-debug.log
 .*.swo
 foxography-*.tgz
 grunt-settings.json
+private.yml

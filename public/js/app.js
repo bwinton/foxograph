@@ -12,8 +12,10 @@
 
 // Declare app level module which depends on filters, and services
 var foxographApp = angular.module('foxographApp',
-  ['ngResource', 'foxographApp.services', 'angular-tools.persona', 'angular-tools.image'])
-  .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+  ['restangular', 'foxographApp.services', 'angular-tools.persona', 'angular-tools.image'])
+  .config(['$routeProvider', '$locationProvider', 'RestangularProvider', function ($routeProvider, $locationProvider, RestangularProvider) {
     $locationProvider.html5Mode(true);
     $routeProvider.when('/').when('/:p_id').when('/:p_id/:m_id').otherwise({redirectTo: '/'});
+    RestangularProvider.setBaseUrl('/api');
+    RestangularProvider.setRestangularFields({id: "_id"});
   }]);

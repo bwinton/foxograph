@@ -20,21 +20,25 @@ var logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
 var mongo_url = 'mongodb://localhost/my_database';
 if (process.env.VCAP_SERVICES) {
   var services = JSON.parse(process.env.VCAP_SERVICES);
-  var mongo_data = services['mongodb-1.8'][0].credentials;
+  var mongo_data = services.mongodb[0].credentials;
   mongo_url = 'mongodb://' + mongo_data.username + ':' + mongo_data.password +
               '@' + mongo_data.host + ':' + mongo_data.port + '/' + mongo_data.db;
 } else if (process.env.MONGO_URL) {
   mongo_url = process.env.MONGO_URL;
 }
 mongoose.connect(mongo_url);
+console.log("Mongo URL:", mongo_url);
 
 var session_secret = 'mytestsessionsecret';
-if (process.env.VCAP_SERVICES) {
+if (process.env.SESSION_SECRET) {
   session_secret = process.env.SESSION_SECRET;
 }
+console.log("Session Secret:", session_secret);
 
 var PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 var HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
+console.log("Port:", PORT);
+console.log("Host:", HOST);
 
 var audience = 'http://' + HOST + ':' + PORT; // Must match your browser's address bar
 if (process.env.VMC_APP_INSTANCE) {
@@ -43,6 +47,7 @@ if (process.env.VMC_APP_INSTANCE) {
 } else if (process.env.AUDIENCE) {
   audience = process.env.AUDIENCE;
 }
+console.log("Audience:", audience);
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -103,13 +108,13 @@ app.delete('/api/projects/:project_id', routes.deleteProject);
 
 // API Mockups.
 app.get('/api/projects/:project_id/mockups', routes.getMockups);
-app.post('/api/mockups', routes.postMockup);
+app.post('/api/projects/:project_id/mockups', routes.postMockup);
 app.get('/api/mockups/:mockup_id', routes.getMockup);
 app.put('/api/mockups/:mockup_id', routes.putMockup);
 
 // API Bugs
 app.get('/api/projects/:project_id/bugs', routes.getBugs);
-app.get('/api/mockups/:mockup_id/bugs', routes.getBugs);
+app.get('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
 app.delete('/api/bugs/:bug_id', routes.deleteBug);

@@ -25,22 +25,50 @@
       <!-- Current Project, and mockup. -->
       <div id="project">
         <h1 class="ng-binding">{{project.name || "Please select a project."}}</h1>
-        <a ng-show="email == project.user" class="link"
+        <a ng-show="email && email == project.user" class="link"
            id="deleteProject"><i class="icon-trash"></i></a>
         <br>
         <a ng-show="prevMockupId" class="link"
            ng-href="/{{project._id}}/{{prevMockupId}}">«</a>
         <span>{{mockup.name}}</span>
-        <a ng-show="email == project.user" class="link"
+        <a ng-show="email && email == project.user" class="link"
            id="deleteMockup"><i class="icon-trash"></i></a>
         <a ng-show="nextMockupId" class="link"
            ng-href="/{{project._id}}/{{nextMockupId}}">»</a>
-        <a ng-hide="email != project.user || nextMockupId" class="link">+</a>
+        <a ng-show="email && email == project.user && !nextMockupId" class="link">+</a>
       </div>
 
       <!-- User box -->
       <user></user>
 
+    </div>
+
+    <div ng-show="email && !selectedProject" ng-controller="NewMockupCtrl">
+      <form id="create-mockup" name="form" class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="inputName">Project name</label>
+          <div class="controls">
+            <input type="text" id="inputName" placeholder="New Project"
+              required="true" ng-model="project.name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputName">First Mockup name</label>
+          <div class="controls">
+            <input type="text" id="inputName" placeholder="New Mockup"
+              required="true" ng-model="project.mockup">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn btn-primary"
+              ng-click="create(project)"
+              ng-disabled="form.$invalid">Create Project</button>
+            <button type="submit" class="btn"
+              ng-click="reset()">Reset</button>
+          </div>
+        </div>
+      </form>
     </div>
 
     <div id="mockup-wrapper" ng-show="project" ng-controller="MockupCtrl" data-mockup-image>
@@ -77,7 +105,7 @@
     <script src="/r/js/lib/underscore.js" type="text/javascript"></script>
     <script src="https://login.persona.org/include.js" type="text/javascript"></script>
     <script src="/r/js/lib/angular/angular.js" type="text/javascript"></script>
-    <script src="/r/js/lib/angular/angular-resource.js" type="text/javascript"></script>
+    <script src="/r/js/lib/restangular.js" type="text/javascript"></script>
     <script src="/r/js/lib/angular-tools/persona.js" type="text/javascript"></script>
     <script src="/r/js/lib/angular-tools/image.js" type="text/javascript"></script>
     <script src="/r/js/app.js" type="text/javascript"></script>

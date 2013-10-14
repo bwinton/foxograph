@@ -130,10 +130,10 @@ module.exports = function(grunt) {
       grunt.event.emit('express.started');
     });
     grunt.event.once('express.started', function (){
-      grunt.util.spawn({cmd: 'open', args: ['http://127.0.0.1:3000']}, function (err, result, code) {
-        console.log("Done open " + err + ", " + result + ", " + code);
-        done();
-      });
+      // grunt.util.spawn({cmd: 'open', args: ['http://127.0.0.1:3000']}, function (err, result, code) {
+      //   console.log("Done open " + err + ", " + result + ", " + code);
+      done();
+      // });
     });
     var mongod = grunt.util.spawn({cmd: 'mongod'}, function (err, result, code) {
       console.log("Done mongod " + err + ", " + result + ", " + code);

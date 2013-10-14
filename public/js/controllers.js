@@ -10,27 +10,6 @@
 
 'use strict';
 
-/* Remote Models */
-
-var projects = function ($resource) {
-  return $resource('/api/projects/:p_id');
-};
-
-var mockups = function ($resource) {
-  return $resource('/api/projects/:p_id/mockups/:m_id');
-};
-
-var bugs = function ($resource) {
-  return $resource('/api/mockups/:m_id/bugs/:b_id');
-};
-
-var projectBugs = function ($resource) {
-  return $resource('/api/projects/:p_id/bugs/:b_id');
-};
-
-// http://www.jacopretorius.net/2013/04/using-ngresource-with-angularjs.html
-// projects.save($scope.newProject, backToList);
-
 /* Controllers */
 
 foxographApp.controller({
@@ -38,7 +17,7 @@ foxographApp.controller({
   // The ProjectsCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'ProjectsCtrl': function ProjectsCtrl($scope, $location, $route, $routeParams, $resource, $filter) {
+  'ProjectsCtrl': function ProjectsCtrl($scope, $location, $route, $routeParams, Restangular, $filter) {
 
     // Handle the change in route by setting the various ids.
     var routeChange = function routeChange() {
@@ -96,7 +75,7 @@ foxographApp.controller({
 
 
     // Load in the projects.
-    projects($resource).query(function (projectList) {
+    Restangular.all('projects').getList().then(function (projectList) {
       // Sort the projects by ['name','user'].
       $scope.projects = $filter('orderBy')(projectList, ['name', 'user']);
       changeProject();
@@ -113,7 +92,7 @@ foxographApp.controller({
         $scope.setBackground('');
         return;
       }
-      mockups($resource).query({p_id: project._id}, function (mockupList) {
+      project.getList('mockups').then(function (mockupList) {
         $scope.mockups = mockupList;
         changeMockup();
       });
@@ -132,7 +111,7 @@ foxographApp.controller({
 
   },
 
-  'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, $resource, Image) {
+  'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, Restangular, Image) {
     // Handle changes to the currently selected project.
     $scope.$watch('bugs', function (bugs) {
       setTimeout(function () {
@@ -146,7 +125,7 @@ foxographApp.controller({
       if (!project) {
         return;
       }
-      projectBugs($resource).query({p_id: project._id}, function (bugList) {
+      project.getList('bugs').then(function (bugList) {
         $scope.bugs = bugList;
       });
     });
@@ -187,7 +166,7 @@ foxographApp.controller({
         return;
       }
 
-      bugs($resource).query({m_id: mockup._id}, function (bugList) {
+      mockup.getList('bugs').then(function (bugList) {
         $scope.mockup.bugs = bugList;
         run();
       });
@@ -198,5 +177,20 @@ foxographApp.controller({
       getMockupStyle(image, $scope);
     });
 
+  },
+
+  'NewMockupCtrl': function NewMockupCtrl($scope, $route, $routeParams, Restangular, Image) {
+    $scope.project = {};
+    $scope.create = function (newProject) {
+      Restangular.all('projects').post({name: newProject.name}).then(function (project) {
+        project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
+
+        })
+      });
+    };
+    $scope.reset = function () {
+      $scope.project = {};
+    };
   }
+
 });

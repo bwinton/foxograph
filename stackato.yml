@@ -1,0 +1,16 @@
+name: foxograph
+framework: node
+runtime: node08
+inherit: private.yml
+min_version:
+  client: 1.6.2
+  server: 2.6.7
+services:
+  ${name}-db: mongodb
+mem: 256M
+ignores:
+  - .git
+  - .gitignore
+  - .npmignore
+  - node_modules
+  - public
