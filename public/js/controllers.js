@@ -31,17 +31,15 @@ foxographApp.controller({
     // Handle a change in project id by setting the project.
     var changeProject = function changeProject() {
       if (!$scope.projects) {
-        // console.log("No projects yet.  Skipping " + $scope.p_id + "…");
         return;
       }
       if (!$scope.p_id) {
-        // console.log("No p_id, setting to " + $scope.projects[0]._id);
         $scope.p_id = $scope.projects[0]._id;
         return;
       }
       $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
       $scope.selectedProject = $scope.project;
-      console.log("$scope.project = " + $scope.project);
+      $scope.onProjectSelect();
     };
     $scope.$watch('p_id', changeProject);
 
@@ -49,18 +47,15 @@ foxographApp.controller({
     // Handle a change in mockup id by setting the mockup.
     var changeMockup = function changeMockup() {
       if (!$scope.mockups) {
-        // console.log("No mockups yet.  Skipping " + $scope.m_id + "…");
         return;
       }
       if (!$scope.m_id) {
-        // console.log("No m_id, setting to " + $scope.mockups[0]._id);
         $scope.m_id = $scope.mockups[0]._id;
         return;
       }
       $scope.mockup = _.findWhere($scope.mockups, {_id: $scope.m_id});
       if (!$scope.mockup) {
         // Probably an old m_id from a previously-selected project.
-        // console.log("m_id not found, setting to " + $scope.mockups[0]._id);
         $scope.m_id = $scope.mockups[0]._id;
         return;
       }
@@ -75,11 +70,19 @@ foxographApp.controller({
 
 
     // Load in the projects.
-    Restangular.all('projects').getList().then(function (projectList) {
-      // Sort the projects by ['name','user'].
-      $scope.projects = $filter('orderBy')(projectList, ['name', 'user']);
-      changeProject();
-    });
+    $scope.loadProjects = function (p_id) {
+      Restangular.all('projects').getList().then(function (projectList) {
+        // Sort the projects by ['name','user'].
+        $scope.projects = $filter('orderBy')(projectList, ['name', 'user']);
+        if (p_id) {
+          $scope.p_id = p_id;
+        } else {
+          changeProject();
+        }
+      });
+    };
+    $scope.loadProjects();
+
 
     // If we get a project, load in the mockups.
     $scope.$watch('project', function (project) {
@@ -161,13 +164,12 @@ foxographApp.controller({
 
     // Handle changes to the currently selected mockup.
     $scope.$watch('mockup', function (mockup) {
-      console.log("Got mockup of " + mockup);
       if (!mockup) {
         return;
       }
 
       mockup.getList('bugs').then(function (bugList) {
-        $scope.mockup.bugs = bugList;
+        mockup.bugs = bugList;
         run();
       });
     });
@@ -179,13 +181,16 @@ foxographApp.controller({
 
   },
 
-  'NewMockupCtrl': function NewMockupCtrl($scope, $route, $routeParams, Restangular, Image) {
+  'NewMockupCtrl': function NewMockupCtrl($scope, $rootScope, $location, $route, Restangular) {
     $scope.project = {};
     $scope.create = function (newProject) {
-      Restangular.all('projects').post({name: newProject.name}).then(function (project) {
+      var projects = Restangular.all('projects');
+      projects.post({name: newProject.name}).then(function (project) {
         project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
-
-        })
+          projects.getList().then(function (projectList) {
+            $scope.$parent.loadProjects(project._id);
+          });
+        });
       });
     };
     $scope.reset = function () {

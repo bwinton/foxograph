@@ -79,7 +79,7 @@ app.configure(function(){
 
       // Print the log
       //if (res.statusCode != 200 && res.statusCode != 304)
-        console.log(logTmpl(req.kvLog));
+      console.log(logTmpl(req.kvLog));
     };
 
     next();

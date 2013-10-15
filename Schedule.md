@@ -3,24 +3,26 @@ Upcoming Features!
 
 ## Version 1.0 ##
 
-* Get it running on paas.allizom.org.
+* Get it running on [paas.allizom.org](https://foxograph.paas.allizom.org/).
   (2 days.) ✔
-    * Copy the config and readme from cupcake-dashboard.
-    * Pick a new name.
-    * Fix any copy/paste bugs I introduced.
+    * ✔ Copy the config and readme from cupcake-dashboard.
+    * ✘ Pick a new name.
+    * ✔ Fix any copy/paste bugs I introduced.
 
-* Let us create new mockups.
-  (2 days.) ☐
-    * Create the form.
-    * Hook up the back-end
-    * Look into Restangular, to see if it makes sense.
+* Let us create new projects.
+  (2 days.) ✔
+    * ✔ Create the form.
+    * ✔ Hook up the back-end
+    * ✔ Look into Restangular, to see if it makes sense. (It does!)
+    * ✔ Change back-end to handle the protocol that Restangular (or other library) uses.
+    * ✔ On Create Project, take us to the new project.
 
 * Store new bugs and mockups on the server.
-  (4 days.) ☐
+  (2 days.) ☐
+    * On image drag, save the image to the back-end.
     * Add front-end code to new bug creation to call store method.
     * Add front-end code to new mockup creation to call store method.
     * Add front-end code to new project creation to call store method.
-    * Change back-end to handle the protocol that Restangular (or other library) uses.
 
 ## Version 1.1 ##
 

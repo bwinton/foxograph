@@ -8,7 +8,8 @@
     <link href="/r/styles/style.css" type="text/css" rel="stylesheet">
     <link href="/r/styles/bugzillaMockup.css" type="text/css" rel="stylesheet">
   </head>
-  <body class="ng-scope" ng-controller="ProjectsCtrl" style="{{background}}">
+  <body class="ng-scope" ng-controller="ProjectsCtrl" ng-init="email=<%= email %>"
+    style="{{background}}" >
     <div class="main-header">
       <!-- Project Menu -->
       <div id="projects">
