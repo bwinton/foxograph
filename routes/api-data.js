@@ -5,8 +5,10 @@ var error = require('./api-utils').error;
 
 var Bug = mongoose.model('Bug', new mongoose.Schema({
   number: String,
-  x: Number,
-  y: Number,
+  startX: Number,
+  startY: Number,
+  endX: Number,
+  endY: Number,
   mockup: String
 }));
 
@@ -108,7 +110,6 @@ exports.postMockup = function(req, res) {
   if (!req.session.email)
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.name) {
-    console.log("error2!");
     return error(res, 'Missing name.');
   }
   Project.findOne({_id: req.params.project_id}, function(err, project) {
@@ -117,7 +118,6 @@ exports.postMockup = function(req, res) {
     if (project.user !== req.session.email)
       return error(res, 'Cannot add a mockup to a project you didn’t create!');
     console.log('Creating mockup:');
-    console.log(req.body);
     req.body.project = req.params.project_id;
     // req.body.slug = makeSlug(req.body.name);
     var mockup = new Mockup(req.body);
@@ -188,16 +188,18 @@ exports.getBugs = function(req, res) {
 
 
 exports.postBug = function(req, res) {
+  console.log(req.body);
   if (!req.session.email)
     return error(res, 'Not logged in.');
   if (!req.body || !req.body.number)
     return error(res, 'Missing number.');
-  Mockup.findOne({_id: req.body.mockup}, function(err, mockup) {
+  Mockup.findOne({_id: req.params.mockup_id}, function(err, mockup) {
     Project.findOne({_id: mockup.project}, function(err, project) {
       if (project.user !== req.session.email)
         return error(res, 'Cannot add a bug to a project you didn’t create!');
       console.log('Creating bug:');
-      console.log(req.body);
+      req.body.mockup = req.params.mockup_id;
+
       var bug = new Bug(req.body);
       console.log(bug);
       bug.save(function (err) {

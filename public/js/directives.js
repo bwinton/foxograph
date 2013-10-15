@@ -41,13 +41,12 @@ foxographApp.directive('mockupImage', function ($http) {
         function bugExists()
         {
           var data = {'number': bug,
-                      'startX': startX, 'startY': startY,
-                      'endX': e.pageX, 'endY': e.pageY,
-                      'mockup': scope.m_id};
+                     'startX': startX, 'startY': startY,
+                     'endX': e.pageX, 'endY': e.pageY};
           startX = null;
           startY = null;
           scope.$apply(function () {
-            scope.bugs.push(data);
+            scope.addBug(data);
           });
         }
         function bugDoesNotExist()
@@ -89,7 +88,7 @@ foxographApp.directive('mockupImage', function ($http) {
         var reader = new FileReader();
         reader.onload = function (event) {
           scope.$apply(function () {
-            scope.mockup.image = event.target.result;
+            scope.setMockupImage(event.target.result);
           });
         };
         reader.readAsDataURL(file);

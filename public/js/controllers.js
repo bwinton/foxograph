@@ -124,6 +124,7 @@ foxographApp.controller({
         });
       }, 15);
     }, true);
+
     $scope.$watch('project', function (project) {
       if (!project) {
         return;
@@ -160,6 +161,15 @@ foxographApp.controller({
           console.log("Image errored!!!  " + err);
         });
       }
+    };
+
+    $scope.setMockupImage = function (image) {
+      $scope.mockup.image = image;
+      $scope.mockup.put();
+    };
+
+    $scope.addBug = function (bug) {
+      $scope.mockup.all('bugs').post(bug);
     };
 
     // Handle changes to the currently selected mockup.
