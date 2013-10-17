@@ -40,9 +40,13 @@ foxographApp.directive('mockupImage', function ($http) {
 
         function bugExists()
         {
-          var data = {'number': bug,
-                     'startX': startX, 'startY': startY,
-                     'endX': e.pageX, 'endY': e.pageY};
+          var data = {
+            'number': bug,
+            'startX': startX,
+            'startY': startY,
+            'endX': e.pageX,
+            'endY': e.pageY
+          };
           startX = null;
           startY = null;
           scope.$apply(function () {

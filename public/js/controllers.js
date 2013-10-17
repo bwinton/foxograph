@@ -83,6 +83,16 @@ foxographApp.controller({
     };
     $scope.loadProjects();
 
+    $scope.addMockup = function () {
+      console.log($scope.project);
+      $scope.project.all('mockups').post({name: 'Add name here…'}, function (mockup) {
+        $scope.project.getList('mockups').then(function (mockupList) {
+          $scope.mockups = mockupList;
+          $scope.m_id = mockup._id;
+        });
+      });
+    };
+
 
     // If we get a project, load in the mockups.
     $scope.$watch('project', function (project) {
