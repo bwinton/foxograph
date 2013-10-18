@@ -161,6 +161,31 @@ exports.putMockup = function(req, res) {
 };
 
 
+
+exports.deleteMockup = function(req, res) {
+  if (!req.session.email)
+    return error(res, 'Not logged in.');
+  console.log('Deleting mockup '+req.params.mockup_id);
+  Mockup.findOne({_id: req.params.mockup_id}, function(err, mockup) {
+    Project.findOne({_id: mockup.project}, function(err, project) {
+      if (project.user !== req.session.email)
+        return error(res, 'Cannot delete a project you didn’t create!');
+
+      // Delete all the bugs for this mockup.
+      Bug.find({mockup: req.params.mockup_id}).remove();
+
+      // Delete the mockup itself!
+      Mockup.findOneAndRemove({_id: req.params.mockup_id}, function(err, mockup) {
+        if (err)
+          return error(res, err, console);
+        console.log(JSON.stringify(mockup));
+        return res.json(mockup);
+      });
+    });
+  });
+};
+
+
 // Bugs.
 function returnBugsForMockups(mockups, res) {
   console.log('Looking for bugs for mockups ' + mockups);

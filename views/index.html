@@ -26,17 +26,18 @@
       <!-- Current Project, and mockup. -->
       <div id="project">
         <h1 class="ng-binding">{{project.name || "Please select a project."}}</h1>
-        <a ng-show="email && email == project.user" class="link"
-           id="deleteProject"><i class="icon-trash"></i></a>
+        <a ng-show="email && email == project.user" ng-click="deleteProject(project)"
+           id="deleteProject" class="link"><i class="icon-trash"></i></a>
         <br>
         <a ng-show="prevMockupId" class="link"
            ng-href="/{{project._id}}/{{prevMockupId}}">«</a>
         <span>{{mockup.name}}</span>
-        <a ng-show="email && email == project.user" class="link"
-           id="deleteMockup"><i class="icon-trash"></i></a>
+        <a ng-show="email && email == project.user"  ng-click="deleteMockup(mockup)"
+           class="link" id="deleteMockup"><i class="icon-trash"></i></a>
         <a ng-show="nextMockupId" class="link"
            ng-href="/{{project._id}}/{{nextMockupId}}">»</a>
-        <a ng-show="email && email == project.user && !nextMockupId" class="link">+</a>
+        <a ng-show="email && email == project.user && !nextMockupId"
+           ng-click="addMockup(project)" class="link">+</a>
       </div>
 
       <!-- User box -->
