@@ -61,7 +61,7 @@ foxographApp.controller({
       }
       if ($scope.p_id && !$scope.m_id) {
         console.log("2 Setting m_id to " + $scope.mockups[0]._id);
-        $location.path('/' + $scope.mockups[0].project + '/' + $scope.mockups[0]._id);
+        $location.path('/p/' + $scope.mockups[0].project + '/' + $scope.mockups[0]._id);
         return;
       }
       $scope.mockup = _.find($scope.mockups, function (mockup) {
@@ -71,7 +71,7 @@ foxographApp.controller({
         // Probably an old m_id from a previously-selected project.
         console.log("3 Setting m_id to " + $scope.mockups[0]._id);
         $scope.mockup = $scope.mockups[0];
-        $location.path('/' + $scope.mockup.project + '/' + $scope.mockup._id);
+        $location.path('/p/' + $scope.mockup.project + '/' + $scope.mockup._id);
         return;
       }
       var mockupIndex = _.indexOf($scope.mockups, $scope.mockup);
@@ -104,7 +104,7 @@ foxographApp.controller({
         $scope.projects = _.without($scope.projects, project);
         $scope.p_id = null;
         console.log("4 Setting m_id to null.");
-        $location.path('/' + $scope.mockups[0].project);
+        $location.path('/p/' + $scope.mockups[0].project);
       });
     };
 
@@ -115,7 +115,7 @@ foxographApp.controller({
             return mockup.creationDate;
           });
           console.log("5 Setting m_id to " + mockup._id);
-          $location.path('/' + mockup.project + '/' + mockup._id);
+          $location.path('/p/' + mockup.project + '/' + mockup._id);
         });
       });
     };
@@ -136,7 +136,7 @@ foxographApp.controller({
           nextMockup = $scope.mockups[index];
         }
         console.log("6 Setting m_id to " + nextMockup._id);
-        $location.path('/' + nextMockup.project + '/' + nextMockup._id);
+        $location.path('/p/' + nextMockup.project + '/' + nextMockup._id);
       });
     };
 
@@ -167,7 +167,7 @@ foxographApp.controller({
     $scope.onProjectSelect = function onProjectSelect() {
       var project = $scope.selectedProject;
       // If we have no project, that means they selected the "Create New Project" option!
-      $location.path('/' + (project ? project._id : 'create'));
+      $location.path('/' + (project ? ('p/' + project._id) : 'create'));
     };
   }
 

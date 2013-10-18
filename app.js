@@ -133,8 +133,9 @@ app.use('/r', express.static(__dirname + '/www'));
 
 // User-facing routes.
 app.get('/', routes.index);
-app.get('/:project_id', routes.index);
-app.get('/:project_id/:mockup_id', routes.index);
+app.get('/create', routes.index);
+app.get('/p/:project_id', routes.index);
+app.get('/p/:project_id/:mockup_id', routes.index);
 
 
 require('express-persona')(app, {

@@ -1,0 +1,27 @@
+<div ng-show="email" class="createBody">
+  <form id="create-mockup" name="form" class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="inputName">Project name</label>
+      <div class="controls">
+        <input type="text" id="inputName" placeholder="New Project"
+          required="true" ng-model="project.name">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="inputName">First Mockup name</label>
+      <div class="controls">
+        <input type="text" id="inputName" placeholder="New Mockup"
+          required="true" ng-model="project.mockup">
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn btn-primary"
+          ng-click="create(project)"
+          ng-disabled="form.$invalid">Create Project</button>
+        <button type="submit" class="btn"
+          ng-click="reset()">Reset</button>
+      </div>
+    </div>
+  </form>
+</div>

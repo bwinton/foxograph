@@ -103,6 +103,7 @@ module.exports = function(grunt) {
       debug: {
         files: [
           {expand: true, cwd: 'public/', src: ['**'], dest: 'www/'},
+          {expand: true, cwd: 'views/partials/', src: ['**'], dest: 'www/'},
         ]
       }
     }

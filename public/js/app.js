@@ -13,9 +13,37 @@
 // Declare app level module which depends on filters, and services
 var foxographApp = angular.module('foxographApp',
   ['restangular', 'ui.router', 'foxographApp.services', 'angular-tools.persona', 'angular-tools.image'])
-  .config(['$routeProvider', '$locationProvider', 'RestangularProvider', function ($routeProvider, $locationProvider, RestangularProvider) {
+  .config(['$stateProvider', '$urlRouterProvider', '$locationProvider', 'RestangularProvider',
+  function ($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
     $locationProvider.html5Mode(true);
-    $routeProvider.when('/').when('/create').when('/:p_id').when('/:p_id/:m_id').otherwise({redirectTo: '/'});
+
+    $urlRouterProvider.otherwise('/');
+    $stateProvider.state('index', {
+      url: '/',
+      views: {
+        'header': { templateUrl: '/r/listHeader.html' },
+        'body': { templateUrl: '/r/listBody.html' }
+      }
+    }).state('create', {
+      url: '/create',
+      views: {
+        'header': { templateUrl: '/r/createHeader.html' },
+        'body': { templateUrl: '/r/createBody.html', controller: 'NewMockupCtrl' }
+      }
+    }).state('project', {
+      url: '/:p_id',
+      views: {
+        'header': { templateUrl: '/r/displayHeader.html' },
+        'body': { templateUrl: '/r/displayBody.html' }
+      }
+    }).state('mockup', {
+      url: '/:p_id/:m_id',
+      views: {
+        'header': { templateUrl: '/r/displayHeader.html' },
+        'body': { templateUrl: '/r/displayBody.html' }
+      }
+    });
+
     RestangularProvider.setBaseUrl('/api');
     RestangularProvider.setRestangularFields({id: "_id"});
   }]);
