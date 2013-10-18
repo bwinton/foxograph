@@ -23,6 +23,7 @@ foxographApp.controller({
     var routeChange = function routeChange() {
       console.log("$routeParams (project) = " + JSON.stringify($routeParams));
       $scope.p_id = $routeParams.p_id;
+      console.log("1 Setting m_id to " + $routeParams.m_id);
       $scope.m_id = $routeParams.m_id;
     };
     $scope.$on("$routeChangeSuccess", routeChange);
@@ -34,7 +35,10 @@ foxographApp.controller({
         return;
       }
       if (!$scope.p_id) {
-        $scope.p_id = $scope.projects[0]._id;
+        // $scope.p_id = $scope.projects[0]._id;
+        $scope.project = null;
+        $scope.selectedProject = $scope.project;
+        $scope.mockup = null;
         return;
       }
       $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
@@ -49,14 +53,25 @@ foxographApp.controller({
       if (!$scope.mockups) {
         return;
       }
-      if (!$scope.m_id) {
-        $scope.m_id = $scope.mockups[0]._id;
+      if (!$scope.p_id) {
+        $scope.project = null;
+        $scope.selectedProject = $scope.project;
+        $scope.mockup = null;
         return;
       }
-      $scope.mockup = _.findWhere($scope.mockups, {_id: $scope.m_id});
+      if ($scope.p_id && !$scope.m_id) {
+        console.log("2 Setting m_id to " + $scope.mockups[0]._id);
+        $location.path('/' + $scope.mockups[0].project + '/' + $scope.mockups[0]._id);
+        return;
+      }
+      $scope.mockup = _.find($scope.mockups, function (mockup) {
+        return mockup._id === $scope.m_id;
+      });
       if (!$scope.mockup) {
         // Probably an old m_id from a previously-selected project.
-        $scope.m_id = $scope.mockups[0]._id;
+        console.log("3 Setting m_id to " + $scope.mockups[0]._id);
+        $scope.mockup = $scope.mockups[0];
+        $location.path('/' + $scope.mockup.project + '/' + $scope.mockup._id);
         return;
       }
       var mockupIndex = _.indexOf($scope.mockups, $scope.mockup);
@@ -83,16 +98,47 @@ foxographApp.controller({
     };
     $scope.loadProjects();
 
-    $scope.addMockup = function () {
-      console.log($scope.project);
-      $scope.project.all('mockups').post({name: 'Add name here…'}, function (mockup) {
-        $scope.project.getList('mockups').then(function (mockupList) {
-          $scope.mockups = mockupList;
-          $scope.m_id = mockup._id;
+    $scope.deleteProject = function (project) {
+      alert('deleting project ' + project.name);
+      project.remove().then(function (data) {
+        $scope.projects = _.without($scope.projects, project);
+        $scope.p_id = null;
+        console.log("4 Setting m_id to null.");
+        $location.path('/' + $scope.mockups[0].project);
+      });
+    };
+
+    $scope.addMockup = function (project) {
+      project.all('mockups').post({name: 'Add name here…'}).then(function (mockup) {
+        project.getList('mockups').then(function (mockupList) {
+          $scope.mockups = _.sortBy(mockupList, function (mockup) {
+            return mockup.creationDate;
+          });
+          console.log("5 Setting m_id to " + mockup._id);
+          $location.path('/' + mockup.project + '/' + mockup._id);
         });
       });
     };
 
+    $scope.deleteMockup = function (mockup) {
+      var index = _.indexOf($scope.mockups, mockup);
+      console.log("6 deleting " + mockup._id);
+      mockup.remove().then(function (data) {
+        $scope.mockups = _.without($scope.mockups, mockup);
+        if (index >= $scope.mockups.length) {
+          index = $scope.mockups.length - 1;
+        }
+        if (index < 0) {
+          index = 0;
+        }
+        var nextMockup = null;
+        if ($scope.mockups.length > 0) {
+          nextMockup = $scope.mockups[index];
+        }
+        console.log("6 Setting m_id to " + nextMockup._id);
+        $location.path('/' + nextMockup.project + '/' + nextMockup._id);
+      });
+    };
 
     // If we get a project, load in the mockups.
     $scope.$watch('project', function (project) {
@@ -106,7 +152,9 @@ foxographApp.controller({
         return;
       }
       project.getList('mockups').then(function (mockupList) {
-        $scope.mockups = mockupList;
+        $scope.mockups = _.sortBy(mockupList, function (mockup) {
+          return mockup.creationDate;
+        });
         changeMockup();
       });
     });
@@ -120,101 +168,6 @@ foxographApp.controller({
       var project = $scope.selectedProject;
       // If we have no project, that means they selected the "Create New Project" option!
       $location.path('/' + (project ? project._id : 'create'));
-    };
-
-  },
-
-  'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, Restangular, Image) {
-    // Handle changes to the currently selected project.
-    $scope.$watch('bugs', function (bugs) {
-      setTimeout(function () {
-        $scope.$apply(function () {
-          console.log("Running!  1");
-          run();
-        });
-      }, 15);
-    }, true);
-
-    $scope.$watch('project', function (project) {
-      if (!project) {
-        return;
-      }
-      project.getList('bugs').then(function (bugList) {
-        $scope.bugs = bugList;
-      });
-    });
-
-    var getMockupStyle = function (mockupImage, $scope) {
-      var width = 'width: 100%; ';
-      var height = 'height: 100%; ';
-      var position = 'background-position: 45%; ';
-      var imageUrl = '"/r/images/default.png"';
-      if (mockupImage) {
-        imageUrl = '"/r/images/bugzilla-loading.png"';
-      }
-      imageUrl = 'background-image: url(' + imageUrl + ');';
-
-      $scope.mockupStyle = width + height + position + imageUrl;
-      $scope.setBackground('');
-
-      if (mockupImage) {
-        Image.load(mockupImage, $scope).then(function (img) {
-          width = 'width: ' + img.width + 'px;';
-          height = 'height: ' + img.height + 'px;';
-          position = '';
-          imageUrl = 'background-image: url("' + mockupImage + '");';
-          $scope.mockupStyle = width + height + position + imageUrl;
-
-          var pixel = 'background-color: rgb(' + img.r + ',' + img.g + ',' + img.b + ');';
-          $scope.setBackground(pixel);
-        }, function (err) {
-          console.log("Image errored!!!  " + err);
-        });
-      }
-    };
-
-    $scope.setMockupImage = function (image) {
-      $scope.mockup.image = image;
-      $scope.mockup.put();
-    };
-
-    $scope.addBug = function (bug) {
-      $scope.mockup.all('bugs').post(bug);
-    };
-
-    // Handle changes to the currently selected mockup.
-    $scope.$watch('mockup', function (mockup) {
-      if (!mockup) {
-        return;
-      }
-
-      mockup.getList('bugs').then(function (bugList) {
-        mockup.bugs = bugList;
-        run();
-      });
-    });
-
-    $scope.$watch('mockup.image', function (image) {
-      console.log("Got mockup image of " + (image ? "something" : "nothing"));
-      getMockupStyle(image, $scope);
-    });
-
-  },
-
-  'NewMockupCtrl': function NewMockupCtrl($scope, $rootScope, $location, $route, Restangular) {
-    $scope.project = {};
-    $scope.create = function (newProject) {
-      var projects = Restangular.all('projects');
-      projects.post({name: newProject.name}).then(function (project) {
-        project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
-          projects.getList().then(function (projectList) {
-            $scope.$parent.loadProjects(project._id);
-          });
-        });
-      });
-    };
-    $scope.reset = function () {
-      $scope.project = {};
     };
   }
 
