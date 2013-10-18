@@ -16,6 +16,7 @@ var Mockup = mongoose.model('Mockup', new mongoose.Schema({
   name: String,
   slug: String,
   image: String,
+  creationDate: Date,
   project: String
 }));
 
@@ -118,6 +119,7 @@ exports.postMockup = function(req, res) {
     if (project.user !== req.session.email)
       return error(res, 'Cannot add a mockup to a project you didn’t create!');
     console.log('Creating mockup:');
+    req.body.creationDate = new Date();
     req.body.project = req.params.project_id;
     // req.body.slug = makeSlug(req.body.name);
     var mockup = new Mockup(req.body);

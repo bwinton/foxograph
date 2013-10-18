@@ -21,8 +21,9 @@ Upcoming Features!
   (2 days.) ☐
     * ✔ On image drag, save the image to the back-end.
     * ✔ Add front-end code to new bug creation to call store method.
-    * Add front-end code to new mockup creation to call store method.
+    * ✔ Add front-end code to new mockup creation to call store method.
     * Add front-end code to new project creation to call store method.
+    * Add front-end code to refresh display on new bug/mockup/project creation.
     * Add front-end code to bug deletion to call delete method.
     * Add front-end code to mockup deletion to call delete method.
     * Add front-end code to project deletion to call delete method.
