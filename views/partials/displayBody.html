@@ -8,7 +8,8 @@
   <p id="mockup" style="{{mockupStyle}}">
     <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
          style="top:{{bug.endY}}px; left:{{bug.endX}}px;" id="bug-{{bug.number}}">
-      <a ng-show="email && email == project.user"  ng-click="deleteMockup(mockup)"
+      <a ng-show="auth.email && auth.email == project.user"
+        ng-click="deleteMockup(mockup)"
         class="link" id="deleteMockup"><i class="icon-trash"></i></a>
     </div>
   </p>

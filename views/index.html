@@ -8,7 +8,7 @@
     <link href="/r/styles/style.css" type="text/css" rel="stylesheet">
     <link href="/r/styles/bugzillaMockup.css" type="text/css" rel="stylesheet">
   </head>
-  <body class="ng-scope" ng-init="email=<%= email %>"
+  <body class="ng-scope" ng-init="auth.email=<%= email %>"
     style="{{background}}" >
     <div class="main-header" ng-controller="HeaderCtrl">
       <!-- Project Menu -->
@@ -31,13 +31,13 @@
         <span>{{subTitle}}</span>
         <a ng-show="nextMockupId" class="link"
            ng-href="/{{project._id}}/{{nextMockupId}}">»</a>
-        <a ng-show="email && email == project.user && !nextMockupId"
+        <a ng-show="auth.email && auth.email == project.user && !nextMockupId"
            ng-click="addMockup(project)" class="link">+</a>
       </div>
 
       <!-- User box -->
-      <user></user>
-      <button type="submit" class="btn" ng-show="email"
+      <user auth="auth"></user>
+      <button type="submit" class="btn" ng-show="auth.email"
         ng-click="createProject()">Create New Project</button>
 
     </div>

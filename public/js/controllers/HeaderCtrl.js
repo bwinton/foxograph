@@ -37,15 +37,9 @@ foxographApp.controller({
       $state.go('project', {'p_id': project ? project._id : null});
     });
 
-    // Event handlers!
-    $scope.setBackground = function setBackground(background) {
-      $scope.background = background;
-    };
-
     $scope.createProject = function () {
       $state.go('create');
     };
 
   }
-
 });
