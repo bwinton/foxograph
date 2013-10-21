@@ -39,7 +39,7 @@ angular.module('angular-tools.persona', [])
                 '  <div ng-show="auth.email" class="email" title="Click to sign out.">{{auth.email}}</div>' +
                 '</div>',
 
-      link: function userPostLink(scope, iElement, iAttrs, ngModel) {
+      link: function userPostLink(scope, iElement, iAttrs) {
 
         // Log in when we click the login button.
         iElement.find('.button.login').on('click', function () {
