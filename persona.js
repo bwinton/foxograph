@@ -33,12 +33,13 @@ angular.module('angular-tools.persona', [])
 
     var directiveDefinitionObject = {
       restrict: 'E',
+      scope: {'auth' : '=auth'},
       template: '<div id="user">' +
-                '  <div ng-hide="email" class="button login" title="Click to sign in.">sign in</div>' +
-                '  <div ng-show="email" class="email" title="Click to sign out.">{{email}}</div>' +
+                '  <div ng-hide="auth.email" class="button login" title="Click to sign in.">sign in</div>' +
+                '  <div ng-show="auth.email" class="email" title="Click to sign out.">{{auth.email}}</div>' +
                 '</div>',
 
-      link: function userPostLink(scope, iElement, iAttrs) {
+      link: function userPostLink(scope, iElement, iAttrs, ngModel) {
 
         // Log in when we click the login button.
         iElement.find('.button.login').on('click', function () {
@@ -52,14 +53,14 @@ angular.module('angular-tools.persona', [])
                 .success(function (data, status, headers, config) {
                   if (data.status === 'okay') {
                     console.log(data.email);
-                    scope.email = data.email;
+                    scope.auth.email = data.email;
                   } else {
                     console.log('Login failed because ' + data.reason);
-                    scope.email = null;
+                    scope.auth.email = null;
                   }
                 }).error(function (data, status, headers, config) {
                   console.log('Login failed (' + status + ') with data ' + data);
-                  scope.email = null;
+                  scope.auth.email = null;
                 });
             });
           });
@@ -72,14 +73,14 @@ angular.module('angular-tools.persona', [])
               .success(function (data, status, headers, config) {
                 if (data.status === 'okay') {
                   console.log('Logout succeeded.');
-                  scope.email = null;
+                  scope.auth.email = null;
                 } else {
                   console.log('Login failed because ' + data.reason);
-                  scope.email = null;
+                  scope.auth.email = null;
                 }
               }).error(function (data, status, headers, config) {
                 console.log('Logout failed (' + status + ') with data ' + JSON.stringify(data));
-                scope.email = null;
+                scope.auth.email = null;
               });
           });
         });
