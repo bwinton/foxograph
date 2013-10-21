@@ -16,7 +16,7 @@
         <!-- Should have a "." in the ng-model, I think, maybe. -->
         <input type="text" placeholder="Filter projects…" ng-model="projectSearch"
                style="padding-bottom: 0; margin-bottom: 0"><br>
-        <select id="project-list" ng-model="selectedProject" ng-change="onProjectSelect()"
+        <select id="project-list" ng-model="selectedProject"
                 style="padding-top: 0; margin-top: 0"
                 ng-options="'[' + c.user + '] ' + c.name for c in projects | filter:projectSearch">
         </select>
@@ -25,14 +25,10 @@
       <!-- Current Project, and mockup. -->
       <div id="project" class="displayHeader">
         <h1>{{mainTitle}}</h1>
-        <a ng-show="email && email == project.user" ng-click="deleteProject(project)"
-           id="deleteProject" class="link"><i class="icon-trash"></i></a>
         <br>
         <a ng-show="prevMockupId" class="link"
            ng-href="/{{project._id}}/{{prevMockupId}}">«</a>
         <span>{{subTitle}}</span>
-        <a ng-show="email && email == project.user"  ng-click="deleteMockup(mockup)"
-           class="link" id="deleteMockup"><i class="icon-trash"></i></a>
         <a ng-show="nextMockupId" class="link"
            ng-href="/{{project._id}}/{{nextMockupId}}">»</a>
         <a ng-show="email && email == project.user && !nextMockupId"

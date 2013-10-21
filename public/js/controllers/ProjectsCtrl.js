@@ -18,10 +18,11 @@ foxographApp.controller({
   // project, and automatically selecting the appropriate mockup in that
   // project.
   'ProjectsCtrl': function ProjectsCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter, $state) {
-    console.log($rootScope, $rootScope.$watch);
     $rootScope.$watch('projects', function () {
       $rootScope.mainTitle = 'Please select a project';
       $rootScope.subTitle = '';
+
+      $rootScope.p_id = $stateParams.p_id;
 
       var project = _.findWhere($scope.projects, {_id: $stateParams.p_id});
       if (!project) {
@@ -43,11 +44,11 @@ foxographApp.controller({
     });
 
     // Handle a change in project id by setting the project.
-    var changeProject = function changeProject() {
-      if (!$scope.projects) {
+    $rootScope.$watch('p_id', function changeProject(p_id) {
+      if (!$rootScope.projects) {
         return;
       }
-      if (!$scope.p_id) {
+      if (!$rootScope.p_id) {
         // $scope.p_id = $scope.projects[0]._id;
         $scope.project = null;
         $scope.selectedProject = $scope.project;
@@ -56,9 +57,7 @@ foxographApp.controller({
       }
       $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
       $scope.selectedProject = $scope.project;
-      $scope.onProjectSelect();
-    };
-    $scope.$watch('p_id', changeProject);
+    });
 
 
     // Handle a change in mockup id by setting the mockup.
@@ -147,7 +146,7 @@ foxographApp.controller({
         $scope.prevMockupId = null;
         $scope.nextMockupId = null;
         $scope.bugs = null;
-        $scope.setBackground('');
+        //$scope.setBackground('');
         return;
       }
       project.getList('mockups').then(function (mockupList) {
@@ -157,21 +156,5 @@ foxographApp.controller({
         changeMockup();
       });
     });
-
-    // Event handlers!
-    $scope.setBackground = function setBackground(background) {
-      $scope.background = background;
-    };
-
-    $scope.createProject = function () {
-      $state.go('create');
-    };
-
-    $scope.onProjectSelect = function onProjectSelect() {
-      var project = $scope.selectedProject;
-      // If we have no project, that means they selected the "Create New Project" option!
-      $location.path('/' + (project ? ('p/' + project._id) : 'create'));
-    };
   }
-
 });

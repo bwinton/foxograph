@@ -17,7 +17,7 @@ foxographApp.controller({
   // The HeaderCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'HeaderCtrl': function HeaderCtrl($scope, $rootScope, $location, Restangular, $filter) {
+  'HeaderCtrl': function HeaderCtrl($scope, $rootScope, Restangular, $filter, $state) {
 
     // Load in the projects.
     Restangular.all('projects').getList().then(function (projectList) {
@@ -25,16 +25,27 @@ foxographApp.controller({
       $rootScope.projects = $filter('orderBy')(projectList, ['name', 'user']);
     });
 
+    $rootScope.$watch('p_id', function (p_id, old_p_id) {
+      if (p_id) {
+        $scope.selectedProject = _.findWhere($rootScope.projects, {_id: p_id});
+      } else {
+        $scope.selectedProject = null;
+      }
+    });
+
+    $scope.$watch('selectedProject', function (project, oldProject) {
+      $state.go('project', {'p_id': project ? project._id : null});
+    });
+
     // Event handlers!
     $scope.setBackground = function setBackground(background) {
       $scope.background = background;
     };
 
-    $scope.onProjectSelect = function onProjectSelect() {
-      var project = $scope.selectedProject;
-      // If we have no project, that means they selected the "Create New Project" option!
-      $location.path('/' + (project ? ('p/' + project._id) : 'create'));
+    $scope.createProject = function () {
+      $state.go('create');
     };
+
   }
 
 });
