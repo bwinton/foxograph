@@ -8,30 +8,45 @@
     <link href="/r/styles/style.css" type="text/css" rel="stylesheet">
     <link href="/r/styles/bugzillaMockup.css" type="text/css" rel="stylesheet">
   </head>
-  <body class="ng-scope" ng-controller="ProjectsCtrl" ng-init="email=<%= email %>"
+  <body class="ng-scope" ng-init="email=<%= email %>"
     style="{{background}}" >
-    <div class="main-header">
+    <div class="main-header" ng-controller="HeaderCtrl">
       <!-- Project Menu -->
       <div id="projects">
         <!-- Should have a "." in the ng-model, I think, maybe. -->
-        <input type="text" placeholder="Filter projects…" data-ng-model="projectSearch"
+        <input type="text" placeholder="Filter projects…" ng-model="projectSearch"
                style="padding-bottom: 0; margin-bottom: 0"><br>
         <select id="project-list" ng-model="selectedProject" ng-change="onProjectSelect()"
                 style="padding-top: 0; margin-top: 0"
                 ng-options="'[' + c.user + '] ' + c.name for c in projects | filter:projectSearch">
-          <option ng-show="email" value="">Create New Project</option>
         </select>
       </div>
 
       <!-- Current Project, and mockup. -->
-      <div ui-view="header"></div>
+      <div id="project" class="displayHeader">
+        <h1>{{mainTitle}}</h1>
+        <a ng-show="email && email == project.user" ng-click="deleteProject(project)"
+           id="deleteProject" class="link"><i class="icon-trash"></i></a>
+        <br>
+        <a ng-show="prevMockupId" class="link"
+           ng-href="/{{project._id}}/{{prevMockupId}}">«</a>
+        <span>{{subTitle}}</span>
+        <a ng-show="email && email == project.user"  ng-click="deleteMockup(mockup)"
+           class="link" id="deleteMockup"><i class="icon-trash"></i></a>
+        <a ng-show="nextMockupId" class="link"
+           ng-href="/{{project._id}}/{{nextMockupId}}">»</a>
+        <a ng-show="email && email == project.user && !nextMockupId"
+           ng-click="addMockup(project)" class="link">+</a>
+      </div>
 
       <!-- User box -->
       <user></user>
+      <button type="submit" class="btn" ng-show="email"
+        ng-click="createProject()">Create New Project</button>
 
     </div>
 
-    <div ui-view="body"></div>
+    <div ui-view></div>
 
     <!-- Third-party library code -->
     <script src="/r/js/lib/jquery/jquery.js" type="text/javascript"></script>
@@ -50,6 +65,7 @@
     <!-- App code -->
     <script src="/r/js/app.js" type="text/javascript"></script>
     <script src="/r/js/services.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/HeaderCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/ProjectsCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/MockupCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/NewMockupCtrl.js" type="text/javascript"></script>

@@ -15,6 +15,8 @@
 foxographApp.controller({
 
   'NewMockupCtrl': function NewMockupCtrl($scope, $rootScope, $location, $route, Restangular) {
+    $rootScope.mainTitle = 'Create a new project';
+    $rootScope.subTitle = '';
     $scope.project = {};
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');

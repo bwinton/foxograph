@@ -75,6 +75,14 @@ foxographApp.controller({
       });
     };
 
+    $scope.deleteBug = function (bug) {
+      alert('deleting bug ' + bug.number);
+      bug.remove().then(function (data) {
+        $scope.bugs = _.without($scope.bugs, bug);
+      });
+    };
+
+
     // Handle changes to the currently selected mockup.
     $scope.$watch('mockup', function (mockup) {
       if (!mockup) {

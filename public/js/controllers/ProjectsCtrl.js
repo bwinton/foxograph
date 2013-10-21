@@ -17,17 +17,30 @@ foxographApp.controller({
   // The ProjectsCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'ProjectsCtrl': function ProjectsCtrl($scope, $location, $route, $routeParams, Restangular, $filter) {
+  'ProjectsCtrl': function ProjectsCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter, $state) {
+    console.log($rootScope, $rootScope.$watch);
+    $rootScope.$watch('projects', function () {
+      $rootScope.mainTitle = 'Please select a project';
+      $rootScope.subTitle = '';
 
-    // Handle the change in route by setting the various ids.
-    var routeChange = function routeChange() {
-      console.log("$routeParams (project) = " + JSON.stringify($routeParams));
-      $scope.p_id = $routeParams.p_id;
-      console.log("1 Setting m_id to " + $routeParams.m_id);
-      $scope.m_id = $routeParams.m_id;
-    };
-    $scope.$on("$routeChangeSuccess", routeChange);
+      var project = _.findWhere($scope.projects, {_id: $stateParams.p_id});
+      if (!project) {
+        return;
+      }
+      $rootScope.mainTitle = project.name;
 
+      if (!$stateParams.m_id) {
+        return;
+      }
+      var mockups = project.all('mockups').getList().then(function (mockupList) {
+        // Sort the projects by ['name','user'].
+        var mockup = _.findWhere(mockupList, {_id: $stateParams.m_id});
+        if (!mockup) {
+          return;
+        }
+        $rootScope.subTitle = mockup.name;
+      });
+    });
 
     // Handle a change in project id by setting the project.
     var changeProject = function changeProject() {
@@ -83,20 +96,6 @@ foxographApp.controller({
     };
     $scope.$watch('m_id', changeMockup);
 
-
-    // Load in the projects.
-    $scope.loadProjects = function (p_id) {
-      Restangular.all('projects').getList().then(function (projectList) {
-        // Sort the projects by ['name','user'].
-        $scope.projects = $filter('orderBy')(projectList, ['name', 'user']);
-        if (p_id) {
-          $scope.p_id = p_id;
-        } else {
-          changeProject();
-        }
-      });
-    };
-    $scope.loadProjects();
 
     $scope.deleteProject = function (project) {
       alert('deleting project ' + project.name);
@@ -162,6 +161,10 @@ foxographApp.controller({
     // Event handlers!
     $scope.setBackground = function setBackground(background) {
       $scope.background = background;
+    };
+
+    $scope.createProject = function () {
+      $state.go('create');
     };
 
     $scope.onProjectSelect = function onProjectSelect() {

@@ -1,4 +1,4 @@
-<div id="mockup-wrapper" ng-controller="MockupCtrl" data-mockup-image class="displayBody">
+<div id="mockup-wrapper" data-mockup-image class="displayBody">
   <svg viewbox="0 0 1500 900" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <line ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
           x1="{{bug.startX}}" y1="{{bug.startY}}"
@@ -8,6 +8,8 @@
   <p id="mockup" style="{{mockupStyle}}">
     <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
          style="top:{{bug.endY}}px; left:{{bug.endX}}px;" id="bug-{{bug.number}}">
+      <a ng-show="email && email == project.user"  ng-click="deleteMockup(mockup)"
+        class="link" id="deleteMockup"><i class="icon-trash"></i></a>
     </div>
   </p>
   <div id="bugs" ng-show="listMode">
