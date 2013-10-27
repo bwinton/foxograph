@@ -1,0 +1,11 @@
+<div class="projectsList">
+  <!-- Should have a "." in the ng-model, I think, maybe. -->
+  <input type="text" placeholder="Filter projects…" ng-model="projectSearch"
+         style="padding-bottom: 0; margin-bottom: 0">
+
+  <ul class="projectList">
+    <li ng-repeat="project in projects | filter:projectSearch">
+      <a ng-href="/p/{{project._id}}">[{{project.user}}] {{project.name}}</a>
+    </li>
+  </ul>
+</div>

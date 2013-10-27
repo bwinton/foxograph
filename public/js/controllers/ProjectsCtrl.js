@@ -17,30 +17,12 @@ foxographApp.controller({
   // The ProjectsCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'ProjectsCtrl': function ProjectsCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter, $state) {
+  'ProjectsCtrl': function ProjectsCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
     $rootScope.$watch('projects', function () {
-      $rootScope.mainTitle = 'Please select a project';
-      $rootScope.subTitle = '';
-
       $rootScope.p_id = $stateParams.p_id;
+      console.log("BW - Setting p_id to ", $rootScope.p_id);
 
       var project = _.findWhere($scope.projects, {_id: $stateParams.p_id});
-      if (!project) {
-        return;
-      }
-      $rootScope.mainTitle = project.name;
-
-      if (!$stateParams.m_id) {
-        return;
-      }
-      var mockups = project.all('mockups').getList().then(function (mockupList) {
-        // Sort the projects by ['name','user'].
-        var mockup = _.findWhere(mockupList, {_id: $stateParams.m_id});
-        if (!mockup) {
-          return;
-        }
-        $rootScope.subTitle = mockup.name;
-      });
     });
 
     // Handle a change in project id by setting the project.
@@ -51,49 +33,43 @@ foxographApp.controller({
       if (!$rootScope.p_id) {
         // $scope.p_id = $scope.projects[0]._id;
         $scope.project = null;
-        $scope.selectedProject = $scope.project;
         $scope.mockup = null;
         return;
       }
-      $scope.project = _.findWhere($scope.projects, {_id: $scope.p_id});
-      $scope.selectedProject = $scope.project;
+      $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.p_id});
     });
 
 
     // Handle a change in mockup id by setting the mockup.
-    var changeMockup = function changeMockup() {
-      if (!$scope.mockups) {
+    $rootScope.$watch('m_id', function changeMockup() {
+      console.log("BW - mockups =", $rootScope.mockups,
+        "p_id =", $rootScope.p_id, "m_id =", $rootScope.m_id);
+      if (!$rootScope.mockups) {
         return;
       }
-      if (!$scope.p_id) {
-        $scope.project = null;
-        $scope.selectedProject = $scope.project;
-        $scope.mockup = null;
+      if (!$rootScope.p_id) {
         return;
       }
-      if ($scope.p_id && !$scope.m_id) {
-        console.log("2 Setting m_id to " + $scope.mockups[0]._id);
-        $location.path('/p/' + $scope.mockups[0].project + '/' + $scope.mockups[0]._id);
+      if ($rootScope.p_id && !$rootScope.m_id) {
+        console.log("2 Setting m_id to " + $rootScope.mockups[0]._id);
+        $rootScope.m_id = $rootScope.mockups[0]._id;
         return;
       }
-      $scope.mockup = _.find($scope.mockups, function (mockup) {
-        return mockup._id === $scope.m_id;
-      });
+      $scope.mockup = _.findWhere($rootScope.mockups, {_id: $rootScope.m_id});
+
       if (!$scope.mockup) {
         // Probably an old m_id from a previously-selected project.
-        console.log("3 Setting m_id to " + $scope.mockups[0]._id);
-        $scope.mockup = $scope.mockups[0];
-        $location.path('/p/' + $scope.mockup.project + '/' + $scope.mockup._id);
+        console.log("3 Setting m_id to " + $rootScope.mockups[0]._id);
+        $scope.mockup = $rootScope.mockups[0];
         return;
       }
-      var mockupIndex = _.indexOf($scope.mockups, $scope.mockup);
-      $scope.prevMockupId = (mockupIndex > 0) ?
-                            $scope.mockups[mockupIndex - 1]._id : null;
-      $scope.nextMockupId = (mockupIndex < $scope.mockups.length - 1) ?
-                            $scope.mockups[mockupIndex + 1]._id : null;
+      var mockupIndex = _.indexOf($rootScope.mockups, $scope.mockup);
+      $rootScope.prevMockupId = (mockupIndex > 0) ?
+                            $rootScope.mockups[mockupIndex - 1]._id : null;
+      $rootScope.nextMockupId = (mockupIndex < $rootScope.mockups.length - 1) ?
+                            $rootScope.mockups[mockupIndex + 1]._id : null;
       console.log("$scope.mockup = " + $scope.mockup);
-    };
-    $scope.$watch('m_id', changeMockup);
+    });
 
 
     $scope.deleteProject = function (project) {
@@ -102,59 +78,40 @@ foxographApp.controller({
         $scope.projects = _.without($scope.projects, project);
         $scope.p_id = null;
         console.log("4 Setting m_id to null.");
-        $location.path('/p/' + $scope.mockups[0].project);
+        // $location.path('/p/' + $rootScope.mockups[0].project);
       });
     };
 
     $scope.addMockup = function (project) {
       project.all('mockups').post({name: 'Add name here…'}).then(function (mockup) {
         project.getList('mockups').then(function (mockupList) {
-          $scope.mockups = _.sortBy(mockupList, function (mockup) {
+          $rootScope.mockups = _.sortBy(mockupList, function (mockup) {
             return mockup.creationDate;
           });
           console.log("5 Setting m_id to " + mockup._id);
-          $location.path('/p/' + mockup.project + '/' + mockup._id);
+          // $location.path('/p/' + mockup.project + '/' + mockup._id);
         });
       });
     };
 
     $scope.deleteMockup = function (mockup) {
-      var index = _.indexOf($scope.mockups, mockup);
+      var index = _.indexOf($rootScope.mockups, mockup);
       console.log("6 deleting " + mockup._id);
       mockup.remove().then(function (data) {
-        $scope.mockups = _.without($scope.mockups, mockup);
-        if (index >= $scope.mockups.length) {
-          index = $scope.mockups.length - 1;
+        $rootScope.mockups = _.without($rootScope.mockups, mockup);
+        if (index >= $rootScope.mockups.length) {
+          index = $rootScope.mockups.length - 1;
         }
         if (index < 0) {
           index = 0;
         }
         var nextMockup = null;
-        if ($scope.mockups.length > 0) {
-          nextMockup = $scope.mockups[index];
+        if ($rootScope.mockups.length > 0) {
+          nextMockup = $rootScope.mockups[index];
         }
         console.log("6 Setting m_id to " + nextMockup._id);
-        $location.path('/p/' + nextMockup.project + '/' + nextMockup._id);
+        // $location.path('/p/' + nextMockup.project + '/' + nextMockup._id);
       });
     };
-
-    // If we get a project, load in the mockups.
-    $scope.$watch('project', function (project) {
-      if (!project) {
-        $scope.mockups = null;
-        $scope.mockup = null;
-        $scope.prevMockupId = null;
-        $scope.nextMockupId = null;
-        $scope.bugs = null;
-        //$scope.setBackground('');
-        return;
-      }
-      project.getList('mockups').then(function (mockupList) {
-        $scope.mockups = _.sortBy(mockupList, function (mockup) {
-          return mockup.creationDate;
-        });
-        changeMockup();
-      });
-    });
   }
 });

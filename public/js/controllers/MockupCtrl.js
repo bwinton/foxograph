@@ -14,7 +14,17 @@
 
 foxographApp.controller({
 
-  'MockupCtrl': function MockupCtrl($scope, $route, $routeParams, Restangular, Image) {
+  'MockupCtrl': function MockupCtrl($scope, $rootScope, $stateParams, Restangular, Image) {
+    $rootScope.$watch('mockups', function () {
+      $rootScope.m_id = $stateParams.m_id;
+      console.log("BW - Setting m_id to ", $rootScope.m_id);
+
+      $scope.mockup = _.findWhere($rootScope.mockups, {_id: $rootScope.m_id});
+      if (!$scope.mockup) {
+        return;
+      }
+    });
+
     // Handle changes to the currently selected project.
     $scope.$watch('bugs', function (bugs) {
       setTimeout(function () {

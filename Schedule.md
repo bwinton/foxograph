@@ -1,3 +1,10 @@
+BUGS!!!
+=======
+
+* Can't add mockup of specific name.
+
+
+
 Upcoming Features!
 ==================
 

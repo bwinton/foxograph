@@ -1,12 +1,12 @@
 @charset "utf-8";
 /* CSS Document */
 
-a {
+bug a {
   color:white;
   text-decoration:none;
 }
 
-a:hover {
+bug a:hover {
   text-decoration:underline;
 }
 

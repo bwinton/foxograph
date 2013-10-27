@@ -34,6 +34,8 @@ body {
 
 .main-header {
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 2;
   width: calc(100% - 40px);
   height: 80px;
@@ -46,6 +48,23 @@ body {
   width: 33%;
   vertical-align: text-bottom;
 }
+
+.main-content {
+  width: 100%;
+  height: calc(100% - 60px);
+  position: relative;
+  top: 80px;
+  left: 0;
+}
+
+.main-content > div {
+  margin: 10vh 10vw;
+}
+
+.main-content > div {
+  margin: 10vh 10vw;
+}
+
 
 #project {
   text-align: center;
@@ -112,17 +131,8 @@ canvas {
   vertical-align: baseline;
 }
 
-#create-mockup,
 #mockup-wrapper {
-  width: 100%;
-  height: calc(100% - 60px);
-  position: relative;
-  top: 80px;
-  left: 0;
-}
-
-#create-mockup {
-  padding: 10vh 10vw;
+  padding: 0;
 }
 
 #mockup-wrapper svg {
