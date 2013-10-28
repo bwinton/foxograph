@@ -2,6 +2,15 @@
 
 var mongoose = require('mongoose');
 var error = require('./api-utils').error;
+var extend = require('./api-utils').extend;
+
+var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
+  number: String,
+  summary: String,
+  status: String,
+  blocking: String,
+  assigned: String
+}));
 
 var Bug = mongoose.model('Bug', new mongoose.Schema({
   number: String,
@@ -192,9 +201,40 @@ exports.deleteMockup = function(req, res) {
 function returnBugsForMockups(mockups, res) {
   console.log('Looking for bugs for mockups ' + mockups);
   return Bug.find({mockup: {$in: mockups}}, function(err, bugs) {
+    console.log("BW1 -", bugs.length, err);
     if (err)
       return error(res, err, console);
-    return res.json(bugs);
+    var bugNumbers = bugs.map(function (bug) {
+      return bug.number;
+    });
+    console.log("BW2 -", bugNumbers);
+    return BugInfo.find({number: {$in: bugNumbers}}, function(err, bugInfos) {
+      console.log("BW3 -", bugInfos.length, err);
+      if (err)
+        return error(res, err, console);
+      var retval = bugs.map(function (bug) {
+        console.log("BW4 -", bug);
+        var bugInfo = bugInfos.filter(function (bugInfo) {
+          return bugInfo.number === bug.number;
+        });
+        console.log("BW4 -", bugInfo.length);
+        if (!bugInfo.length) {
+          bugInfo = [{
+            number: bug.number,
+            summary: "This is my bug summary.",
+            status: "VERIFIED",
+            resolution: "",
+            cf_blocking_20: "",
+            assigned_to: {"real_name": "Nobody; OK to take it and work on it"}
+          }];
+        }
+        console.log("BW5 -", bugInfo.length ? bugInfo[0] : {});
+        console.log("BW6 -", extend(bug, bugInfo.length ? bugInfo[0] : {}));
+        return extend(bug.toObject(), bugInfo.length ? bugInfo[0] : {});
+      });
+      console.log("BW7 - retval", retval);
+      return res.json(retval);
+    });
   });
 }
 
@@ -232,7 +272,12 @@ exports.postBug = function(req, res) {
       bug.save(function (err) {
         if (err)
           return error(res, err, console);
-        return res.json(bug);
+        BugInfo.findOne({number: bug.number}, function(err, bugInfo) {
+          console.log("AAAAAAAA -", err, bugInfo);
+          if (err)
+            return error(res, err, console);
+          return extend(bug, bugInfo || {});
+        });
       });
     });
   });
@@ -263,4 +308,12 @@ exports.deleteBug = function(req, res) {
   });
 };
 
-
+exports.getBugInfo = function(req, res) {
+  console.log('Getting bug info '+req.params.bug_id);
+  return BugInfo.find({_id: req.params.bug_id}, function(err, bugs) {
+    if (err)
+      return error(res, err, console);
+    console.log(JSON.stringify(bugs));
+    return res.json(bugs[0]);
+  });
+};

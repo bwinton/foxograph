@@ -149,6 +149,8 @@ canvas {
   top: 6px;
   width: 1500px;
   height: 900px;
+  z-index: 1;
+  pointer-events: none;
 }
 
 #mockup-wrapper line {
@@ -156,14 +158,15 @@ canvas {
   stroke-width:1;
 }
 
-#mockup {
+mockup-image {
   background-repeat: no-repeat;
   cursor: crosshair;
   margin: 0;
   padding: 0;
+  position: absolute;
 }
 
-#mockup-wrapper.hover #mockup {
+mockup-image.hover {
   opacity: .1;
 }
 

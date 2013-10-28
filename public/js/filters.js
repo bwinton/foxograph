@@ -37,4 +37,125 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
     var out = top + left + transform;
     return out;
   };
+}).filter('statusClass', function styleFactory() {
+  return function statusClass(bug) {
+    if (!bug) {
+      return '';
+    }
+
+    var status = 'atRisk';
+    if (bug.status === "RESOLVED" || bug.status === "VERIFIED") {
+      if (bug.resolution === "FIXED") {
+        status = "complete";
+      } else if (bug.resolution === "DUPLICATE") {
+        status = "duplicate";
+      } else if (bug.resolution === "INVALID") {
+        status = "atRisk";
+      } else if (bug.resolution === "WONTFIX") {
+        status = "atRisk";
+      } else if (bug.resolution === "WORKSFORME") {
+        status = "atRisk";
+      } else if (bug.resolution === "INCOMPLETE") {
+        status = "atRisk";
+      } else if (bug.cf_blocking_20 === "?") {
+        status = "nominated";
+      } else if (bug.cf_blocking_20.substr(-1) === "+") {
+        status = "blocking";
+      } else if (bug.assigned_to.real_name === "Nobody; OK to take it and work on it") {
+        status = "grassRoots";
+      }
+    }
+    return status;
+  };
+}).filter('statusText', function styleFactory() {
+  return function statusText(bug) {
+    if (!bug) {
+      return '';
+    }
+
+    var status = "At Risk";
+    if (bug.status === "RESOLVED" || bug.status === "VERIFIED") {
+      if (bug.resolution === "FIXED") {
+        status = "Fixed";
+      } else if (bug.resolution === "DUPLICATE") {
+        status = "Duplicate";
+      } else if (bug.resolution === "INVALID") {
+        status = "Invalid";
+      } else if (bug.resolution === "WONTFIX") {
+        status = "Won't Fix";
+      } else if (bug.resolution === "WORKSFORME") {
+        status = "Works for Me";
+      } else if (bug.resolution === "INCOMPLETE") {
+        status = "Incomplete";
+      } else if (bug.cf_blocking_20 === "?") {
+        status = "Nominated";
+      } else if (bug.cf_blocking_20.substr(-1) === "+") {
+        status = "Blocker";
+      } else if (bug.assigned_to.real_name === "Nobody; OK to take it and work on it") {
+        status = "Grassroots";
+      }
+    }
+    return status;
+  };
+}).filter('assignedClass', function styleFactory() {
+  return function assignedClass(bug) {
+    if (!bug) {
+      return '';
+    }
+
+    var assigned = "inactive";
+    if (bug.assigned_to.real_name !== "Nobody; OK to take it and work on it") {
+      assigned = "active";
+    }
+    return assigned;
+  };
+}).filter('assignedText', function styleFactory() {
+  return function assignedText(bug) {
+    if (!bug) {
+      return '';
+    }
+
+    var assigned = "Unassigned";
+    if (bug.assigned_to.real_name !== "Nobody; OK to take it and work on it") {
+      assigned = bug.assigned_to.real_name;
+    }
+    return assigned;
+  };
+}).filter('blockingClass', function styleFactory() {
+  return function blockingClass(bug) {
+    if (!bug) {
+      return '';
+    }
+
+    var blocking = "inactive";
+    if (bug.cf_blocking_20 !== null) {
+      if (bug.cf_blocking_20.substr(-1) === "+") {
+        blocking = "active";
+      } else if (bug.cf_blocking_20 === "-") {
+        blocking = "rejected";
+      } else if (bug.cf_blocking_20 === "?") {
+        blocking = "inactive";
+      }
+    }
+    return blocking;
+  };
+}).filter('blockingText', function styleFactory() {
+  return function blockingText(bug) {
+    if (!bug) {
+      return '';
+    }
+
+    var blocking = "Not blocking";
+    if (bug.cf_blocking_20 !== null) {
+      if (bug.cf_blocking_20.substr(-1) === "+") {
+        blocking = "Blocking";
+      } else if (bug.cf_blocking_20 === "-") {
+        blocking = "Blocking rejected";
+      } else if (bug.cf_blocking_20 === "?") {
+        blocking = "Nominated";
+      }
+    }
+    return blocking;
+  };
 });
+

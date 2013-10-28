@@ -57,7 +57,7 @@ foxographApp.controller({
         // Load in the mockups for that project.
         mockup.all('bugs').getList().then(function (bugList) {
           // Sort the bugs by ['number'].
-          console.log("BW - Loaded bugs.");
+          console.log("BW - Loaded bugs.", bugList);
           $rootScope.bugs = $filter('orderBy')(bugList, ['number']);
         });
       } else {

@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false, bugzilla:false */
+/*global _:false, foxographApp:false */
 
 'use strict';
 
@@ -14,7 +14,7 @@
 
 foxographApp.directive('mockupImage', function ($http) {
   var directiveDefinitionObject = {
-    restrict: 'A',
+    restrict: 'E',
     scope: true,
 
     link: function userPostLink($scope, iElement, iAttrs) {
@@ -38,26 +38,19 @@ foxographApp.directive('mockupImage', function ($http) {
           return;
         }
 
-        function bugExists()
-        {
-          var data = {
-            'number': bug,
-            'startX': startX,
-            'startY': startY,
-            'endX': e.pageX,
-            'endY': e.pageY
-          };
-          startX = null;
-          startY = null;
-          $scope.$apply(function () {
-            $scope.addBug(data);
-          });
-        }
-        function bugDoesNotExist()
-        {
-          alert('The bug number entered is not valid.\nPlease try again.');
-        }
-        bugzilla.getBug(bug, bugExists, bugDoesNotExist);
+        console.log("Adding bug", bug);
+        var data = {
+          'number': bug,
+          'startX': startX,
+          'startY': startY,
+          'endX': e.pageX,
+          'endY': e.pageY
+        };
+        startX = null;
+        startY = null;
+        $scope.$apply(function () {
+          $scope.addBug(data);
+        });
         return false;
       });
 
