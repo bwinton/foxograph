@@ -70,6 +70,14 @@ body {
   text-align: center;
 }
 
+.project-content,
+.mockupBody {
+  width: 100%;
+  height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 #user {
   margin-top: 28px;
   cursor: pointer;
@@ -132,6 +140,7 @@ canvas {
 }
 
 #mockup-wrapper {
+  margin: 0;
   padding: 0;
 }
 
@@ -150,6 +159,8 @@ canvas {
 #mockup {
   background-repeat: no-repeat;
   cursor: crosshair;
+  margin: 0;
+  padding: 0;
 }
 
 #mockup-wrapper.hover #mockup {

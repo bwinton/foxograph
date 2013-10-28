@@ -29,29 +29,53 @@ foxographApp.controller({
       $rootScope.projects = $filter('orderBy')(projectList, ['name', 'user']);
     });
 
-    $rootScope.$watch('p_id', function (p_id, old_p_id) {
-      console.log("BW - setting selected project.");
+    var pIdChanged = function (p_id) {
       $scope.selectedProject = _.findWhere($rootScope.projects, {_id: p_id});
       $rootScope.mainTitle = 'Please select a project';
       if ($scope.selectedProject) {
         $rootScope.mainTitle = $scope.selectedProject.name;
+        // Load in the mockups for that project.
+        $scope.selectedProject.all('mockups').getList().then(function (mockupList) {
+          // Sort the projects by ['name','user'].
+          console.log("BW - Loaded mockups.");
+          $rootScope.mockups = $filter('orderBy')(mockupList, ['creationDate']);
+        });
+      } else {
+        $rootScope.mockups = null;
       }
+    };
+    $rootScope.$watch('p_id', pIdChanged);
+    $rootScope.$watch('projects', function () {
+      pIdChanged($rootScope.p_id);
+    });
+
+    var mIdChanged = function (m_id) {
+      console.log("BW - setting selected mockup to " + m_id);
+      var mockup = _.findWhere($rootScope.mockups, {_id: m_id});
+      if (mockup) {
+        $rootScope.subTitle = mockup.name;
+        // Load in the mockups for that project.
+        mockup.all('bugs').getList().then(function (bugList) {
+          // Sort the bugs by ['number'].
+          console.log("BW - Loaded bugs.");
+          $rootScope.bugs = $filter('orderBy')(bugList, ['number']);
+        });
+      } else {
+        $rootScope.bugs = null;
+      }
+    };
+    $rootScope.$watch('m_id', mIdChanged);
+    $rootScope.$watch('mockups', function () {
+      mIdChanged($rootScope.m_id);
     });
 
     // Something about $rootScope.subTitle = $scope.mockup.name;
 
     $scope.$watch('selectedProject', function (project, oldProject) {
       if (project) {
-        // Load in the mockups for that project.
-        project.all('mockups').getList().then(function (mockupList) {
-          // Sort the projects by ['name','user'].
-          console.log("BW - Loaded mockups.");
-          $rootScope.mockups = $filter('orderBy')(mockupList, ['creationDate']);
-        });
-
-        // $state.go('project', {'p_id': project._id});
+        $rootScope.p_id = project._id;
       } else {
-        $rootScope.mockups = null;
+        $rootScope.p_id = null;
       }
     });
 
