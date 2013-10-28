@@ -15,22 +15,22 @@
 foxographApp.directive('mockupImage', function ($http) {
   var directiveDefinitionObject = {
     restrict: 'A',
-    scope: false,
+    scope: true,
 
-    link: function userPostLink(scope, iElement, iAttrs) {
+    link: function userPostLink($scope, iElement, iAttrs) {
       var startX = null;
       var startY = null;
       iElement.on('mousedown', function (e) {
-        if ((scope.email !== scope.project.user) ||
-            !scope.background) {
+        var validUser = ($scope.auth.email === $scope.project.user);
+        if (!validUser || !$scope.background) {
           return false;
         }
         startX = e.pageX;
         startY = e.pageY;
       });
       iElement.on('mouseup', function (e) {
-        if ((scope.email !== scope.project.user) ||
-            !scope.background) {
+        var validUser = ($scope.auth.email === $scope.project.user);
+        if (!validUser || !$scope.background) {
           return false;
         }
         var bug = prompt('Please enter a bug number');
@@ -49,8 +49,8 @@ foxographApp.directive('mockupImage', function ($http) {
           };
           startX = null;
           startY = null;
-          scope.$apply(function () {
-            scope.addBug(data);
+          $scope.$apply(function () {
+            $scope.addBug(data);
           });
         }
         function bugDoesNotExist()
@@ -62,14 +62,16 @@ foxographApp.directive('mockupImage', function ($http) {
       });
 
       iElement.on('dragover', function () {
-        if (scope.email !== scope.project.user) {
+        var validUser = ($scope.auth.email === $scope.project.user);
+        if (!validUser) {
           return false;
         }
         iElement.addClass('hover');
         return false;
       });
       iElement.on('dragleave', function () {
-        if (scope.email !== scope.project.user) {
+        var validUser = ($scope.auth.email === $scope.project.user);
+        if (!validUser) {
           return false;
         }
         iElement.removeClass('hover');
@@ -77,7 +79,8 @@ foxographApp.directive('mockupImage', function ($http) {
       });
       iElement.on('drop', function (e) {
         e.preventDefault();
-        if (scope.email !== scope.project.user) {
+        var validUser = ($scope.auth.email === $scope.project.user);
+        if (!validUser) {
           return false;
         }
 
@@ -91,8 +94,8 @@ foxographApp.directive('mockupImage', function ($http) {
         var file = data.files[0];
         var reader = new FileReader();
         reader.onload = function (event) {
-          scope.$apply(function () {
-            scope.setMockupImage(event.target.result);
+          $scope.$apply(function () {
+            $scope.setMockupImage(event.target.result);
           });
         };
         reader.readAsDataURL(file);
