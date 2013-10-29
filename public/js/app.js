@@ -12,7 +12,7 @@
 
 // Declare app level module which depends on filters, and services
 var foxographApp = angular.module('foxographApp',
-  ['restangular', 'ui.router', 'foxographApp.services', 'angular-tools.persona', 'angular-tools.image'])
+  ['restangular', 'ui.router', 'angular-tools.persona', 'angular-tools.image'])
   .config([
     '$stateProvider', '$urlRouterProvider', '$locationProvider', 'RestangularProvider',
     function ($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {

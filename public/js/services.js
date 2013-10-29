@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global angular:false */
+/*global angular:false, foxographApp:false */
 
 'use strict';
 
@@ -14,6 +14,12 @@
 
 
 // Demonstrate how to register services
-// In this case it is a simple value service.
-angular.module('foxographApp.services', [])
-  .value('version', '0.1');
+foxographApp.service('modelService', function () {
+  this.sayHello = function (text) {
+    return "Service says \"Hello " + text + "\"";
+  };
+  this.sayGoodbye = function (text) {
+    return "Service says \"Goodbye " + text + "\"";
+  };
+});
+// I think I should be using these for some of the models, instead of the rootScope, maybe.
