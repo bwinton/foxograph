@@ -21,6 +21,9 @@ foxographApp.directive('mockupImage', function ($http) {
       var startX = null;
       var startY = null;
       iElement.on('mousedown', function (e) {
+        if (e.target !== iElement[0]) {
+          return false;
+        }
         var validUser = ($scope.auth.email === $scope.project.user);
         if (!validUser || !$scope.background) {
           return false;
@@ -29,6 +32,9 @@ foxographApp.directive('mockupImage', function ($http) {
         startY = e.pageY;
       });
       iElement.on('mouseup', function (e) {
+        if (e.target !== iElement[0]) {
+          return false;
+        }
         var validUser = ($scope.auth.email === $scope.project.user);
         if (!validUser || !$scope.background) {
           return false;
