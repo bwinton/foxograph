@@ -1,3 +1,13 @@
+/*! This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true,
+strict:true, undef:true, unused:true, curly:true, browser:true, white:true,
+moz:true, esnext:false, indent:2, maxerr:50, devel:true, node:true, boss:true,
+globalstrict:true, nomen:false, newcap:false */
+
 "use strict";
 
 var mongoose = require('mongoose');
@@ -201,13 +211,11 @@ exports.deleteMockup = function(req, res) {
 function returnBugsForMockups(mockups, res) {
   console.log('Looking for bugs for mockups ' + mockups);
   return Bug.find({mockup: {$in: mockups}}, function(err, bugs) {
-    console.log("BW1 -", bugs.length, err);
     if (err)
       return error(res, err, console);
     var bugNumbers = bugs.map(function (bug) {
       return bug.number;
     });
-    console.log("BW2 -", bugNumbers);
     return BugInfo.find({number: {$in: bugNumbers}}, function(err, bugInfos) {
       console.log("BW3 -", bugInfos.length, err);
       if (err)
@@ -273,10 +281,13 @@ exports.postBug = function(req, res) {
         if (err)
           return error(res, err, console);
         BugInfo.findOne({number: bug.number}, function(err, bugInfo) {
-          console.log("AAAAAAAA -", err, bugInfo);
           if (err)
             return error(res, err, console);
-          return extend(bug, bugInfo || {});
+          if (bugInfo) {
+            return extend(bug, bugInfo || {});
+          }
+          console.log("AAAAAAAA -", err, bugInfo);
+
         });
       });
     });
