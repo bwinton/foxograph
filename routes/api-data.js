@@ -13,13 +13,16 @@ globalstrict:true, nomen:false, newcap:false */
 var mongoose = require('mongoose');
 var error = require('./api-utils').error;
 var extend = require('./api-utils').extend;
+var bugzilla = require('./api-bugzilla');
 
 var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
   number: String,
   summary: String,
   status: String,
+  resolution: String,
   blocking: String,
-  assigned: String
+  assigned: String,
+  last_got: Date
 }));
 
 var Bug = mongoose.model('Bug', new mongoose.Schema({
@@ -45,13 +48,12 @@ var Project = mongoose.model('Project', new mongoose.Schema({
   user: String
 }));
 
+var BUGZILLA_FETCH_DELAY = 4 * 60 * 60 * 1000; // 4 hours.
 
 // Projects.
 
 exports.getProjects = function (req, res) {
-  console.log('Getting all projects');
   return Project.find(function (err, projects) {
-    console.log(JSON.stringify(projects));
     return res.json(projects);
   });
 };
@@ -63,11 +65,9 @@ exports.postProject = function (req, res) {
   if (!req.body || !req.body.name) {
     return error(res, 'Missing name.');
   }
-  console.log('Creating project:');
   req.body.user = req.session.email;
   req.body.creationDate = new Date();
   var project = new Project(req.body);
-  console.log(project);
   project.save(function (err) {
     if (err) {
       console.error(err);
@@ -78,12 +78,10 @@ exports.postProject = function (req, res) {
 };
 
 exports.getProject = function (req, res) {
-  console.log('Getting project ' + req.params.project_id);
   return Project.find({_id: req.params.project_id}, function (err, projects) {
     if (err) {
       return error(res, err, console);
     }
-    console.log(JSON.stringify(projects[0]));
     return res.json(projects[0]);
   });
 };
@@ -92,7 +90,6 @@ exports.deleteProject = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  console.log('Deleting project ' + req.params.project_id);
   Project.findOne({_id: req.params.project_id}, function (err, project) {
     if (project.user !== req.session.email) {
       return error(res, 'Cannot delete a project you didn’t create!');
@@ -104,7 +101,6 @@ exports.deleteProject = function (req, res) {
         return error(res, err, console);
       }
       mockups.forEach(function (mockup) {
-        console.log('  Deleting mockup ' + mockup._id);
         Bug.find({mockup: mockup._id}).remove();
       });
     }).remove();
@@ -114,7 +110,6 @@ exports.deleteProject = function (req, res) {
       if (err) {
         return error(res, err, console);
       }
-      console.log(JSON.stringify(project));
       return res.json(project);
     });
   });
@@ -124,12 +119,10 @@ exports.deleteProject = function (req, res) {
 // Mockups.
 
 exports.getMockups = function (req, res) {
-  console.log('Looking for mockups for project ' + req.params.project_id);
   return Mockup.find({project: req.params.project_id}, function (err, mockups) {
     if (err) {
       return error(res, err, console);
     }
-    // console.log(JSON.stringify(mockups));
     return res.json(mockups);
   });
 };
@@ -148,12 +141,10 @@ exports.postMockup = function (req, res) {
     if (project.user !== req.session.email) {
       return error(res, 'Cannot add a mockup to a project you didn’t create!');
     }
-    console.log('Creating mockup:');
     req.body.creationDate = new Date();
     req.body.project = req.params.project_id;
     // req.body.slug = makeSlug(req.body.name);
     var mockup = new Mockup(req.body);
-    console.log(mockup);
     mockup.save(function (err) {
       if (err) {
         return error(res, err, console);
@@ -164,12 +155,10 @@ exports.postMockup = function (req, res) {
 };
 
 exports.getMockup = function (req, res) {
-  console.log('Getting mockup ' + req.params.mockup_id);
   return Mockup.find({_id: req.params.mockup_id}, function (err, mockups) {
     if (err) {
       return error(res, err, console);
     }
-    console.log(JSON.stringify(mockups[0]));
     return res.json(mockups[0]);
   });
 };
@@ -185,8 +174,6 @@ exports.putMockup = function (req, res) {
     if (project.user !== req.session.email) {
       return error(res, 'Cannot update a mockup in a project you didn’t create!');
     }
-    console.log('Updating mockup:');
-    console.log(req.body);
     var id = req.body._id;
     delete req.body._id;
     Mockup.update({_id: id}, req.body, function (err, mockup) {
@@ -204,7 +191,6 @@ exports.deleteMockup = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  console.log('Deleting mockup ' + req.params.mockup_id);
   Mockup.findOne({_id: req.params.mockup_id}, function (err, mockup) {
     Project.findOne({_id: mockup.project}, function (err, project) {
       if (project.user !== req.session.email) {
@@ -219,7 +205,6 @@ exports.deleteMockup = function (req, res) {
         if (err) {
           return error(res, err, console);
         }
-        console.log(JSON.stringify(mockup));
         return res.json(mockup);
       });
     });
@@ -228,42 +213,54 @@ exports.deleteMockup = function (req, res) {
 
 
 // Bugs.
+var getBugzillaInfo = function (bug, bugInfo) {
+  if (bugInfo.last_got && Date.now() - bugInfo.last_got.getTime() < BUGZILLA_FETCH_DELAY) {
+    console.log('Too soon to fetch bug data for', bug.number);
+    return;
+  }
+  bugzilla.getBug(bug.number, function (err, response, body) {
+    var bugzillaInfo = {};
+    if (!err && response.statusCode === 200) {
+      bugzillaInfo = bugzilla.getInfo(body);
+    }
+    if (bugzillaInfo.number) {
+      var bugInfo = new BugInfo(bugzillaInfo);
+      bugInfo.save(function (err) {
+        console.log('Saving bugInfo: err=', err);
+      });
+    }
+  });
+};
+
+var addBugInfos = function (bugs, callback) {
+  var bugNumbers = bugs.map(function (bug) {
+    return bug.number;
+  });
+  BugInfo.find({number: {$in: bugNumbers}}, function (err, bugInfos) {
+    if (err) {
+      console.error(err);
+    }
+    var retval = bugs.map(function (bug) {
+      var bugInfo = bugInfos.filter(function (bugInfo) {
+        return bugInfo.number === bug.number;
+      });
+      bugInfo = bugInfo.length ? bugInfo[0].toObject() : {};
+      // Kick off a bugzilla request, too.
+      getBugzillaInfo(bug, bugInfo);
+      return extend(bug.toObject(), bugInfo);
+    });
+    callback(retval);
+  });
+};
+
+
 function returnBugsForMockups(mockups, res) {
-  console.log('Looking for bugs for mockups ' + mockups);
   return Bug.find({mockup: {$in: mockups}}, function (err, bugs) {
     if (err) {
       return error(res, err, console);
     }
-    var bugNumbers = bugs.map(function (bug) {
-      return bug.number;
-    });
-    return BugInfo.find({number: {$in: bugNumbers}}, function (err, bugInfos) {
-      console.log("BW3 -", bugInfos.length, err);
-      if (err) {
-        return error(res, err, console);
-      }
-      var retval = bugs.map(function (bug) {
-        console.log("BW4 -", bug);
-        var bugInfo = bugInfos.filter(function (bugInfo) {
-          return bugInfo.number === bug.number;
-        });
-        console.log("BW4 -", bugInfo.length);
-        if (!bugInfo.length) {
-          bugInfo = [{
-            number: bug.number,
-            summary: "This is my bug summary.",
-            status: "VERIFIED",
-            resolution: "",
-            cf_blocking_20: "",
-            assigned_to: {"real_name": "Nobody; OK to take it and work on it"}
-          }];
-        }
-        console.log("BW5 -", bugInfo.length ? bugInfo[0] : {});
-        console.log("BW6 -", extend(bug, bugInfo.length ? bugInfo[0] : {}));
-        return extend(bug.toObject(), bugInfo.length ? bugInfo[0] : {});
-      });
-      console.log("BW7 - retval", retval);
-      return res.json(retval);
+    addBugInfos(bugs, function (bugs) {
+      return res.json(bugs);
     });
   });
 }
@@ -286,7 +283,6 @@ exports.getBugs = function (req, res) {
 
 
 exports.postBug = function (req, res) {
-  console.log(req.body);
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
@@ -298,24 +294,15 @@ exports.postBug = function (req, res) {
       if (project.user !== req.session.email) {
         return error(res, 'Cannot add a bug to a project you didn’t create!');
       }
-      console.log('Creating bug:');
       req.body.mockup = req.params.mockup_id;
 
       var bug = new Bug(req.body);
-      console.log(bug);
       bug.save(function (err) {
         if (err) {
           return error(res, err, console);
         }
-        BugInfo.findOne({number: bug.number}, function (err, bugInfo) {
-          if (err) {
-            return error(res, err, console);
-          }
-          if (bugInfo) {
-            return extend(bug, bugInfo || {});
-          }
-          console.log("AAAAAAAA -", err, bugInfo);
-
+        addBugInfos([bug], function (bugs) {
+          return res.json(bugs);
         });
       });
     });
@@ -323,13 +310,13 @@ exports.postBug = function (req, res) {
 };
 
 exports.getBug = function (req, res) {
-  console.log('Getting bug ' + req.params.bug_id);
   return Bug.find({_id: req.params.bug_id}, function (err, bugs) {
     if (err) {
       return error(res, err, console);
     }
-    console.log(JSON.stringify(bugs));
-    return res.json(bugs[0]);
+    addBugInfos(bugs, function (bugs) {
+      return res.json(bugs[0]);
+    });
   });
 };
 
@@ -337,7 +324,6 @@ exports.deleteBug = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  console.log('Deleting bug ' + req.params.bug_id);
   Bug.findOne({_id: req.params.bug_id}, function (err, bug) {
     Mockup.findOne({_id: bug.mockup}, function (err, mockup) {
       Project.findOne({_id: mockup.project}, function (err, project) {
@@ -347,17 +333,6 @@ exports.deleteBug = function (req, res) {
         bug.remove();
       });
     });
-  });
-};
-
-exports.getBugInfo = function (req, res) {
-  console.log('Getting bug info ' + req.params.bug_id);
-  return BugInfo.find({_id: req.params.bug_id}, function (err, bugs) {
-    if (err) {
-      return error(res, err, console);
-    }
-    console.log(JSON.stringify(bugs));
-    return res.json(bugs[0]);
   });
 };
 
@@ -400,7 +375,6 @@ exports.dump = function (req, res) {
           });
           rv.push(currentProject);
         });
-        console.log(JSON.stringify(rv));
         return res.json(rv);
       });
     });

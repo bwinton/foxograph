@@ -57,11 +57,11 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
         status = "atRisk";
       } else if (bug.resolution === "INCOMPLETE") {
         status = "atRisk";
-      } else if (bug.cf_blocking_20 === "?") {
+      } else if (bug.blocking === "?") {
         status = "nominated";
-      } else if (bug.cf_blocking_20.substr(-1) === "+") {
+      } else if (bug.blocking.substr(-1) === "+") {
         status = "blocking";
-      } else if (bug.assigned_to.real_name === "Nobody; OK to take it and work on it") {
+      } else if (bug.assigned === "Nobody; OK to take it and work on it") {
         status = "grassRoots";
       }
     }
@@ -87,11 +87,11 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
         status = "Works for Me";
       } else if (bug.resolution === "INCOMPLETE") {
         status = "Incomplete";
-      } else if (bug.cf_blocking_20 === "?") {
+      } else if (bug.blocking === "?") {
         status = "Nominated";
-      } else if (bug.cf_blocking_20.substr(-1) === "+") {
+      } else if (bug.blocking.substr(-1) === "+") {
         status = "Blocker";
-      } else if (bug.assigned_to.real_name === "Nobody; OK to take it and work on it") {
+      } else if (bug.assigned === "Nobody; OK to take it and work on it") {
         status = "Grassroots";
       }
     }
@@ -104,7 +104,7 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
     }
 
     var assigned = "inactive";
-    if (bug.assigned_to.real_name !== "Nobody; OK to take it and work on it") {
+    if (bug.assigned !== "Nobody; OK to take it and work on it") {
       assigned = "active";
     }
     return assigned;
@@ -116,8 +116,8 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
     }
 
     var assigned = "Unassigned";
-    if (bug.assigned_to.real_name !== "Nobody; OK to take it and work on it") {
-      assigned = bug.assigned_to.real_name;
+    if (bug.assigned !== "Nobody; OK to take it and work on it") {
+      assigned = bug.assigned;
     }
     return assigned;
   };
@@ -128,12 +128,12 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
     }
 
     var blocking = "inactive";
-    if (bug.cf_blocking_20 !== null) {
-      if (bug.cf_blocking_20.substr(-1) === "+") {
+    if (bug.blocking !== null) {
+      if (bug.blocking.substr(-1) === "+") {
         blocking = "active";
-      } else if (bug.cf_blocking_20 === "-") {
+      } else if (bug.blocking === "-") {
         blocking = "rejected";
-      } else if (bug.cf_blocking_20 === "?") {
+      } else if (bug.blocking === "?") {
         blocking = "inactive";
       }
     }
@@ -146,12 +146,12 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
     }
 
     var blocking = "Not blocking";
-    if (bug.cf_blocking_20 !== null) {
-      if (bug.cf_blocking_20.substr(-1) === "+") {
+    if (bug.blocking !== null) {
+      if (bug.blocking.substr(-1) === "+") {
         blocking = "Blocking";
-      } else if (bug.cf_blocking_20 === "-") {
+      } else if (bug.blocking === "-") {
         blocking = "Blocking rejected";
-      } else if (bug.cf_blocking_20 === "?") {
+      } else if (bug.blocking === "?") {
         blocking = "Nominated";
       }
     }
