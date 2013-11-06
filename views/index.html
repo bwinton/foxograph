@@ -14,9 +14,9 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <ul class="nav container navbar-nav navbar-fixed-top" ng-controller="HeaderCtrl">
         <!-- Project Menu -->
-        <li id="projects" class="dropdown">
+        <li id="projects" class="dropdown navbar-form">
           <select id="project-list" ng-model="selectedProject"
-                  ng-options="'[' + c.user + '] ' + c.name for c in projects">
+                  ng-options="'[' + c.user + '] ' + c.name for c in projects" class="form-control">
           </select>
         </li>
 
@@ -35,7 +35,7 @@
           </p>
         </div>
 
-        <li class="pull-right">
+        <li class="pull-right navbar-form">
           <button type="submit" class="btn" ng-show="auth.email"
             ng-click="createProject()">Create New Project</button>
         </li>
