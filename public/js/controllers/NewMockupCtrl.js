@@ -14,7 +14,7 @@
 
 foxographApp.controller({
 
-  'NewMockupCtrl': function NewMockupCtrl($scope, $rootScope, $location, $route, Restangular) {
+  'NewMockupCtrl': function NewMockupCtrl($scope, $rootScope, Restangular, $filter, $state) {
     $rootScope.mainTitle = 'Create a new project';
     $rootScope.subTitle = '';
     $rootScope.p_id = null;
@@ -26,9 +26,9 @@ foxographApp.controller({
       var projects = Restangular.all('projects');
       projects.post({name: newProject.name}).then(function (project) {
         project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
-          projects.getList().then(function (projectList) {
-            $scope.$parent.loadProjects(project._id);
-          });
+          $rootScope.projects.push(project);
+          $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
+          $state.go('project.mockup', {'p_id': project._id, 'm_id': mockup._id});
         });
       });
     };
