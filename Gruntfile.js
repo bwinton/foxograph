@@ -1,3 +1,5 @@
+Tail = require('tail').Tail;
+
 module.exports = function(grunt) {
 
   var settings = grunt.file.readJSON('grunt-settings.json');
@@ -136,7 +138,7 @@ module.exports = function(grunt) {
       done();
       // });
     });
-    var mongod = grunt.util.spawn({cmd: 'mongod'}, function (err, result, code) {
+    var mongod = grunt.util.spawn({cmd: 'mongod', args: ['--logpath', 'mongo.log']}, function (err, result, code) {
       console.log("Done mongod " + err + ", " + result + ", " + code);
       if (err && code === 100) {
         console.log("Mongo already started.");
@@ -144,12 +146,12 @@ module.exports = function(grunt) {
       } else if (err) {
         throw err;
       }
-    });
-    mongod.stdout.on('data', function (data) {
-      data = data.toString().trim();
-      if (data.match(/\[initandlisten\] waiting for connections on port \d+$/)) {
-        grunt.event.emit('mongod.started');
-      }
+      new Tail('mongo.log').on('line', function(data) {
+        data = data.toString().trim();
+        if (data.match(/\[initandlisten\] waiting for connections on port \d+$/)) {
+          grunt.event.emit('mongod.started');
+        }
+      });
     });
   });
 

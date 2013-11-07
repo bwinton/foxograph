@@ -6,3 +6,4 @@ npm-debug.log
 foxography-*.tgz
 grunt-settings.json
 private.yml
+mongo.log
