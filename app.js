@@ -6,11 +6,14 @@
 
 var ejs = require('ejs');
 var express = require('express');
+var io = require("socket.io");
 var mongoose = require('mongoose');
 var routes = require('./routes');
 var url = require('url');
 
 var app = module.exports = express();
+var server = require('http').createServer(app);
+io = io.listen(server);
 
 var logTmpl = ejs.compile('<%= date %> (<%= response_time %>ms): ' +
                           '<%= status %> <%= method %> <%= url %>');
@@ -142,6 +145,7 @@ require('express-persona')(app, {
   audience: audience
 });
 
-app.listen(PORT, HOST, function() {
+server.listen(PORT, HOST, function() {
   console.log('Listening on ' + audience);
 });
+
