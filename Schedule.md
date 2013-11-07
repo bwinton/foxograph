@@ -1,11 +1,17 @@
+WORK FLOW!!!
+============
+
+* Look at the root.
+    * Choose a project.
+        * Choose a mockup.
+
+
 BUGS!!!
 =======
 
-* Add a new bug doesn't work, because I'm removing the bugzilla api.
-* "Error: $scope.$parent.loadProjects is not a function
-  NewMockupCtrl/$scope.create/</</<@http://127.0.0.1:3000/r/js/controllers/NewMockupCtrl.js:30
-  After creating a new project/mockup…
-
+* After creating a project, we don't go to that project.
+* New mockups should go at the end, not the beginning.
+* After creating a bug, we don't see the results of the bug without reloading.
 
 Upcoming Features!
 ==================
