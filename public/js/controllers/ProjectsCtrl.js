@@ -47,9 +47,7 @@ foxographApp.controller({
     $scope.addMockup = function (project) {
       project.all('mockups').post({name: 'Add name here…'}).then(function (mockup) {
         project.getList('mockups').then(function (mockupList) {
-          $rootScope.mockups = _.sortBy(mockupList, function (mockup) {
-            return mockup.creationDate;
-          });
+          $rootScope.mockups = $filter('orderBy')(mockupList, ['creationDate']);
         });
       });
     };

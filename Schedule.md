@@ -9,9 +9,9 @@ WORK FLOW!!!
 BUGS!!!
 =======
 
-* After creating a project, we don't go to that project.
-* New mockups should go at the end, not the beginning.
-* After creating a bug, we don't see the results of the bug without reloading.
+* After creating a project, we don’t go to that project.
+* After creating a mockup, we don’t go to that mockup.
+* After creating a bug, we don’t see the results of the bug without reloading.
 
 Upcoming Features!
 ==================
