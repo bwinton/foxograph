@@ -94,7 +94,7 @@ foxographApp.controller({
         project.getList('mockups').then(function (mockupList) {
           console.log("Going to the newly created ", mockup);
           $rootScope.mockups = mockupList;
-          $state.go('project', {'p_id': project._id, 'm_id': mockup._id});
+          $state.go('project.mockup', {'p_id': project._id, 'm_id': mockup._id});
         });
       });
     };

@@ -9,7 +9,6 @@ WORK FLOW!!!
 BUGS!!!
 =======
 
-* After creating a mockup, we don’t go to that mockup.
 * After creating a bug, we don’t see the results of the bug without reloading.
 
 Upcoming Features!

@@ -44,14 +44,6 @@ foxographApp.controller({
       });
     };
 
-    $scope.addMockup = function (project) {
-      project.all('mockups').post({name: 'Add name here…'}).then(function (mockup) {
-        project.getList('mockups').then(function (mockupList) {
-          $rootScope.mockups = $filter('orderBy')(mockupList, ['creationDate']);
-        });
-      });
-    };
-
     $scope.deleteMockup = function (mockup) {
       var index = _.indexOf($rootScope.mockups, mockup);
       console.log("6 deleting " + mockup._id);
