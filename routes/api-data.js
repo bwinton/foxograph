@@ -247,7 +247,7 @@ var addBugInfos = function (bugs, callback) {
       bugInfo = bugInfo.length ? bugInfo[0].toObject() : {};
       // Kick off a bugzilla request, too.
       getBugzillaInfo(bug, bugInfo);
-      return extend(bug.toObject(), bugInfo);
+      return extend(bugInfo, bug.toObject());
     });
     callback(retval);
   });
@@ -330,7 +330,12 @@ exports.deleteBug = function (req, res) {
         if (project.user !== req.session.email) {
           return error(res, 'Cannot delete a bug from a project you didn’t create!');
         }
-        bug.remove();
+        Bug.findOneAndRemove({_id: req.params.bug_id}, function (err, bug) {
+          if (err) {
+            return error(res, err, console);
+          }
+          return res.json(bug);
+        });
       });
     });
   });

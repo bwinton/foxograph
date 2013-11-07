@@ -118,7 +118,7 @@ app.get('/api/projects/:project_id/bugs', routes.getBugs);
 app.get('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
-app.delete('/api/bugs/:bug_id', routes.deleteBug);
+app.delete('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.deleteBug);
 
 // API Admin
 app.get('/api/deleteAll', routes.deleteAll);

@@ -43,6 +43,10 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
       return '';
     }
 
+    if (!bug.status) {
+      return 'loading';
+    }
+
     var status = 'atRisk';
     if (bug.status === "RESOLVED" || bug.status === "VERIFIED") {
       if (bug.resolution === "FIXED") {
@@ -65,11 +69,11 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
         status = "grassRoots";
       }
     }
-    return status;
+    return 'done ' + status;
   };
 }).filter('statusText', function styleFactory() {
   return function statusText(bug) {
-    if (!bug) {
+    if (!bug || !bug.status) {
       return '';
     }
 
@@ -99,7 +103,7 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
   };
 }).filter('assignedClass', function styleFactory() {
   return function assignedClass(bug) {
-    if (!bug) {
+    if (!bug || !bug.assigned) {
       return '';
     }
 
@@ -111,7 +115,7 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
   };
 }).filter('assignedText', function styleFactory() {
   return function assignedText(bug) {
-    if (!bug) {
+    if (!bug || !bug.assigned) {
       return '';
     }
 
@@ -123,7 +127,7 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
   };
 }).filter('blockingClass', function styleFactory() {
   return function blockingClass(bug) {
-    if (!bug) {
+    if (!bug || !bug.blocking) {
       return '';
     }
 
@@ -141,7 +145,7 @@ foxographApp.filter('bugLineStyle', function styleFactory() {
   };
 }).filter('blockingText', function styleFactory() {
   return function blockingText(bug) {
-    if (!bug) {
+    if (!bug || !bug.blocking) {
       return '';
     }
 

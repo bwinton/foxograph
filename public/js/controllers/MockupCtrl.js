@@ -80,15 +80,12 @@ foxographApp.controller({
 
     $scope.addBug = function (bug) {
       $scope.mockup.all('bugs').post(bug).then(function (bug) {
-        console.log(bug);
-        $rootScope.bugs.push(bug);
+        $rootScope.bugs.push(bug[0]);
       });
     };
 
     $scope.deleteBug = function (bug) {
-      alert('deleting bug ' + bug.number);
       bug.remove().then(function (data) {
-        console.log(data);
         $rootScope.bugs = _.without($rootScope.bugs, bug);
       });
     };

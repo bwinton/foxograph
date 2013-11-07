@@ -13,19 +13,24 @@
 /* Directives */
 
 foxographApp.directive('bugPanel', function () {
-  var template = '<div class="panel done {{bug | statusClass}}"' +
+  var template = '<div class="panel {{bug | statusClass}}"' +
     '    style="top:{{bug.endY}}px; left:{{bug.endX}}px;">' +
     '  <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">{{bug.number}}, {{bug.summary}}</a>' +
     '  <br>' +
-    '<span class="{{bug | statusClass}}">{{bug | statusText}}:</span>' +
-    '<span class="{{bug | blockingClass}}">{{bug | blockingText}}</span>, ' +
-    '<span class="{{bug | assignedClass}}">{{bug | assignedText}}</span>' +
-    '  <div ng-transclude></div>' +
+    '<img src="{{loading}}" ng-hide="bug && bug.status">' +
+
+    '<span ng-show="bug && bug.status" class="{{bug | statusClass}}">{{bug | statusText}}:</span>' +
+    '<span ng-show="bug && bug.status" class="{{bug | blockingClass}}">{{bug | blockingText}}</span>, ' +
+    '<span ng-show="bug && bug.status" class="{{bug | assignedClass}}">{{bug | assignedText}}</span>' +
+    '  <div ng-show="bug && bug.status" ng-transclude></div>' +
     '</div>';
   return {
     template: template,
     restrict: 'E',
-    scope: {bug: '=bug'},
+    scope: {
+      bug: '=bug',
+      loading: "@loadingImage"
+    },
     transclude : true,
     link: function postLink($scope, $iElement, $iAttrs) {
       console.log("Creating bugPanel ", $scope, $iElement, $iAttrs);
