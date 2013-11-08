@@ -9,7 +9,7 @@ WORK FLOW!!!
 BUGS!!!
 =======
 
-* After creating a bug, we don’t see the results of the bug without reloading.
+* Can't delete mockups.
 
 Upcoming Features!
 ==================

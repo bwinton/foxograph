@@ -1,12 +1,12 @@
-/*! This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this
-* file, You can obtain one at http://mozilla.org/MPL/2.0/.
-*/
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
-/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true,
-strict:true, undef:true, unused:true, curly:true, browser:true, white:true,
-moz:true, esnext:false, indent:2, maxerr:50, devel:true, node:true, boss:true,
-globalstrict:true, nomen:false, newcap:false */
+/* jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true,
+   strict:true, undef:true, unused:true, curly:true, browser:true, white:true,
+   moz:true, esnext:false, indent:2, maxerr:50, devel:true, node:true, boss:true,
+   globalstrict:true, nomen:false, newcap:false */
 
 "use strict";
 
@@ -213,12 +213,24 @@ exports.deleteMockup = function (req, res) {
 
 
 // Bugs.
-var getBugzillaInfo = function (bug, bugInfo) {
+exports.lookupBugInfo = function (bug, callback) {
+  BugInfo.find({number: bug.number}, function (err, bugInfo) {
+    if (err) {
+      console.error(err);
+    }
+    bugInfo = bugInfo.length ? bugInfo[0].toObject() : {};
+    // Kick off a bugzilla request, too.
+    getBugzillaInfo(bug.number, bugInfo, callback);
+    return;
+  });
+};
+
+var getBugzillaInfo = function (bugNumber, bugInfo, callback) {
   if (bugInfo.last_got && Date.now() - bugInfo.last_got.getTime() < BUGZILLA_FETCH_DELAY) {
-    console.log('Too soon to fetch bug data for', bug.number);
+    console.log('Too soon to fetch bug data for', bugNumber);
     return;
   }
-  bugzilla.getBug(bug.number, function (err, response, body) {
+  bugzilla.getBug(bugNumber, function (err, response, body) {
     var bugzillaInfo = {};
     if (!err && response.statusCode === 200) {
       bugzillaInfo = bugzilla.getInfo(body);
@@ -226,7 +238,9 @@ var getBugzillaInfo = function (bug, bugInfo) {
     if (bugzillaInfo.number) {
       var bugInfo = new BugInfo(bugzillaInfo);
       bugInfo.save(function (err) {
-        console.log('Saving bugInfo: err=', err);
+        if (callback) {
+          callback(bugInfo.toObject());
+        }
       });
     }
   });

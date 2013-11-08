@@ -159,3 +159,10 @@ server.listen(PORT, HOST, function() {
   console.log('Listening on ' + audience);
 });
 
+io.sockets.on('connection', function (socket) {
+  socket.on('getBugInfo', function (data) {
+    routes.lookupBugInfo(data, function(bugInfo) {
+      socket.emit('bugInfo', bugInfo);
+    })
+  });
+});

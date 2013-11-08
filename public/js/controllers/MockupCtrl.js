@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false, run:false */
+/*global _:false, foxographApp:false, io:false */
 
 'use strict';
 
@@ -14,7 +14,7 @@
 
 foxographApp.controller({
 
-  'MockupCtrl': function MockupCtrl($scope, $rootScope, $stateParams, Restangular, Image) {
+  'MockupCtrl': function MockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
     console.log("BW - Setting m_id to ", $stateParams.m_id);
     $rootScope.m_id = $stateParams.m_id;
 
@@ -80,7 +80,18 @@ foxographApp.controller({
 
     $scope.addBug = function (bug) {
       $scope.mockup.all('bugs').post(bug).then(function (bug) {
-        $rootScope.bugs.push(bug[0]);
+        bug = bug[0];
+        var socket = io.connect($location.host());
+        socket.emit('getBugInfo', bug);
+
+        socket.on('bugInfo', function (bugInfo) {
+          $scope.mockup.all('bugs').getList().then(function (bugList) {
+            // Sort the bugs by ['number'].
+            $rootScope.bugs = $filter('orderBy')(bugList, ['number']);
+          });
+        });
+
+        $rootScope.bugs.push(bug);
       });
     };
 
