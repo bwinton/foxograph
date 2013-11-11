@@ -78,6 +78,18 @@ foxographApp.controller({
       $scope.mockup.put();
     };
 
+    $scope.setCurrentBug = function (currentBug) {
+      $rootScope.bugs = _.reject($rootScope.bugs, function (bug) {
+        var rv = bug.current;
+        delete bug.current;
+        return rv;
+      });
+      if (currentBug) {
+        currentBug.current = true;
+        $rootScope.bugs.push(currentBug);
+      }
+    };
+
     $scope.addBug = function (bug) {
       $scope.mockup.all('bugs').post(bug).then(function (bug) {
         bug = bug[0];

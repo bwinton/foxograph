@@ -6,20 +6,19 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false */
+/*global foxographApp:false */
 
 'use strict';
 
 /* Directives */
 
-foxographApp.directive('mockupImage', function ($http) {
+foxographApp.directive('mockupImage', function () {
   var directiveDefinitionObject = {
     restrict: 'E',
     scope: true,
 
-    link: function userPostLink($scope, iElement, iAttrs) {
-      var startX = null;
-      var startY = null;
+    link: function userPostLink($scope, iElement) {
+      var bug = null;
       iElement.on('mousedown', function (e) {
         if (e.target !== iElement[0]) {
           return false;
@@ -28,8 +27,35 @@ foxographApp.directive('mockupImage', function ($http) {
         if (!validUser || !$scope.background) {
           return false;
         }
-        startX = e.pageX;
-        startY = e.pageY;
+        bug = {
+          'mockup': $scope.m_id,
+          'number': 'Adding…',
+          'startX': e.pageX,
+          'startY': e.pageY,
+          'endX': e.pageX,
+          'endY': e.pageY
+        };
+        $scope.$apply(function () {
+          $scope.setCurrentBug(bug);
+          console.log($scope.bugs);
+        });
+      });
+      iElement.on('mousemove', function (e) {
+        if (e.target !== iElement[0]) {
+          return false;
+        }
+        var validUser = ($scope.auth.email === $scope.project.user);
+        if (!validUser || !$scope.background) {
+          return false;
+        }
+        if (!bug) {
+          return false;
+        }
+        console.log('mousemove', bug);
+        $scope.$apply(function () {
+          bug.endX = e.pageX;
+          bug.endY = e.pageY;
+        });
       });
       iElement.on('mouseup', function (e) {
         if (e.target !== iElement[0]) {
@@ -39,23 +65,18 @@ foxographApp.directive('mockupImage', function ($http) {
         if (!validUser || !$scope.background) {
           return false;
         }
-        var bug = prompt('Please enter a bug number');
-        if (!bug) {
-          return;
-        }
+        var bugNumber = prompt('Please enter a bug number');
 
-        console.log("Adding bug", bug);
-        var data = {
-          'number': bug,
-          'startX': startX,
-          'startY': startY,
-          'endX': e.pageX,
-          'endY': e.pageY
-        };
-        startX = null;
-        startY = null;
+        console.log('Adding bug', bugNumber);
         $scope.$apply(function () {
-          $scope.addBug(data);
+          var newBug = bug;
+          $scope.setCurrentBug(null);
+          bug = null;
+          if (!bugNumber) {
+            return;
+          }
+          newBug.number = bugNumber;
+          $scope.addBug(newBug);
         });
         return false;
       });
