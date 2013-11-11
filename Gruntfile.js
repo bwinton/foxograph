@@ -1,23 +1,34 @@
-Tail = require('tail').Tail;
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-module.exports = function(grunt) {
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true,
+  strict:true, undef:true, node:true, indent:2, maxerr:50, devel:true,
+  boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
+
+
+'use strict';
+
+var Tail = require('tail').Tail;
+
+module.exports = function (grunt) {
 
   var settings = grunt.file.readJSON('grunt-settings.json');
 
-  var ssh_settings = (function(){
+  var ssh_settings = (function () {
     var obj = {
       path: settings.path,
-      srcBasePath: "./website/",
+      srcBasePath: './website/',
       host: settings.host,
       createDirectories: true,
       username: settings.username
     };
     /* handle privateKey ssh or password based ssh */
-    if(settings.privateKey){
+    if (settings.privateKey) {
       obj.privateKey = grunt.file.read(settings.privateKey);
       obj.passphrase = settings.passphrase;
     }
-    else{
+    else {
       obj.password = settings.password;
     }
     return obj;
@@ -116,15 +127,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-express-server');
 
-  grunt.registerTask('version', 'Write the version.', function() {
+  grunt.registerTask('version', 'Write the version.', function () {
     grunt.log.write(grunt.config('pkg.name') + ' ' + grunt.config('pkg.version') + '\n').ok();
   });
 
   grunt.registerTask('server', [ 'express:dev', 'watch' ]);
 
-  grunt.registerTask('debug', 'Run a debug server, and open the site in a tab.', function(){
+  grunt.registerTask('debug', 'Run a debug server, and open the site in a tab.', function () {
     var done = this.async();
-    grunt.event.once('mongod.started', function (){
+    grunt.event.once('mongod.started', function () {
       if (grunt.file.exists('www')) {
         grunt.file.delete('www');
       }
@@ -132,26 +143,26 @@ module.exports = function(grunt) {
       grunt.task.run('server');
       grunt.event.emit('express.started');
     });
-    grunt.event.once('express.started', function (){
+    grunt.event.once('express.started', function () {
       // grunt.util.spawn({cmd: 'open', args: ['http://127.0.0.1:3000']}, function (err, result, code) {
       //   console.log("Done open " + err + ", " + result + ", " + code);
       done();
       // });
     });
+    new Tail('mongo.log').on('line', function (data) {
+      data = data.toString().trim();
+      if (data.match(/\[initandlisten\] waiting for connections on port \d+$/)) {
+        grunt.event.emit('mongod.started');
+      }
+    });
     var mongod = grunt.util.spawn({cmd: 'mongod', args: ['--logpath', 'mongo.log']}, function (err, result, code) {
-      console.log("Done mongod " + err + ", " + result + ", " + code);
+      console.log('Done mongod ' + err + ', ' + result + ', ' + code);
       if (err && code === 100) {
-        console.log("Mongo already started.");
+        console.log('Mongo already started.');
         grunt.event.emit('mongod.started');
       } else if (err) {
         throw err;
       }
-      new Tail('mongo.log').on('line', function(data) {
-        data = data.toString().trim();
-        if (data.match(/\[initandlisten\] waiting for connections on port \d+$/)) {
-          grunt.event.emit('mongod.started');
-        }
-      });
     });
   });
 
