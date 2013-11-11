@@ -9,8 +9,8 @@
     <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}">
       <bug-panel bug="bug" loading-image="/r/images/bugzilla-loading.png">
         <a ng-show="auth.email && auth.email == project.user"
-           ng-click="deleteBug(bug)"
-           class="link pull-right"><i class="glyphicon glyphicon-trash icon-white"></i></a>
+           ng-click="deleteBug(bug)" class="delete link pull-right"
+           ><i class="glyphicon glyphicon-trash icon-white"></i></a>
       </bug-panel>
     </div>
   </mockup-image>

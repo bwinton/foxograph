@@ -59,9 +59,9 @@ bug-panel a {
 
 .main-content {
   width: 100%;
-  height: calc(100% - 60px);
+  height: calc(100% - 50px);
   position: relative;
-  top: 80px;
+  top: 0;
   left: 0;
 }
 
@@ -107,7 +107,6 @@ canvas {
 
 #mockup-wrapper svg {
   position: absolute;
-  top: 6px;
   width: 1500px;
   height: 900px;
   z-index: 1;
@@ -125,6 +124,8 @@ mockup-image {
   margin: 0;
   padding: 0;
   position: absolute;
+  top: 50px;
+  left: 0;
 }
 
 mockup-image.hover {
@@ -153,6 +154,6 @@ mockup-image.hover {
     transform-origin: 0 0 0;
 }
 
-.deleteBug {
-  float: right;
+.delete.link {
+  margin-top: -1.5em;
 }

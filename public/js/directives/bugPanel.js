@@ -14,7 +14,7 @@
 
 foxographApp.directive('bugPanel', function () {
   var template = '<div class="panel {{bug | statusClass}}"' +
-    '    style="top:{{bug.endY}}px; left:{{bug.endX}}px;">' +
+    '    style="top:{{bug.endY - 50}}px; left:{{bug.endX}}px;">' +
     '  <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">{{bug.number}}, {{bug.summary}}</a>' +
     '  <br>' +
     '<img src="{{loading}}" ng-hide="bug && bug.status">' +
