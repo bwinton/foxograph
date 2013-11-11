@@ -15,7 +15,7 @@
 foxographApp.controller({
 
   'MockupCtrl': function MockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
-    console.log("BW - Setting m_id to ", $stateParams.m_id);
+    console.log('BW - Setting m_id to ', $stateParams.m_id);
     $rootScope.m_id = $stateParams.m_id;
 
     $rootScope.$watch('mockups', function () {
@@ -31,7 +31,7 @@ foxographApp.controller({
                             $rootScope.mockups[mockupIndex + 1]._id : null;
 
 
-      console.log("$scope.mockup = " + $scope.mockup);
+      console.log('$scope.mockup = ' + $scope.mockup);
     });
 
     // Handle changes to the currently selected project.
@@ -68,7 +68,7 @@ foxographApp.controller({
           var pixel = 'background-color: rgb(' + img.r + ',' + img.g + ',' + img.b + ');';
           $rootScope.background = pixel;
         }, function (err) {
-          console.log("Image errored!!!  " + err);
+          console.log('Image errored!!!  ' + err);
         });
       }
     };
@@ -96,25 +96,23 @@ foxographApp.controller({
         var socket = io.connect($location.host());
         socket.emit('getBugInfo', bug);
 
-        socket.on('bugInfo', function (bugInfo) {
+        socket.on('bugInfo', function () {
           $scope.mockup.all('bugs').getList().then(function (bugList) {
             // Sort the bugs by ['number'].
             $rootScope.bugs = $filter('orderBy')(bugList, ['number']);
           });
         });
-
-        $rootScope.bugs.push(bug);
       });
     };
 
     $scope.deleteBug = function (bug) {
-      bug.remove().then(function (data) {
+      bug.remove().then(function () {
         $rootScope.bugs = _.without($rootScope.bugs, bug);
       });
     };
 
     $scope.$watch('mockup.image', function (image) {
-      console.log("Got mockup image of " + (image ? "something" : "nothing"));
+      console.log('Got mockup image of ' + (image ? 'something' : 'nothing'));
       getMockupStyle(image, $scope);
     });
   }
