@@ -65,11 +65,8 @@ bug-panel a {
   left: 0;
 }
 
-.main-content > div {
-  margin: 10vh 10vw;
-}
-
-.main-content > div {
+.projects-list,
+.mockups-list {
   margin: 10vh 10vw;
 }
 
