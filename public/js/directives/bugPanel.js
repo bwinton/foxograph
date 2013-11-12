@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false, bugzilla:false */
+/*global foxographApp:false */
 
 'use strict';
 
@@ -29,11 +29,11 @@ foxographApp.directive('bugPanel', function () {
     restrict: 'E',
     scope: {
       bug: '=bug',
-      loading: "@loadingImage"
+      loading: '@loadingImage'
     },
     transclude : true,
     link: function postLink($scope, $iElement, $iAttrs) {
-      console.log("Creating bugPanel ", $scope, $iElement, $iAttrs);
+      console.log('Creating bugPanel ', $scope, $iElement, $iAttrs);
     }
   };
 });
