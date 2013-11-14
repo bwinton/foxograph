@@ -65,8 +65,9 @@ bug-panel a {
   left: 0;
 }
 
-.projects-list,
-.mockups-list {
+.create-mockup,
+.mockups-list,
+.projects-list {
   margin: 10vh 10vw;
 }
 
