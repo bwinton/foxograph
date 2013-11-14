@@ -8,12 +8,12 @@ strict:true, undef:true, unused:true, curly:true, browser:true, white:true,
 moz:true, esnext:false, indent:2, maxerr:50, devel:true, node:true, boss:true,
 globalstrict:true, nomen:false, newcap:false */
 
-"use strict";
+'use strict';
 
 var request = require('request');
 
 
-var BASE_URL = "https://api-dev.bugzilla.mozilla.org/latest";
+var BASE_URL = 'https://api-dev.bugzilla.mozilla.org/latest';
 // var BASE_UI_URL = "https://bugzilla.mozilla.org";
 
 exports.getBug = function (id, callback) {

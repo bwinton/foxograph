@@ -8,12 +8,12 @@
    moz:true, esnext:false, indent:2, maxerr:50, devel:true, node:true, boss:true,
    globalstrict:true, nomen:false, newcap:false */
 
-"use strict";
+'use strict';
 
 var mongoose = require('mongoose');
+var bugzilla = require('./api-bugzilla');
 var error = require('./api-utils').error;
 var extend = require('./api-utils').extend;
-var bugzilla = require('./api-bugzilla');
 
 var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
   number: String,
@@ -226,7 +226,7 @@ var getBugzillaInfo = function (bugNumber, bugInfo, callback) {
     }
     if (bugzillaInfo.number) {
       var bugInfo = new BugInfo(bugzillaInfo);
-      bugInfo.save(function (err) {
+      bugInfo.save(function () {
         if (callback) {
           callback(bugInfo.toObject());
         }

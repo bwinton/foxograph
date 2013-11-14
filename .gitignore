@@ -1,9 +1,10 @@
-www/
-npm-debug.log
-.DS_Store
-.*.swp
 .*.swo
+.*.swp
+.DS_Store
 foxography-*.tgz
 grunt-settings.json
-private.yml
 mongo.log
+npm-debug.log
+private.yml
+temp/
+www/
