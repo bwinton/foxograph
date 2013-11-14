@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false, run:false */
+/*global _:false, foxographApp:false */
 
 'use strict';
 
@@ -18,12 +18,14 @@ foxographApp.controller({
   // project, and automatically selecting the appropriate mockup in that
   // project.
   'ProjectsCtrl': function ProjectsCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
-    console.log("BW - Setting p_id to ", $stateParams.p_id);
+    console.log('BW - Setting p_id to ', $stateParams.p_id);
     $rootScope.p_id = $stateParams.p_id;
 
     // Handle a change in project id by setting the project.
     $rootScope.$watch('p_id', function changeProject(p_id) {
       if (!$rootScope.projects) {
+        // Hopefully we'll do this later.
+        // We should totally make this into an Ensure clause on the route!!!
         return;
       }
       if (!$rootScope.p_id) {
@@ -32,7 +34,15 @@ foxographApp.controller({
         return;
       }
       $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.p_id});
+    });
 
+    // If we have projects, and a p_id, make sure that we've set the project.
+    $rootScope.$watch('projects', function ensureProject() {
+      console.log('BW - Ensuring project of ', $rootScope.p_id, $rootScope.projects);
+      if (!$rootScope.p_id || !$rootScope.projects) {
+        return;
+      }
+      $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.p_id});
     });
 
 
