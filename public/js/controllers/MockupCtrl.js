@@ -6,7 +6,7 @@
   strict:true, undef:true, browser:true, indent:2, maxerr:50, devel:true,
   boss:true, white:true, globalstrict:true, nomen:false, newcap:true*/
 
-/*global _:false, foxographApp:false, io:false */
+/*global _:false, foxographApp:false */
 
 'use strict';
 
@@ -92,16 +92,12 @@ foxographApp.controller({
 
     $scope.addBug = function (bug) {
       $scope.mockup.all('bugs').post(bug).then(function (bug) {
+        // Sort the bugs by ['number'].
         bug = bug[0];
-        var socket = io.connect($location.host());
-        socket.emit('getBugInfo', bug);
-
-        socket.on('bugInfo', function () {
-          $scope.mockup.all('bugs').getList().then(function (bugList) {
-            // Sort the bugs by ['number'].
-            $rootScope.bugs = $filter('orderBy')(bugList, ['number']);
-          });
-        });
+        $rootScope.bugs.push(bug);
+        $rootScope.bugs = $filter('orderBy')($rootScope.bugs, ['number']);
+      }, function (response) {
+        console.log('Error with status code', response);
       });
     };
 

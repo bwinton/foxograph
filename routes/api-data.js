@@ -10,7 +10,9 @@
 
 'use strict';
 
+var deferred = require('deferred');
 var mongoose = require('mongoose');
+
 var bugzilla = require('./api-bugzilla');
 var error = require('./api-utils').error;
 var extend = require('./api-utils').extend;
@@ -214,12 +216,28 @@ exports.deleteMockup = function (req, res) {
 
 // Bugs.
 
-var getBugzillaInfo = function (bugNumber, bugInfo, callback) {
-  if (bugInfo.last_got && Date.now() - bugInfo.last_got.getTime() < BUGZILLA_FETCH_DELAY) {
-    console.log('Too soon to fetch bug data for', bugNumber);
-    return;
+var makeFullBug = function (bug, bugInfo) {
+  var retval = {};
+  if (bug.toObject) {
+    bug = bug.toObject();
   }
-  bugzilla.getBug(bugNumber, function (err, response, body) {
+  if (bugInfo.toObject) {
+    bugInfo = bugInfo.toObject();
+  }
+  extend(retval, bugInfo, bug);
+  return retval;
+};
+
+var getBugzillaInfo = function (bug, bugInfo) {
+  var def = deferred();
+  if (bugInfo.last_got && Date.now() - bugInfo.last_got.getTime() < BUGZILLA_FETCH_DELAY) {
+    console.log('Too soon to fetch bug data for', bug.number);
+    setTimeout(function () {
+      def.resolve(makeFullBug(bug, bugInfo));
+    }, 0);
+    return def.promise;
+  }
+  bugzilla.getBug(bug.number, function (err, response, body) {
     var bugzillaInfo = {};
     if (!err && response.statusCode === 200) {
       bugzillaInfo = bugzilla.getInfo(body);
@@ -227,12 +245,17 @@ var getBugzillaInfo = function (bugNumber, bugInfo, callback) {
     if (bugzillaInfo.number) {
       var bugInfo = new BugInfo(bugzillaInfo);
       bugInfo.save(function () {
-        if (callback) {
-          callback(bugInfo.toObject());
-        }
+        def.resolve(makeFullBug(bug, bugInfo));
       });
+    } else {
+      // Figure out how to handle errors.
+      // The form is: { error: true, code: 102, message: 'Access Denied' }
+      // At the least, we need to remove the bug from the db.
+      // Or do we?  For now, let's return the error, and filter it out.
+      def.resolve(makeFullBug(bug, body));
     }
   });
+  return def.promise;
 };
 
 var addBugInfos = function (bugs, callback) {
@@ -243,16 +266,22 @@ var addBugInfos = function (bugs, callback) {
     if (err) {
       console.error(err);
     }
-    var retval = bugs.map(function (bug) {
+    deferred.map(bugs, function (bug) {
       var bugInfo = bugInfos.filter(function (bugInfo) {
         return bugInfo.number === bug.number;
       });
       bugInfo = bugInfo.length ? bugInfo[0].toObject() : {};
-      // Kick off a bugzilla request, too.
-      getBugzillaInfo(bug, bugInfo);
-      return extend(bugInfo, bug.toObject());
+      // Kick off a bugzilla request.
+      return getBugzillaInfo(bug, bugInfo);
+    }).then(function (result) {
+      result = result.filter(function (bug) {
+        return !bug.error;
+      });
+      callback(result);
+    }, function (response) {
+      console.log('addBugInfos 5 Error:', response);
+      callback(response);
     });
-    callback(retval);
   });
 };
 
