@@ -9,7 +9,6 @@
     "mongoose": "3.2.1",
     "request": "~2.27.0",
     "tail": "~0.3.2",
-    "socket.io": "~0.9.16"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

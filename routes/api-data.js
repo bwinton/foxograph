@@ -213,17 +213,6 @@ exports.deleteMockup = function (req, res) {
 
 
 // Bugs.
-exports.lookupBugInfo = function (bug, callback) {
-  BugInfo.find({number: bug.number}, function (err, bugInfo) {
-    if (err) {
-      console.error(err);
-    }
-    bugInfo = bugInfo.length ? bugInfo[0].toObject() : {};
-    // Kick off a bugzilla request, too.
-    getBugzillaInfo(bug.number, bugInfo, callback);
-    return;
-  });
-};
 
 var getBugzillaInfo = function (bugNumber, bugInfo, callback) {
   if (bugInfo.last_got && Date.now() - bugInfo.last_got.getTime() < BUGZILLA_FETCH_DELAY) {
