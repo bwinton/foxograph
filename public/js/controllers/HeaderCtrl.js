@@ -51,6 +51,7 @@ foxographApp.controller({
 
     var mIdChanged = function (m_id) {
       console.log("BW - setting selected mockup to " + m_id);
+      $rootScope.subTitle = '';
       var mockup = _.findWhere($rootScope.mockups, {_id: m_id});
       if (mockup) {
         $rootScope.subTitle = mockup.name;
@@ -73,9 +74,12 @@ foxographApp.controller({
 
     $scope.$watch('selectedProject', function (project, oldProject) {
       if (project) {
-        $rootScope.p_id = project._id;
+        $rootScope.m_id = null;
+        $state.go('project.index', {'p_id': project._id});
       } else {
         $rootScope.p_id = null;
+        $rootScope.m_id = null;
+        $state.go('index', {});
       }
     });
 
