@@ -1,0 +1,13 @@
+{
+  "name": "angular-tools",
+  "_cacheHeaders": {
+    "ETag": "\"f3c4267c288d01312eb7540f768abae0\"",
+    "Content-Length": "28987",
+    "Content-Type": "text/html; charset=utf-8"
+  },
+  "_release": "e-tag:f3c4267c2",
+  "main": "index",
+  "_source": "https://github.com/bwinton/angular-tools/",
+  "_target": "*",
+  "_originalSource": "https://github.com/bwinton/angular-tools/"
+}
