@@ -101,6 +101,17 @@ module.exports = function (grunt) {
         options: {
           frameworks: ['jasmine'],
           files: [
+            'public/js/lib/jquery/jquery.js',
+            'public/js/lib/bootstrap/dist/js/bootstrap.js',
+            'public/js/lib/lodash/dist/lodash.js',
+            'public/js/lib/angular/angular.js',
+            'public/js/lib/angular-mocks/angular-mocks.js',
+            'public/js/lib/restangular/dist/restangular.js',
+            'public/js/lib/angular-ui-router/release/angular-ui-router.js',
+            'public/js/lib/angular-tools/*.js',
+            'public/js/*.js',
+            'public/js/directives/*.js',
+            'public/js/controllers/*.js',
             'test/frontend/*.js'
           ],
           singleRun: true,
