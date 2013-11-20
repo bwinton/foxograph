@@ -1,0 +1,29 @@
+{
+  "name": "foxograph",
+  "version": "0.1.2",
+  "homepage": "https://github.com/bwinton/foxograph",
+  "authors": [
+    "Blake Winton <bwinton@latte.ca>"
+  ],
+  "description": "A site to create linked mockups.",
+  "main": "app.js",
+  "license": "MPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.0.8",
+    "angular-tools": "https://github.com/bwinton/angular-tools/",
+    "angular-ui-router": "~0.2.0",
+    "bootstrap": "~3.0.1",
+    "jquery": "~2.0.3",
+    "lodash": "~1.3.0"
+    "restangular": "~1.1.6",
+  },
+}
