@@ -14,6 +14,7 @@ var Tail = require('tail').Tail;
 module.exports = function (grunt) {
 
   var settings = grunt.file.readJSON('grunt-settings.json');
+  process.env.FIREFOX_BIN = settings.firefox_bin;
 
   var ssh_settings = (function () {
     var obj = {
@@ -103,7 +104,7 @@ module.exports = function (grunt) {
             'test/frontend/*.js'
           ],
           singleRun: true,
-          browsers: ['Chrome']//, settings.browser]
+          browsers: ['Chrome', 'Firefox']
         }
       }
     },
