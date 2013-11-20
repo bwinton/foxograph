@@ -95,7 +95,18 @@ module.exports = function (grunt) {
         }
       }
     },
-
+    karma: {
+      unit: {
+        options: {
+          frameworks: ['jasmine'],
+          files: [
+            'test/frontend/*.js'
+          ],
+          singleRun: true,
+          browsers: ['Chrome']//, settings.browser]
+        }
+      }
+    },
     watch: {
       scripts: {
         files: lintable_files,
@@ -126,6 +137,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-express-server');
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('version', 'Write the version.', function () {
     grunt.log.write(grunt.config('pkg.name') + ' ' + grunt.config('pkg.version') + '\n').ok();
