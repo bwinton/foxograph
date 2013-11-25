@@ -9,7 +9,8 @@
     "mongoose": "3.2.1",
     "request": "~2.27.0",
     "tail": "~0.3.2",
-    "deferred": "~0.6.6"
+    "deferred": "~0.6.6",
+    "debug": "~0.7.4"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
