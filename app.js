@@ -14,6 +14,8 @@
  * Module dependencies.
  */
 
+var app_log = require('debug')('foxograph:app');
+var request_log = require('debug')('foxograph:request');
 var ejs = require('ejs');
 var express = require('express');
 var mongoose = require('mongoose');
@@ -38,18 +40,18 @@ if (process.env.VCAP_SERVICES) {
   mongo_url = process.env.MONGO_URL;
 }
 mongoose.connect(mongo_url);
-console.log('Mongo URL:', mongo_url);
+app_log('Mongo URL: %s', mongo_url);
 
 var session_secret = 'mytestsessionsecret';
 if (process.env.SESSION_SECRET) {
   session_secret = process.env.SESSION_SECRET;
 }
-console.log('Session Secret:', session_secret);
+app_log('Session Secret: %s', session_secret);
 
 var PORT = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 var HOST = process.env.IP_ADDRESS || process.env.VCAP_APP_HOST || '127.0.0.1';
-console.log('Port:', PORT);
-console.log('Host:', HOST);
+app_log('Port: %s', PORT);
+app_log('Host: %s', HOST);
 
 var audience = 'http://' + HOST + ':' + PORT; // Must match your browser's address bar
 if (process.env.VMC_APP_INSTANCE) {
@@ -58,7 +60,7 @@ if (process.env.VMC_APP_INSTANCE) {
 } else if (process.env.AUDIENCE) {
   audience = process.env.AUDIENCE;
 }
-console.log('Audience:', audience);
+app_log('Audience: %s', audience);
 
 app.configure(function () {
   app.set('views', __dirname + '/views');
@@ -90,7 +92,7 @@ app.configure(function () {
 
       // Print the log
       //if (res.statusCode != 200 && res.statusCode != 304)
-      console.log(logTmpl(req.kvLog));
+      request_log(logTmpl(req.kvLog));
     };
 
     next();
@@ -154,5 +156,5 @@ require('express-persona')(app, {
 });
 
 server.listen(PORT, HOST, function () {
-  console.log('Listening on ' + audience);
+  app_log('Listening on %s', audience);
 });
