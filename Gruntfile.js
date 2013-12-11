@@ -158,7 +158,7 @@ module.exports = function (grunt) {
   grunt.registerTask('server', [ 'express:dev', 'watch' ]);
 
   grunt.registerTask('debug', 'Run a debug server, and open the site in a tab.', function () {
-    process.env.DEBUG = "foxograph:*";
+    process.env.DEBUG = 'foxograph:*';
     var done = this.async();
     grunt.event.once('mongod.started', function () {
       if (grunt.file.exists('www')) {

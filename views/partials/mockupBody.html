@@ -1,8 +1,10 @@
 <div id="mockup-wrapper" data-mockup-image class="mockupBody">
   <svg viewbox="0 0 1500 900" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <line ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
-          x1="{{bug.startX}}" y1="{{bug.startY}}"
-          x2="{{bug.endX + 150}}" y2="{{bug.endY + 30}}"></line>
+          ng-attr-x1="{{bug.startX}}"
+          ng-attr-y1="{{bug.startY}}"
+          ng-attr-x2="{{bug.endX + 150}}"
+          ng-attr-y2="{{bug.endY + 30}}"></line>
   </svg>
 
   <mockup-image id="mockup" style="{{mockupStyle}}">&nbsp;
