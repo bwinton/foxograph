@@ -6,5 +6,6 @@ grunt-settings.json
 mongo.log
 npm-debug.log
 private.yml
+README.html
 temp/
 www/

@@ -3,9 +3,29 @@ arewecreatingyet
 
 A creator/displayer for areweprettyyet-style dashboards/spec pages.
 
-To get set up, install [mongodb](http://www.mongodb.org/), then type `volo add;npm install`.
+## Installation ##
 
-To run type `volo debug`.
+Ensure the following are installed:
+
+* [mongodb](http://www.mongodb.org/)
+* [grunt](http://gruntjs.com/getting-started)
+
+Then do the following:
+
+1. `npm install` There will be some warnings, they can be ignored
+2. Create a `grunt-settings.json` file with the following contents changing the file path to your local firefox installation:
+```
+{
+	"firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin"
+}
+``` 
+
+To run: `grunt debug`
+
+Notes:
+
+* If the task hangs on `Running "debug" task` start `mongod` separately and try again
+* If a browser tab isn't opened automatically you can manually navigate to `127.0.0.1:3000`
 
 
 ## Design ##
