@@ -45,7 +45,17 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
+    stackato: grunt.file.readYAML('stackato.yml'),
 
+
+    shell: {
+      update: {
+        command: "stackato update <%= stackato.name %>"
+      },
+      push: {
+        command: "stackato push <%= stackato.name %>"
+      }
+    },
     version: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -150,12 +160,16 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-express-server');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-shell');
 
   grunt.registerTask('version', 'Write the version.', function () {
     grunt.log.write(grunt.config('pkg.name') + ' ' + grunt.config('pkg.version') + '\n').ok();
   });
 
   grunt.registerTask('server', [ 'express:dev', 'watch' ]);
+
+  grunt.registerTask('update', [ 'copy:debug', 'shell:update']);
+  grunt.registerTask('push', [ 'copy:debug', 'shell:push']);
 
   grunt.registerTask('debug', 'Run a debug server, and open the site in a tab.', function () {
     process.env.DEBUG = 'foxograph:*';
