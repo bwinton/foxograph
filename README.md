@@ -26,6 +26,7 @@ Notes:
 
 * If the task hangs on `Running "debug" task` start `mongod` separately and try again
 * If a browser tab isn't opened automatically you can manually navigate to `127.0.0.1:3000`
+* If the debug complains about lacking a `mongo.log` simply create a blank file with that name
 
 
 ## Design ##
