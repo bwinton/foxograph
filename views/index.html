@@ -16,7 +16,13 @@
         <!-- Project Menu -->
         <li ng-show="projects" id="projects" class="dropdown navbar-form">
           <select id="project-list" ng-model="selectedProject"
-                  ng-options="'[' + c.user + '] ' + c.name for c in projects" class="form-control">
+                  ng-options="project.name for project in projects" class="form-control">
+          </select>
+        </li> 
+
+        <li ng-show="mockups" id="mockups" class="dropdown navbar-form">
+          <select id="mockups-list" ng-model="selectedMockup"
+                  ng-options="mockup.name for mockup in mockups" class="form-control">
           </select>
         </li>
 
