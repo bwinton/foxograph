@@ -20,11 +20,15 @@ foxographApp.controller({
     $rootScope.p_id = null;
     $rootScope.prevMockupId = null;
     $rootScope.nextMockupId = null;
-
     $scope.project = {};
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
-      projects.post({name: newProject.name}).then(function (project) {
+
+      // Will need to filter here
+      var themes = _.map($rootScope.themes, function(theme) {return theme._id});
+      var products = _.map($rootScope.products, function(product) {return product._id});
+
+      projects.post({name: newProject.name, themes: themes, products: products}).then(function (project) {
         project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
           $rootScope.projects.push(project);
           $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
@@ -35,6 +39,20 @@ foxographApp.controller({
     $scope.reset = function () {
       $scope.project = {};
     };
+
+    $scope.createTheme = function() {
+      var themes = Restangular.all('themes');
+      themes.post({name: $scope.newTheme}).then(function (newTheme) {
+        $rootScope.themes.push(newTheme);
+      })
+    }
+
+    $scope.createProduct = function() {
+      var products = Restangular.all('products');
+      products.post({name: $scope.newProduct}).then(function (newProduct) {
+        $rootScope.products.push(newProduct);
+      })
+    }
   }
 
 });

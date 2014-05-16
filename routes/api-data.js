@@ -44,13 +44,73 @@ var Mockup = mongoose.model('Mockup', new mongoose.Schema({
   project: String
 }));
 
+var Theme = mongoose.model('Theme', new mongoose.Schema({
+  name: String
+}));
+
+var Product = mongoose.model('Product', new mongoose.Schema({
+  name: String
+}));
+
 var Project = mongoose.model('Project', new mongoose.Schema({
   name: String,
   creationDate: Date,
-  user: String
+  user: String,
+  themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
+  products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}]
 }));
 
+
+
 var BUGZILLA_FETCH_DELAY = 4 * 60 * 60 * 1000; // 4 hours.
+
+// Themes
+exports.getThemes = function (req, res) {
+  return Theme.find(function (err, themes) {
+    return res.json(themes);
+  });
+};
+
+exports.postTheme = function (req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }  
+  if (!req.body || !req.body.name) {
+    return error(res, 'Missing name.');
+  }
+  var theme = new Theme(req.body);
+  theme.save(function (err) {
+    if (err) {
+      console.error(err);
+      return error(res, err, console);
+    }
+    return res.json(theme);
+  });
+};
+
+// Products
+exports.getProducts = function (req, res) {
+  return Product.find(function (err, products) {
+    return res.json(products);
+  });
+};
+
+exports.postProduct = function (req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }  
+  if (!req.body || !req.body.name) {
+    return error(res, 'Missing name.');
+  }
+  var product = new Product(req.body);
+  product.save(function (err) {
+    if (err) {
+      console.error(err);
+      return error(res, err, console);
+    }
+    return res.json(product);
+  });
+};
 
 // Projects.
 

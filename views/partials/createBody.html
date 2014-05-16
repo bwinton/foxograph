@@ -24,4 +24,20 @@
       </div>
     </div>
   </form>
+  <ul>
+    <li ng-repeat="theme in themes">{{theme.name}}</li>
+  </ul>
+  <form>
+    <input type="text" ng-model="newTheme"></input>
+    <button type="submit" class="btn"
+            ng-click="createTheme()">Create New Theme</button>
+  </form>
+  <ul>
+    <li ng-repeat="product in products">{{product.name}}</li>
+  </ul>
+  <form>
+    <input type="text" ng-model="newProduct"></input>
+    <button type="submit" class="btn"
+            ng-click="createProduct()">Create New Product</button>
+  </form>
 </div>
