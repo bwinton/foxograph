@@ -107,6 +107,11 @@ foxographApp.controller({
       });
     };
 
+    $scope.$on('$destroy', function() {
+      $rootScope.background = '';
+      $rootScope.m_id = null;
+    })
+
     $scope.$watch('mockup.image', function (image) {
       console.log('Got mockup image of ' + (image ? 'something' : 'nothing'));
       getMockupStyle(image, $scope);
