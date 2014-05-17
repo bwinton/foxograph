@@ -21,6 +21,8 @@ foxographApp.controller({
     $rootScope.prevMockupId = null;
     $rootScope.nextMockupId = null;
     $scope.project = {};
+    $scope.selectedThemes = [];
+    $scope.selectedProducts = [];
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
 
