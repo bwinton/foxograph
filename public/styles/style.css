@@ -29,11 +29,76 @@ html {
 body {
   font: 14px/21px 'Open Sans',"Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
   height: 100%;
-  background-color: #DBDBDB;
+  padding-top: 70px;
+}
+
+.panel-title {
+  display: inline-block;
+}
+
+.text-label{
+    font-weight: bold;
+    font-size: 10px;
+    color: #343536;
+    padding: 0 3px;
+    text-transform: uppercase;
+}
+
+.extra-muted {
+    color: #999;
+}
+
+.list-group-item {
+    position: relative;
+}
+
+.list-group-item span.title {
+    font-size: 12px;
+    width: 90%;
+    display: block;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.list-group-item.on span.title {
+    font-weight: bold;
+}
+
+.list-group-item .circle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #DDD;
+    background-color: white;
+    right: 10px;
+    top: 15px;
+}
+
+.list-group-item.on .circle {
+    background-color: #A3ED2B;
+    border-color: #A3ED2B;
+}
+
+.panel-heading button.btn-xs {
+    color: #999;
+}
+
+.toggle-list.list-group {
+  margin: 0;
+}
+
+.toggle-list.list-group-item {
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 1px solid #DDD;
+  margin: 0;
 }
 
 /***** New styles. *******/
-
+/*
 .navbar-nav {
     margin: 0 auto;
 }
@@ -56,7 +121,7 @@ bug-panel a {
 }
 
 /***** Old styles. *******/
-
+/*
 .main-content {
   width: 100%;
   height: calc(100% - 50px);
@@ -154,8 +219,10 @@ mockup-image.hover {
 
 .delete.link {
   margin-top: -1.5em;
-}
+} */
 
 .toggle-list.on {
   font-weight: 700;
 }
+
+

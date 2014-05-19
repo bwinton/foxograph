@@ -12,7 +12,9 @@
   <body class="ng-scope" ng-init="auth = {email:<%= email %>}"
     style="{{background}}" >
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <ul class="nav container navbar-nav navbar-fixed-top" ng-controller="HeaderCtrl">
+      <div class="container">
+      <ul class="nav container navbar-nav" ng-controller="HeaderCtrl">
+        <a class="navbar-brand" href="/">Foxograph</a>
         <!-- Project Menu -->
         <li ng-show="projects" id="projects" class="dropdown navbar-form">
           <select id="project-list" ng-model="selectedProject"
@@ -39,7 +41,6 @@
                ng-click="addMockup(p_id)" class="link">+</a>
             </small>
           </p>
-        </div>
 
         <li class="pull-right navbar-form">
           <button type="submit" class="btn" ng-show="auth.email"
@@ -58,9 +59,10 @@
           </user>
         </li>
       </ul>
+    </div>
     </nav>
 
-    <div ui-view class="main-content"></div>
+    <div ui-view class="main-content container"></div>
 
     <!-- Third-party library code -->
     <script src="/r/js/lib/jquery/jquery.js" type="text/javascript"></script>
