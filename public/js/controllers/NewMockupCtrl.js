@@ -26,9 +26,8 @@ foxographApp.controller({
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
 
-      // Will need to filter here
-      var themes = _.map($rootScope.themes, function(theme) {return theme._id});
-      var products = _.map($rootScope.products, function(product) {return product._id});
+      var themes = _.map($scope.selectedThemes, function(theme) {return theme._id});
+      var products = _.map($scope.selectedProducts, function(product) {return product._id});
 
       projects.post({name: newProject.name, themes: themes, products: products}).then(function (project) {
         project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
@@ -40,6 +39,8 @@ foxographApp.controller({
     };
     $scope.reset = function () {
       $scope.project = {};
+      $scope.selectedProducts = [];
+      $scope.selectedThemes = [];
     };
 
     $scope.createTheme = function() {
