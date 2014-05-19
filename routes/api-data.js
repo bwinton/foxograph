@@ -115,10 +115,17 @@ exports.postProduct = function (req, res) {
 // Projects.
 
 exports.getProjects = function (req, res) {
+  return Project.find({}).populate('themes').populate('products').exec(function(error, projects) {
+    return res.json(projects);
+  })
+};
+
+/*
+exports.getProjects = function (req, res) {
   return Project.find(function (err, projects) {
     return res.json(projects);
   });
-};
+};*/
 
 exports.postProject = function (req, res) {
   if (!req.session.email) {
