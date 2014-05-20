@@ -20,11 +20,16 @@ foxographApp.controller({
     $rootScope.p_id = null;
     $rootScope.prevMockupId = null;
     $rootScope.nextMockupId = null;
-
     $scope.project = {};
+    $scope.selectedThemes = [];
+    $scope.selectedProducts = [];
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
-      projects.post({name: newProject.name}).then(function (project) {
+
+      var themes = _.map($scope.selectedThemes, function(theme) {return theme._id});
+      var products = _.map($scope.selectedProducts, function(product) {return product._id});
+
+      projects.post({name: newProject.name, themes: themes, products: products}).then(function (project) {
         project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
           $rootScope.projects.push(project);
           $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
@@ -34,7 +39,25 @@ foxographApp.controller({
     };
     $scope.reset = function () {
       $scope.project = {};
+      $scope.selectedProducts = [];
+      $scope.selectedThemes = [];
     };
+
+    $scope.createTheme = function(theme, cb) {
+      var themes = Restangular.all('themes');
+      themes.post({name: theme}).then(function (newTheme) {
+        $rootScope.themes.push(newTheme);
+        cb(newTheme);
+      })
+    }
+
+    $scope.createProduct = function(product, cb) {
+      var products = Restangular.all('products');
+      products.post({name: product}).then(function (newProduct) {
+        $rootScope.products.push(newProduct);
+        cb(newProduct);
+      })
+    }
   }
 
 });

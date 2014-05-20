@@ -29,6 +29,14 @@ foxographApp.controller({
       $rootScope.projects = $filter('orderBy')(projectList, ['name', 'user']);
     });
 
+    Restangular.all('themes').getList().then(function (themeList) {
+      $rootScope.themes = themeList;
+    });
+
+    Restangular.all('products').getList().then(function (productList) {
+      $rootScope.products = productList;
+    });
+
     var pIdChanged = function (p_id) {
       $scope.selectedProject = _.findWhere($rootScope.projects, {_id: p_id});
       $rootScope.mainTitle = 'Please select a project';
@@ -50,6 +58,8 @@ foxographApp.controller({
     });
 
     var mIdChanged = function (m_id) {
+      $scope.selectedMockup = _.findWhere($rootScope.mockups, {_id: m_id});
+      console.log($scope.selectedMockup);
       console.log("BW - setting selected mockup to " + m_id);
       $rootScope.subTitle = '';
       var mockup = _.findWhere($rootScope.mockups, {_id: m_id});
@@ -81,6 +91,11 @@ foxographApp.controller({
         $rootScope.m_id = null;
         $state.go('index', {});
       }
+    });
+
+    $scope.$watch('selectedMockup', function (mockup, oldMockup) {
+      $rootScope.m_id = mockup._id
+      $state.go('project.mockup', {'p_id': $rootScope.p_id, 'm_id': mockup._id});
     });
 
     $scope.createProject = function () {

@@ -1,11 +1,40 @@
-<div class="projects-list">
-  <!-- Should have a "." in the ng-model, I think, maybe. -->
-  <input type="text" placeholder="Filter projects…" ng-model="projectSearch"
-         style="padding-bottom: 0; margin-bottom: 0" ng-show="projects">
+<!--  <input type="text" placeholder="Filter projects…" ng-model="projectSearch"
+  style="padding-bottom: 0; margin-bottom: 0" ng-show="projects"> -->
 
-  <ul class="projectList">
-    <li ng-repeat="project in projects | filter:projectSearch">
-      <a ng-href="/p/{{project._id}}">[{{project.user}}] {{project.name}}</a>
-    </li>
-  </ul>
+  <!-- sidebar -->
+  <div class="row">
+   <!-- sidebar -->
+   <div class="col-md-2">
+    <div class="well well-sm">
+      <h4 class="text-center">{{ projects.length }} Projects</h4>
+      <h6 class="text-center"><small><i>in current view</i></small></h6>
+      <hr/>
+      <!--<a class="btn btn-primary btn-block btn-xs" ng-show="permissions.add" ng-href="/projects/new">New Project</a>-->
+    </div>
+    <toggle-list title="'Products'" list="products" attribute="'name'" 
+    selected="filteredProducts" clearable="true"></toggle-list>
+    <toggle-list title="'Themes'" list="themes" attribute="'name'" 
+    selected="filteredThemes" clearable="true"></toggle-list>
+  </div>
+
+  <!-- project listing -->
+  <div class="col-md-10">
+    <table ng-show="projects.length" class="table table-hover">
+      <tbody>
+        <tr ng-repeat="project in projects">
+          <td>
+            <a class="projectTitle" ng-href="/p/{{ project._id }}"><strong>{{ project.name }}</strong></a><br/>
+            <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
+          </td>
+          <td>
+            <span ng-repeat="product in project.products" class="text-label extra-muted">{{ product.name }}<br/></span>
+          </td>
+          <td>{{ project.user }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-show="!projects.length" class="well well-lg">No projects. <i ng-show="projects.length">Try another filter?</i></div>
+  </div>  
 </div>
+
+  <!-- Should have a "." in the ng-model, I think, maybe. -->

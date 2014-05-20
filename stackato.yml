@@ -1,4 +1,4 @@
-name: foxograph
+name: foxographdev
 framework: node
 runtime: node08
 inherit: private.yml

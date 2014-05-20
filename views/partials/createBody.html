@@ -1,27 +1,38 @@
-<div ng-show="auth.email" class="createBody">
-  <form class="create-mockup" name="form" class="form-horizontal">
-    <div class="control-group">
-      <label class="control-label" for="inputName">Project name</label>
-      <div class="controls">
-        <input type="text" id="inputName" placeholder="New Project"
-          required="true" ng-model="project.name">
-      </div>
+<div ng-show="auth.email" class="row">
+  <div class="col-md-3">
+    <div class="createBody">
+      <form class="create-mockup" name="form" class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="inputName">Project name</label>
+          <div class="controls">
+            <input type="text" id="inputName" placeholder="New Project"
+            required="true" ng-model="project.name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputName">First Mockup name</label>
+          <div class="controls">
+            <input type="text" id="inputName" placeholder="New Mockup"
+            required="true" ng-model="project.mockup">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn btn-primary"
+            ng-click="create(project)"
+            ng-disabled="form.$invalid">Create Project</button>
+            <button type="submit" class="btn"
+            ng-click="reset()">Reset</button>
+          </div>
+        </div>
+      </form>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="inputName">First Mockup name</label>
-      <div class="controls">
-        <input type="text" id="inputName" placeholder="New Mockup"
-          required="true" ng-model="project.mockup">
-      </div>
-    </div>
-    <div class="control-group">
-      <div class="controls">
-        <button type="submit" class="btn btn-primary"
-          ng-click="create(project)"
-          ng-disabled="form.$invalid">Create Project</button>
-        <button type="submit" class="btn"
-          ng-click="reset()">Reset</button>
-      </div>
-    </div>
-  </form>
+  </div>
+<div class="col-md-3">
+    <toggle-list title="'Themes'" list="themes" attribute="'name'" selected="selectedThemes" addable="true" addfn="createTheme"></toggle-list>
+  </div>
+  <div class="col-md-3">
+    <toggle-list title="'Products'" list="products" attribute="'name'" selected="selectedProducts" addable="true" addfn="createProduct"></toggle-list>
 </div>
+</div>
+

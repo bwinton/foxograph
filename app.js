@@ -133,6 +133,14 @@ app.post('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
 app.delete('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.deleteBug);
 
+// API Themes
+app.get('/api/themes', routes.getThemes);
+app.post('/api/themes', routes.postTheme);
+
+// API Products
+app.get('/api/products', routes.getProducts);
+app.post('/api/products', routes.postProduct);
+
 // API Admin
 app.get('/api/deleteAll', routes.deleteAll);
 app.get('/api/dump', routes.dump);

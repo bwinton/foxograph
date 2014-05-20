@@ -4,7 +4,9 @@
 foxography-*.tgz
 grunt-settings.json
 mongo.log
+mongo.log.*
 npm-debug.log
 private.yml
+README.html
 temp/
 www/

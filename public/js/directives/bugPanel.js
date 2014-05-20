@@ -13,7 +13,7 @@
 /* Directives */
 
 foxographApp.directive('bugPanel', function () {
-  var template = '<div class="panel {{bug | statusClass}}"' +
+  var template = '<div class="bug-panel {{bug | statusClass}}"' +
     '    style="top:{{bug.endY - 50}}px; left:{{bug.endX}}px;">' +
     '  <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">{{bug.number}}, {{bug.summary}}</a>' +
     '  <br>' +
