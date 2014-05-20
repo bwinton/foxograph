@@ -162,7 +162,7 @@ canvas {
 #deleteProject {
   vertical-align: baseline;
 }
-
+*/
 #mockup-wrapper {
   margin: 0;
   padding: 0;
@@ -216,7 +216,7 @@ mockup-image.hover {
     -webkit-transform-origin: 0 0 0;
     transform-origin: 0 0 0;
 }
-
+/*
 .delete.link {
   margin-top: -1.5em;
 } */
