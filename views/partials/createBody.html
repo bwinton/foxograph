@@ -29,17 +29,10 @@
     </div>
   </div>
 <div class="col-md-3">
-    <div class="panel panel-default">
-      <div class="panel-heading"><h3 class="panel-title">Products</h3></div>
-      <toggle-list list="products" attribute="'name'" selected="selectedProducts"></toggle-list>
-    </div>
+    <toggle-list title="'Themes'" list="themes" attribute="'name'" selected="selectedThemes" addable="true" addfn="createTheme"></toggle-list>
   </div>
   <div class="col-md-3">
-    <div class="panel panel-default">
-      <div class="panel-heading"><h3 class="panel-title">Themes</h3></div>
-      <toggle-list list="themes" attribute="'name'" selected="selectedThemes"></toggle-list>
-    </div>
-  </div>
+    <toggle-list title="'Products'" list="products" attribute="'name'" selected="selectedProducts" addable="true" addfn="createProduct"></toggle-list>
 </div>
 </div>
 

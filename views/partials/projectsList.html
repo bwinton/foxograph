@@ -11,18 +11,10 @@
       <hr/>
       <!--<a class="btn btn-primary btn-block btn-xs" ng-show="permissions.add" ng-href="/projects/new">New Project</a>-->
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading"><h3 class="panel-title">Products</h3>
-        <button type="button" ng-click="toggleFilter('product', 'clear')" class="btn btn-default btn-xs pull-right">Clear</button>
-      </div>
-      <toggle-list list="products" attribute="'name'" selected="filteredProducts"></toggle-list>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading"><h3 class="panel-title">Themes</h3>
-        <button type="button" ng-click="toggleFilter('theme', 'clear')" class="btn btn-default btn-xs pull-right">Clear</button>
-      </div>
-      <toggle-list list="themes" attribute="'name'" selected="filteredThemes"></toggle-list>
-    </div>
+    <toggle-list title="'Products'" list="products" attribute="'name'" 
+    selected="filteredProducts" clearable="true"></toggle-list>
+    <toggle-list title="'Themes'" list="themes" attribute="'name'" 
+    selected="filteredThemes" clearable="true"></toggle-list>
   </div>
 
   <!-- project listing -->

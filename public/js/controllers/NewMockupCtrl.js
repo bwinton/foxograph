@@ -43,17 +43,19 @@ foxographApp.controller({
       $scope.selectedThemes = [];
     };
 
-    $scope.createTheme = function() {
+    $scope.createTheme = function(theme, cb) {
       var themes = Restangular.all('themes');
-      themes.post({name: $scope.newTheme}).then(function (newTheme) {
+      themes.post({name: theme}).then(function (newTheme) {
         $rootScope.themes.push(newTheme);
+        cb(newTheme);
       })
     }
 
-    $scope.createProduct = function() {
+    $scope.createProduct = function(product, cb) {
       var products = Restangular.all('products');
-      products.post({name: $scope.newProduct}).then(function (newProduct) {
+      products.post({name: product}).then(function (newProduct) {
         $rootScope.products.push(newProduct);
+        cb(newProduct);
       })
     }
   }
