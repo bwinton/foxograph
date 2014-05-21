@@ -30,9 +30,11 @@ foxographApp.directive('toggleList', function () {
     transclude : false,
     link: function (scope, element, attrs) {
       scope.isSelected = function(listItem) {
-        for (var i = 0; i < scope.selected.length; i++) {
-          if (scope.selected[i][scope.attribute] === listItem[scope.attribute]) {
-            return true;
+        if (scope.selected) {
+          for (var i = 0; i < scope.selected.length; i++) {
+            if (scope.selected[i][scope.attribute] === listItem[scope.attribute]) {
+              return true;
+            }
           }
         }
         return false;
