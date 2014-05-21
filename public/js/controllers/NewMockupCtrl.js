@@ -29,7 +29,6 @@ foxographApp.controller({
       var themes = _.map($scope.selectedThemes, function(theme) {return theme._id});
       var products = _.map($scope.selectedProducts, function(product) {return product._id});
       var mockups = [{name: newProject.mockup}]
-      console.log(mockups);
       projects.post({name: newProject.name, themes: themes, products: products, mockups: mockups}).then(function (project) {
         $rootScope.projects.push(project);
         $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
