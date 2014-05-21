@@ -1,0 +1,16 @@
+<div class="row">
+  <table ng-show="projects.length" class="table table-hover">
+      <tbody>
+        <tr ng-repeat="project in projects">
+          <td>
+            <a class="projectTitle" ng-href="/p/{{ project._id }}"><strong>{{ project.name }}</strong></a><br/>
+            <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
+          </td>
+          <td>
+            <span ng-repeat="product in project.products" class="text-label extra-muted">{{ product.name }}<br/></span>
+          </td>
+          <td>{{ project.user }}</td>
+        </tr>
+      </tbody>
+    </table>
+</div>

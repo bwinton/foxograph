@@ -157,6 +157,7 @@ app.get('/', routes.index);
 app.get('/create', routes.index);
 app.get('/p/:project_id', routes.index);
 app.get('/p/:project_id/:mockup_id', routes.index);
+app.get('/profile/:user_email', routes.index);
 
 
 require('express-persona')(app, {

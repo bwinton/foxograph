@@ -60,6 +60,10 @@ var foxographApp = angular.module('foxographApp',
         url: '/:m_id',
         templateUrl: '/r/mockupBody.html',
         controller: 'MockupCtrl'
+      }).state('profile', {
+        url: '/profile/:user_email',
+        templateUrl: '/r/profile.html',
+        controller: 'ProfileCtrl'
       });
 
       RestangularProvider.setBaseUrl('/api');
