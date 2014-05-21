@@ -62,6 +62,8 @@ foxographApp.directive('toggleList', function () {
 
       scope.add = function(item) {
         scope.selected.push(item);
+        scope.newItem = '';
+        scope.adding = false;
       }
 
       scope.submitItem = function() {
