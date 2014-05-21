@@ -21,7 +21,7 @@
   <div class="col-md-10">
     <table ng-show="projects.length" class="table table-hover">
       <tbody>
-        <tr ng-repeat="project in projects">
+        <tr ng-repeat="project in projects | filterProducts : filteredProducts | filterThemes: filteredThemes">
           <td>
             <a class="projectTitle" ng-href="/p/{{ project._id }}"><strong>{{ project.name }}</strong></a><br/>
             <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>

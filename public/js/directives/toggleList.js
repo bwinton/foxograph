@@ -1,6 +1,6 @@
 foxographApp.directive('toggleList', function () {
   var template = '<div class="panel panel-default">' +
-      '<div class="panel-heading"><h3 class="panel-title">{{title}}</h3>' +
+      '<div class="panel-heading"><h3 class="toggle-list panel-title">{{title}}</h3>' +
         '<button ng-show="clearable" type="button" ng-click="clear()" class="btn btn-default btn-xs pull-right">Clear</button>' +
       '</div>' +
       '<ul class="toggle-list list-group">' +
@@ -43,7 +43,6 @@ foxographApp.directive('toggleList', function () {
       }
 
       scope.toggle = function(listItem) {
-        console.log(scope.isSelected(listItem));
         if (scope.isSelected(listItem)) {
           var newSelected = []
           for (var i = 0; i < scope.selected.length; i++) {
@@ -53,7 +52,6 @@ foxographApp.directive('toggleList', function () {
           }
           scope.selected = newSelected
         } else {
-          console.log(scope.selected);
           scope.selected.push(listItem);
         }
       }

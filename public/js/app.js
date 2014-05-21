@@ -42,7 +42,8 @@ var foxographApp = angular.module('foxographApp',
       $urlRouterProvider.otherwise('/');
       $stateProvider.state('index', {
         url: '/',
-        templateUrl: '/r/projectsList.html'
+        templateUrl: '/r/projectsList.html',
+        controller: 'IndexCtrl'
       }).state('create', {
         url: '/create',
         templateUrl: '/r/createBody.html',
