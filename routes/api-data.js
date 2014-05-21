@@ -36,13 +36,13 @@ var Bug = mongoose.model('Bug', new mongoose.Schema({
   mockup: String
 }));
 
-var Mockup = mongoose.model('Mockup', new mongoose.Schema({
+var mockupSchema = new mongoose.Schema({
   name: String,
   slug: String,
   image: String,
-  creationDate: Date,
-  project: String
-}));
+  creationDate: { type: Date, default: Date.now }
+});
+var Mockup = mongoose.model('Mockup', mockupSchema);
 
 var Theme = mongoose.model('Theme', new mongoose.Schema({
   name: String
@@ -57,7 +57,8 @@ var Project = mongoose.model('Project', new mongoose.Schema({
   creationDate: Date,
   user: String,
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
-  products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}]
+  products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
+  mockups: [mockupSchema]
 }));
 
 

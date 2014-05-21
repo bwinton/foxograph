@@ -28,13 +28,12 @@ foxographApp.controller({
 
       var themes = _.map($scope.selectedThemes, function(theme) {return theme._id});
       var products = _.map($scope.selectedProducts, function(product) {return product._id});
-
-      projects.post({name: newProject.name, themes: themes, products: products}).then(function (project) {
-        project.post('mockups', {name: newProject.mockup}).then(function (mockup) {
-          $rootScope.projects.push(project);
-          $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
-          $state.go('project.mockup', {'p_id': project._id, 'm_id': mockup._id});
-        });
+      var mockups = [{name: newProject.mockup}]
+      console.log(mockups);
+      projects.post({name: newProject.name, themes: themes, products: products, mockups: mockups}).then(function (project) {
+        $rootScope.projects.push(project);
+        $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
+        $state.go('project.mockup', {'p_id': project._id, 'm_id': project.mockups[0]._id});
       });
     };
     $scope.reset = function () {
