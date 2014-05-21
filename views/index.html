@@ -16,23 +16,9 @@
       <ul class="nav container navbar-nav" ng-controller="HeaderCtrl">
         <a class="navbar-brand" href="/">Foxograph</a>
 
-        <!-- Current Project, and mockup. -->
-        <li id="project">
-          <p class="navbar-brand">{{mainTitle}}
-            <small>
-            <a ng-show="prevMockupId" class="link"
-               ng-href="/p/{{p_id}}/{{prevMockupId}}">«</a>
-            <span>{{subTitle}}</span>
-            <a ng-show="nextMockupId" class="link"
-               ng-href="/p/{{p_id}}/{{nextMockupId}}">»</a>
-            <a ng-show="auth.email && auth.email == selectedProject.user && !nextMockupId"
-               ng-click="addMockup(p_id)" class="link">+</a>
-            </small>
-          </p>
-
         <li class="pull-right navbar-form">
           <button type="submit" class="btn" ng-show="auth.email"
-            ng-click="createProject()">Create New Project</button>
+            ui-sref="project.new()">Create New Project</button>
         </li>
         <!-- User box -->
         <li class="pull-right navbar-text">
@@ -78,12 +64,12 @@
     <script src="/r/js/directives/mockupImage.js" type="text/javascript"></script>
     <script src="/r/js/directives/toggleList.js" type="text/javascript"></script>
     <script src="/r/js/controllers/IndexCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/HeaderCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/ProjectsCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/DashboardCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/ProfileCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/IndexCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/MockupCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/NewMockupCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProjectMockupCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProjectNewCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProjectShowCtrl.js" type="text/javascript"></script>
+
     <script src="/r/js/filters.js" type="text/javascript"></script>
   </body>
 

@@ -4,7 +4,7 @@
       <tbody>
         <tr ng-repeat="mockup in project.mockups">
           <td>
-            <a class="projectTitle" ng-href="/p/{{ project._id }}/{{mockup_.id}}}"><strong>{{ mockup.name }}</strong></a><br/>
+            <a class="projectTitle" ui-sref="project.mockup({project_id: project._id, mockup_id: mockup._id})"><strong>{{ mockup.name }}</strong></a><br/>
           </td>
         </tr>
       </tbody>

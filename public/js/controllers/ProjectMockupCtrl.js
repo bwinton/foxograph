@@ -14,9 +14,11 @@
 
 foxographApp.controller({
 
-  'MockupCtrl': function MockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
+  'ProjectMockupCtrl': function ProjectMockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
     console.log('BW - Setting m_id to ', $stateParams.m_id);
     $rootScope.m_id = $stateParams.m_id;
+
+
 
     $rootScope.$watch('mockups', function () {
       $scope.mockup = _.findWhere($rootScope.mockups, {_id: $rootScope.m_id});
@@ -110,7 +112,7 @@ foxographApp.controller({
     $scope.$on('$destroy', function() {
       $rootScope.background = '';
       $rootScope.m_id = null;
-    })
+    });
 
     $scope.$watch('mockup.image', function (image) {
       console.log('Got mockup image of ' + (image ? 'something' : 'nothing'));

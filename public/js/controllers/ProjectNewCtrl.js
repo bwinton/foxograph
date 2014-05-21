@@ -14,7 +14,7 @@
 
 foxographApp.controller({
 
-  'NewMockupCtrl': function NewMockupCtrl($scope, $rootScope, Restangular, $filter, $state) {
+  'ProjectNewCtrl': function ProjectNewCtrl($scope, $rootScope, Restangular, $filter, $state) {
     $rootScope.mainTitle = 'Create a new project';
     $rootScope.subTitle = '';
     $rootScope.p_id = null;
@@ -32,7 +32,7 @@ foxographApp.controller({
       projects.post({name: newProject.name, themes: themes, products: products, mockups: mockups}).then(function (project) {
         $rootScope.projects.push(project);
         $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
-        $state.go('project.mockup', {'p_id': project._id, 'm_id': project.mockups[0]._id});
+        $state.go('project.mockup', {'project_id': project._id, 'mockup_id': project.mockups[0]._id});
       });
     };
     $scope.reset = function () {

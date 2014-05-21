@@ -17,40 +17,16 @@ foxographApp.controller({
   // The ProjectsCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'ProjectsCtrl': function ProjectsCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
-    console.log('BW - Setting p_id to ', $stateParams.p_id);
-    $rootScope.p_id = $stateParams.p_id;
-
-    // Handle a change in project id by setting the project.
-    $rootScope.$watch('p_id', function changeProject(p_id) {
-      if (!$rootScope.projects) {
-        // Hopefully we'll do this later.
-        // We should totally make this into an Ensure clause on the route!!!
-        return;
-      }
-      if (!$rootScope.p_id) {
-        $scope.project = null;
-        $scope.mockup = null;
-        return;
-      }
-      $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.p_id});
-    });
-
-    // If we have projects, and a p_id, make sure that we've set the project.
-    $rootScope.$watch('projects', function ensureProject() {
-      console.log('BW - Ensuring project of ', $rootScope.p_id, $rootScope.projects);
-      if (!$rootScope.p_id || !$rootScope.projects) {
-        return;
-      }
-      $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.p_id});
-    });
-
+  'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
+    console.log('BW - Setting project_id to ', $stateParams.project_id);
+    
+    $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
 
     $scope.deleteProject = function (project) {
       alert('deleting project ' + project.name);
       project.remove().then(function (data) {
         $scope.projects = _.without($scope.projects, project);
-        $scope.p_id = null;
+        $scope.project_id = null;
       });
     };
 
@@ -71,5 +47,30 @@ foxographApp.controller({
         }
       });
     };
+
+       // $rootScope.project_id = $stateParams.project_id;
+
+    // Handle a change in project id by setting the project.
+   /* $rootScope.$watch('project_id', function changeProject(project_id) {
+      if (!$rootScope.projects) {
+        // Hopefully we'll do this later.
+        // We should totally make this into an Ensure clause on the route!!!
+        return;
+      }
+      if (!$rootScope.project_id) {
+        $scope.project = null;
+        $scope.mockup = null;
+        return;
+      }
+    }); */
+
+    // If we have projects, and a project_id, make sure that we've set the project.
+   /* $rootScope.$watch('projects', function ensureProject() {
+      console.log('BW - Ensuring project of ', $rootScope.project_id, $rootScope.projects);
+      if (!$rootScope.project_id || !$rootScope.projects) {
+        return;
+      }
+      $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.project_id});
+    }); */
   }
 });
