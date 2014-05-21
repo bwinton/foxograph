@@ -20,7 +20,13 @@ foxographApp.controller({
   'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
     console.log('BW - Setting project_id to ', $stateParams.project_id);
     
-    $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
+    $rootScope.$watch('projects', function() {
+      $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
+    });
+    
+    $scope.projectChanged = function() {
+
+    }
 
     $scope.deleteProject = function (project) {
       alert('deleting project ' + project.name);
@@ -65,12 +71,6 @@ foxographApp.controller({
     }); */
 
     // If we have projects, and a project_id, make sure that we've set the project.
-   /* $rootScope.$watch('projects', function ensureProject() {
-      console.log('BW - Ensuring project of ', $rootScope.project_id, $rootScope.projects);
-      if (!$rootScope.project_id || !$rootScope.projects) {
-        return;
-      }
-      $scope.project = _.findWhere($rootScope.projects, {_id: $rootScope.project_id});
-    }); */
+
   }
 });

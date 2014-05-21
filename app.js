@@ -154,9 +154,9 @@ app.use('/r', express.static(__dirname + '/www'));
 
 // User-facing routes.
 app.get('/', routes.index);
-app.get('/create', routes.index);
-app.get('/p/:project_id', routes.index);
-app.get('/p/:project_id/:mockup_id', routes.index);
+app.get('/new', routes.index);
+app.get('/project/:project_id', routes.index);
+app.get('/project/:project_id/:mockup_id', routes.index);
 app.get('/profile/:user_email', routes.index);
 
 
