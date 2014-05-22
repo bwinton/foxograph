@@ -25,14 +25,16 @@ foxographApp.controller({
     $rootScope.$watch('projects', function() {
       $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
       if ($scope.project) {
-        $scope.form = angular.copy($scope.project)
+        $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
       }
     });
 
     function checkForm() {
-      if ($scope.form.name !== $scope.project.name) return true;
-        
+      if ($scope.project)
+      {
+        if($scope.form.name !== $scope.project.name) return true;
+
         var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id});
         var formThemes = _.map($scope.form.themes, function(theme) {return theme._id});
 
@@ -41,20 +43,26 @@ foxographApp.controller({
 
         if (_.xor(projectThemes, formThemes).length !== 0 ||
             _.xor(projectProducts, formProducts).length !== 0) {
-          console.log(_.xor(projectThemes, formThemes).length !== 0)
-          console.log(_.xor(projectProducts, formProducts).length !== 0)
-
-          console.log(_.xor(projectThemes, formThemes).length !== 0 ||
-            _.xor(projectProducts, formProducts).length !== 0);
           return true;
         }
-        
+      }         
         return false;   
     }
 
     $scope.$watch('form', function() {
       $scope.formChanged = checkForm();
     }, true)
+
+    $scope.updateProject = function() {
+      var projectPromise = $scope.form.put()
+      console.log($scope.form);
+      projectPromise.then(function(project) {
+        console.log(project);
+        var projects = _.without($rootScope.projects, $scope.project)
+        projects.push(project);
+        $rootScope.projects = projects;
+      })
+    }
 
     $scope.deleteProject = function (project) {
       alert('deleting project ' + project.name);

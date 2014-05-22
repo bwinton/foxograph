@@ -20,7 +20,7 @@
         selected="form.products"></toggle-list>
         <toggle-list title="'Themes'" list="themes" attribute="'name'" 
         selected="form.themes"></toggle-list>
-        <button ng-show="formChanged" class="btn-block btn-primary" type="submit">Save Project</button>
+        <button ng-show="formChanged" ng-click="updateProject()" class="btn-block btn-primary" type="submit">Save Project</button>
       </form>
 
     </div>
