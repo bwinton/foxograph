@@ -6,7 +6,7 @@
     "express": "3.0.0rc4",
     "express-persona": "0.0.7",
     "ejs": "0.8.3",
-    "mongoose": "3.2.1",
+    "mongoose": "~3.8.1",
     "request": "~2.27.0",
     "tail": "~0.3.2",
     "deferred": "~0.6.6",
