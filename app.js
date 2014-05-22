@@ -117,6 +117,7 @@ app.configure('production', function () {
 app.get('/api/projects', routes.getProjects);
 app.post('/api/projects', routes.postProject);
 app.get('/api/projects/:project_id', routes.getProject);
+app.put('/api/projects/:project_id', routes.putProject);
 app.delete('/api/projects/:project_id', routes.deleteProject);
 
 // API Mockups.
