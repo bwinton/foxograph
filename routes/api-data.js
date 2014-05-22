@@ -45,17 +45,17 @@ var mockupSchema = new mongoose.Schema({
 var Mockup = mongoose.model('Mockup', mockupSchema);
 
 var Theme = mongoose.model('Theme', new mongoose.Schema({
-  name: String
+  name: {type: String, required: 'Theme name required.'}
 }));
 
 var Product = mongoose.model('Product', new mongoose.Schema({
-  name: String
+  name: {type: String, required: 'Product name required.'}
 }));
 
 var Project = mongoose.model('Project', new mongoose.Schema({
-  name: String,
-  creationDate: Date,
-  user: String,
+  name: {type: String, required: 'Project name required.'},
+  creationDate: {type: Date, default: Date.now },
+  user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
   products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
   mockups: [mockupSchema]
@@ -76,9 +76,6 @@ exports.postTheme = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }  
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
-  }
   var theme = new Theme(req.body);
   theme.save(function (err) {
     if (err) {
@@ -100,9 +97,6 @@ exports.postProduct = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }  
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
-  }
   var product = new Product(req.body);
   product.save(function (err) {
     if (err) {
@@ -121,22 +115,12 @@ exports.getProjects = function (req, res) {
   })
 };
 
-/*
-exports.getProjects = function (req, res) {
-  return Project.find(function (err, projects) {
-    return res.json(projects);
-  });
-};*/
 
 exports.postProject = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
-  }
   req.body.user = req.session.email;
-  req.body.creationDate = new Date();
   var project = new Project(req.body);
   project.save(function (err) {
     if (err) {
