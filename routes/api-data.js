@@ -37,7 +37,7 @@ var Bug = mongoose.model('Bug', new mongoose.Schema({
 }));
 
 var mockupSchema = new mongoose.Schema({
-  name: String,
+  name: {type: "string", unique: true, required: 'Mockup must have name'},
   slug: String,
   image: String,
   creationDate: { type: Date, default: Date.now }
@@ -45,15 +45,15 @@ var mockupSchema = new mongoose.Schema({
 var Mockup = mongoose.model('Mockup', mockupSchema);
 
 var Theme = mongoose.model('Theme', new mongoose.Schema({
-  name: {type: String, required: 'Theme name required.'}
+  name: {type: String, unique: true, required: 'Theme name required.'}
 }));
 
 var Product = mongoose.model('Product', new mongoose.Schema({
-  name: {type: String, required: 'Product name required.'}
+  name: {type: String, unique: true, required: 'Product name required.'}
 }));
 
 var Project = mongoose.model('Project', new mongoose.Schema({
-  name: {type: String, required: 'Project name required.'},
+  name: {type: String, unique: true, required: 'Project name required.'},
   creationDate: {type: Date, default: Date.now },
   user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
