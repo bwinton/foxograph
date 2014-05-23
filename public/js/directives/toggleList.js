@@ -7,12 +7,12 @@ foxographApp.directive('toggleList', function () {
         '<a class="list-group-item toggle-list" ng-repeat="listItem in list" ng-click="toggle(listItem)"' +  
           'ng-class="{on: isSelected(listItem)}">' +
           '<span class="title" ng-bind="listItem[attribute]"></span><span class="circle"></span></a>' +
-        '<a ng-show="addable && !adding" ng-click="addItem()" class="list-group-item toggle-list">Add' + 
+        '<a ng-show="addable && !adding" ng-click="add()" class="list-group-item toggle-list">Add' + 
           '<span class="plus"></span>'+
         '</a>' +
-        '<form ng-show="adding">' +
+        '<form ng-show="addable && adding">' +
           '<input type="text" ng-model="newItem" placeholder="Adding to {{title}}">' +
-          '<button type="button" ng-click="submitItem()" class="btn btn-default btn-xs pull-right">Add</button>'
+          '<button type="button" ng-click="addItem()" class="btn btn-default btn-xs pull-right">Add</button>'
       '</ul>' +
     '</div>';
   return {
@@ -25,10 +25,11 @@ foxographApp.directive('toggleList', function () {
       title: '=title',
       clearable: '=clearable',
       addable: '=addable',
-      addfn: '=addfn'
     },
     transclude : false,
     link: function (scope, element, attrs) {
+      scope.adding = false;
+
       scope.isSelected = function(listItem) {
         if (scope.selected) {
           for (var i = 0; i < scope.selected.length; i++) {
@@ -58,18 +59,17 @@ foxographApp.directive('toggleList', function () {
         }
       }
 
-      scope.addItem = function() {
+      scope.add = function() {
         scope.adding = true;
       }
 
-      scope.add = function(item) {
+      scope.addItem = function() {
+        var item = {};
+        item[scope.attribute] = scope.newItem;
         scope.selected.push(item);
+        scope.list.push(item);
         scope.newItem = '';
         scope.adding = false;
-      }
-
-      scope.submitItem = function() {
-        scope.addfn(scope.newItem, scope.add);
       }
     }
   };
