@@ -15,47 +15,34 @@
 foxographApp.controller({
 
   'ProjectNewCtrl': function ProjectNewCtrl($scope, $rootScope, Restangular, $filter, $state) {
-    $rootScope.mainTitle = 'Create a new project';
-    $rootScope.subTitle = '';
-    $rootScope.p_id = null;
-    $rootScope.prevMockupId = null;
-    $rootScope.nextMockupId = null;
     $scope.project = {};
     $scope.selectedThemes = [];
     $scope.selectedProducts = [];
+    
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
 
-      var themes = _.map($scope.selectedThemes, function(theme) {return theme._id});
-      var products = _.map($scope.selectedProducts, function(product) {return product._id});
       var mockups = [{name: newProject.mockup}]
-      projects.post({name: newProject.name, themes: themes, products: products, mockups: mockups}).then(function (project) {
-        $rootScope.projects.push(project);
-        $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
-        $state.go('project.mockup', {'project_id': project._id, 'mockup_id': project.mockups[0]._id});
+      projects.post({
+        name: newProject.name, 
+        themes: $scope.selectedThemes, 
+        products: $scope.selectedProducts, 
+        mockups: mockups}).then(function (project) {
+          console.log(project);
+          $rootScope.projects.push(project);
+          $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
+          $rootScope.products = _.uniq($rootScope.products.concat(project.products), function(product) {return product._id})
+          $rootScope.themes = _.uniq($rootScope.themes.concat(project.themes), function(theme) {return theme._id})
+          $state.go('project.mockup', {'project_id': project._id, 'mockup_id': project.mockups[0]._id});
       });
     };
+
     $scope.reset = function () {
+      console.log($scope.selectedThemes);
+      console.log($scope.selectedProducts);
       $scope.project = {};
       $scope.selectedProducts = [];
       $scope.selectedThemes = [];
     };
-
-    $scope.createTheme = function(theme, cb) {
-      var themes = Restangular.all('themes');
-      themes.post({name: theme}).then(function (newTheme) {
-        $rootScope.themes.push(newTheme);
-        cb(newTheme);
-      })
-    }
-
-    $scope.createProduct = function(product, cb) {
-      var products = Restangular.all('products');
-      products.post({name: product}).then(function (newProduct) {
-        $rootScope.products.push(newProduct);
-        cb(newProduct);
-      })
-    }
   }
-
 });

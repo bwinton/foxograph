@@ -51,7 +51,7 @@ foxographApp.controller({
 
     $scope.$watch('form', function() {
       $scope.formChanged = checkForm();
-    }, true)
+    }, true);
 
     $scope.updateProject = function() {
       var projectPromise = $scope.form.put()

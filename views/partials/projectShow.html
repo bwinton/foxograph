@@ -17,9 +17,9 @@
         <img src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
         <i>{{project.user}}</i>
         <toggle-list title="'Products'" list="products" attribute="'name'" 
-        selected="form.products"></toggle-list>
+        selected="form.products" addfn="addProduct"></toggle-list>
         <toggle-list title="'Themes'" list="themes" attribute="'name'" 
-        selected="form.themes"></toggle-list>
+        selected="form.themes" addfn="addTheme"></toggle-list>
         <button ng-show="formChanged" ng-click="updateProject()" class="btn-block btn-primary" type="submit">Save Project</button>
       </form>
 
