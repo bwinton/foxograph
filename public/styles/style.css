@@ -32,11 +32,17 @@ body {
   padding-top: 70px;
 }
 
-.panel-title {
+/* toggle-list stuff requires bootstrap */
+
+.toggle-list a {
+  cursor:pointer;
+}
+
+.toggle-list.panel-title {
   display: inline-block;
 }
 
-.text-label{
+.toggle-list.text-label{
     font-weight: bold;
     font-size: 10px;
     color: #343536;
@@ -44,15 +50,16 @@ body {
     text-transform: uppercase;
 }
 
-.extra-muted {
-    color: #999;
+.toggle-list.list-group-item {
+  position: relative;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 1px solid #DDD;
+  margin: 0;
 }
 
-.list-group-item {
-    position: relative;
-}
-
-.list-group-item span.title {
+.toggle-list.list-group-item span.title {
     font-size: 12px;
     width: 90%;
     display: block;
@@ -61,11 +68,11 @@ body {
     user-select: none;
 }
 
-.list-group-item.on span.title {
+.toggle-list.list-group-item.on span.title {
     font-weight: bold;
 }
 
-.list-group-item .circle {
+.toggle-list.list-group-item .circle {
     position: absolute;
     width: 12px;
     height: 12px;
@@ -76,93 +83,18 @@ body {
     top: 15px;
 }
 
-.list-group-item.on .circle {
+.toggle-list.list-group-item.on .circle {
     background-color: #A3ED2B;
     border-color: #A3ED2B;
 }
 
-.panel-heading button.btn-xs {
+/* app stuff */
+
+.extra-muted {
     color: #999;
 }
 
-.toggle-list.list-group {
-  margin: 0;
-}
-
-.toggle-list.list-group-item {
-  border-top: 0;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 1px solid #DDD;
-  margin: 0;
-}
-
-/***** New styles. *******/
-/*
-.navbar-nav {
-    margin: 0 auto;
-}
-
-.navbar-default .navbar-brand {
-    font-weight: bold;
-    color: #594875;
-}
-
-.navbar-default .navbar-brand small {
-    font-weight: normal;
-}
-
-user > div {
-  cursor: pointer;
-}
-
-bug-panel a {
-  color: white;
-}
-
-/***** Old styles. *******/
-/*
-.main-content {
-  width: 100%;
-  height: calc(100% - 50px);
-  position: relative;
-  top: 0;
-  left: 0;
-}
-
-.create-mockup,
-.mockups-list,
-.projects-list {
-  margin: 10vh 10vw;
-}
-
-
-#project {
-  text-align: center;
-}
-
-.project-content,
-.mockupBody {
-  width: 100%;
-  height: 100%;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-#project a {
-  color: #00B7FF;
-}
-
-canvas {
-  margin: 0;
-  padding: 0;
-  display: none;
-}
-
-#deleteProject {
-  vertical-align: baseline;
-}
-*/
+/* mockup page stuff should be combined with bugpanel/bugzilla stuff? */
 #mockup-wrapper {
   margin: 0;
   padding: 0;
@@ -191,9 +123,7 @@ mockup-image {
   left: 0;
 }
 
-mockup-image.hover {
-  opacity: .1;
-}
+/* I don't know what this is */
 
 #bugs {
   background: #DDD;
@@ -202,27 +132,6 @@ mockup-image.hover {
   left: 0px;
   height: 100%;
   padding: 1em;
-}
-
-.bug {
-  position: absolute;
-}
-
-.bug-line {
-    width: 1px;
-    height: 1px;
-    background: black;
-    position: absolute;
-    -webkit-transform-origin: 0 0 0;
-    transform-origin: 0 0 0;
-}
-/*
-.delete.link {
-  margin-top: -1.5em;
-} */
-
-.toggle-list.on {
-  font-weight: 700;
 }
 
 
