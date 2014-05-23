@@ -21,9 +21,8 @@ foxographApp.controller({
 
     // Load in the projects.
     Restangular.all('projects').getList().then(function (projectList) {
-      // Sort the projects by ['name','user'].
       console.log("BW - Loaded projects.");
-      $rootScope.projects = $filter('orderBy')(projectList, ['name', 'user']);
+      $rootScope.projects = projectList
     });
 
     Restangular.all('themes').getList().then(function (themeList) {
@@ -32,7 +31,80 @@ foxographApp.controller({
 
     Restangular.all('products').getList().then(function (productList) {
       $rootScope.products = productList;
+    });    
+    
+    // Keep our themes, products, and projects nice and ordered
+    $rootScope.$watch('themes', function() {  
+      if ($rootScope.themes) {
+        var themes = $rootScope.themes;
+
+        // reject themes without id's if there is a theme with the same name with an id
+        // useful after project creation and update
+        themes = _.reject(themes, function(theme) {
+          theme._id === undefined && _.some(themes, function(themeComp) {
+            theme.name === themeComp.name
+          });
+        });
+
+        // order themes alphabetically by name
+        themes = $filter('orderBy')(themes, ['name']);
+
+        // prevent infinite updating
+        if (!identical(themes, $rootScope.themes)) {
+          $rootScope.themes = themes;
+        }
+      }
     });
+
+    $rootScope.$watch('products', function() {  
+      if ($rootScope.products) {
+        var products = $rootScope.products;
+
+        // reject products without id's if there is a product with the same name with an id
+        // useful after project creation and update
+        products = _.reject(products, function(product) {
+          product._id === undefined && _.some(products, function(productComp) {
+            product.name === productComp.name
+          });
+        });
+
+        // order products alphabetically by name
+        products = $filter('orderBy')(products, ['name']);
+
+        // prevent infinite updating
+        if (!identical(products, $rootScope.products)) {
+          $rootScope.products = products;
+        }        
+      }
+    });
+
+    $rootScope.$watch('projects', function() {
+      if ($rootScope.projects) {
+        var projects = $rootScope.projects;
+
+        projects = $filter('orderBy')(projects, ['name', 'user']);
+
+        if (!identical(projects, $rootScope.projects)) {
+          $rootScope.projects = projects;
+        }        
+      }
+    });
+
+    // Checks if two collections are identical comparing _id's and names if _id is undefined
+    function identical(c1, c2) {
+      if (c1.length !== c2.length) {
+        return false;
+      }
+
+      for (var i = 0; i < c1.length; i++) {
+        // check that id's are defined and equal
+        // or id's are both undefined and names are equal
+        if ((c1[i]._id !== undefined && c2[i]._id !== undefined && c1[i]._id !== c2[i]._id) ||
+            (c1[i]._id === c2[i]._id && c1[i].name !== c2[i].name)) { return false; }
+      }
+
+      return true
+    }
     
 /*
     var pIdChanged = function (p_id) {
