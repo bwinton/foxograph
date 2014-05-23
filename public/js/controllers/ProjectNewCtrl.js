@@ -23,26 +23,46 @@ foxographApp.controller({
       var projects = Restangular.all('projects');
 
       var mockups = [{name: newProject.mockup}]
-      projects.post({
+      var project = {
         name: newProject.name, 
         themes: $scope.selectedThemes, 
         products: $scope.selectedProducts, 
-        mockups: mockups}).then(function (project) {
-          console.log(project);
+        mockups: mockups
+      }
+
+      projects.post(project).then(function (project) {
           $rootScope.projects.push(project);
-          $rootScope.projects = $filter('orderBy')($rootScope.projects, ['name', 'user']);
-          $rootScope.products = _.uniq($rootScope.products.concat(project.products), function(product) {return product._id})
-          $rootScope.themes = _.uniq($rootScope.themes.concat(project.themes), function(theme) {return theme._id})
+          
+          // add newly created products to rootscope
+          var newProducts = _.where(project.products, function(product) {
+            return ! _.some($rootScope.products, {_id: product._id})  
+          });
+          
+          // delete any newly created products that were unsaved
+          $rootScope.products = _.filter($rootScope.products.concat(newProducts), "_id");
+
+
+          // add newly created themes to rootscope
+          var newThemes = _.where(project.themes, function(theme) {
+            return ! _.some($rootScope.themes, {_id: theme._id})  
+          });
+
+          // delete any newly created themes that were unsaved
+          $rootScope.themes = _.filter($rootScope.themes.concat(newThemes), "_id");
+          
           $state.go('project.mockup', {'project_id': project._id, 'mockup_id': project.mockups[0]._id});
       });
     };
 
     $scope.reset = function () {
-      console.log($scope.selectedThemes);
-      console.log($scope.selectedProducts);
       $scope.project = {};
       $scope.selectedProducts = [];
       $scope.selectedThemes = [];
     };
+
+    $scope.$on('$destroy', function() {
+      $rootScope.themes = _.filter($rootScope.themes, "_id");
+      $rootScope.products = _.filter($rootScope.products, "_id");
+    });
   }
 });

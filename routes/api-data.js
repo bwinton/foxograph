@@ -148,6 +148,7 @@ exports.putProject = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
+  
   Project.findById(req.body._id, function (err, project) {
     if (err) {
       console.error(err);
@@ -157,21 +158,28 @@ exports.putProject = function (req, res) {
     if (project.user !== req.session.email) {
       return error(res, 'Cannot modify project you did not create.');
     }
+
     project.name = req.body.name;
-    project.themes = req.body.themes.map(function(theme) {return theme._id});
-    project.products = req.body.products.map(function(product) {return product._id});
-    project.save(function (err) {
-      if (err) {
-        console.error(err);
-        return error(res, err, console);
-      }
-      project.populate("themes products", function(err, project) {
-        if (err) {
-          console.error(err);
-          return error(res, err, console);
-        }
-        return res.json(project)
-      }); 
+    saveUnsaved(req.body.products, Product, function(products) {
+      project.products = products.map(function(product) {return product._id});
+      saveUnsaved(req.body.themes, Theme, function(themes) {
+        project.themes = themes.map(function(theme) {return theme._id});
+
+        project.save(function (err) {
+          if (err) {
+            console.error(err);
+            return error(res, err, console);
+          } else {
+            project.populate("themes products", function(err, project) {
+              if (err) {
+                console.error(err);
+                return error(res, err, console);
+              }
+              return res.json(project)
+            });
+          }
+        });   
+      });
     });
   });
 };

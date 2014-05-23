@@ -61,8 +61,31 @@ foxographApp.controller({
         var projects = _.without($rootScope.projects, $scope.project)
         projects.push(project);
         $rootScope.projects = projects;
+        
+        // add newly created products to rootscope
+        var newProducts = _.where(project.products, function(product) {
+          return ! _.some($rootScope.products, {_id: product._id})  
+        });
+        
+        // delete any newly created products that were unsaved
+        $rootScope.products = _.filter($rootScope.products.concat(newProducts), "_id");
+
+
+        // add newly created themes to rootscope
+        var newThemes = _.where(project.themes, function(theme) {
+          return ! _.some($rootScope.themes, {_id: theme._id})  
+        });
+
+        // delete any newly created themes that were unsaved
+        $rootScope.themes = _.filter($rootScope.themes.concat(newThemes), "_id");
       })
     }
+
+    $scope.$on('$destroy', function() {
+      $rootScope.themes = _.filter($rootScope.themes, "_id");
+      $rootScope.products = _.filter($rootScope.products, "_id");
+    });
+
 
     $scope.deleteProject = function (project) {
       alert('deleting project ' + project.name);
@@ -89,6 +112,8 @@ foxographApp.controller({
         }
       });
     };
+
+
 
        // $rootScope.project_id = $stateParams.project_id;
 
