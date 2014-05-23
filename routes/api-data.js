@@ -115,19 +115,32 @@ exports.getProjects = function (req, res) {
   })
 };
 
-
 exports.postProject = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  req.body.user = req.session.email;
-  var project = new Project(req.body);
-  project.save(function (err) {
-    if (err) {
-      console.error(err);
-      return error(res, err, console);
-    }
-    return res.json(project);
+
+  saveUnsaved(req.body.products, Product, function(products) {
+    req.body.products = products.map(function(product) {return product._id});
+    saveUnsaved(req.body.themes, Theme, function(themes) {
+      req.body.themes = themes.map(function(theme) {return theme._id});
+      req.body.user = req.session.email;
+      var project = new Project(req.body);
+      project.save(function (err) {
+        if (err) {
+          console.error(err);
+          return error(res, err, console);
+        } else {
+          project.populate("themes products", function(err, project) {
+            if (err) {
+              console.error(err);
+              return error(res, err, console);
+            }
+            return res.json(project)
+          });
+        }
+      });   
+    });
   });
 };
 
@@ -501,3 +514,38 @@ exports.dump = function (req, res) {
     });
   });
 };
+
+// Helper function to create any new products or themes if new
+function saveUnsaved(list, Model, cb, acc) {
+  // accumulator
+  if (acc === undefined) {
+    acc = [];
+  }
+  // base case
+  if (list.length === 0) {
+    // call callback with accumulated array of saved elements
+    cb(acc);
+  } else {
+  // recursive case
+    // Get an element check to see if it's new
+    var elem = list.pop();
+    if (elem._id === undefined) {
+      // element is new, let's create and save it
+      elem = new Model(elem);
+      elem.save(function(err) {
+        // If no errors (we're throwing out any erroneous elements)
+        if (!err) {
+          acc.push(elem);
+          saveUnsaved(list, Model, cb, acc);
+        } else {
+          // error, throw out element and keep going
+          saveUnsaved(list, Model, cb, acc);          
+        }
+      });
+    } else {
+      // Element is not new push it onto acc and continue
+      acc.push(elem);
+      saveUnsaved(list, Model, cb, acc);
+    }
+  }  
+}
