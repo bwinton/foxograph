@@ -38,7 +38,6 @@ var Bug = mongoose.model('Bug', new mongoose.Schema({
 
 var mockupSchema = new mongoose.Schema({
   name: {type: "string", unique: true, required: 'Mockup must have name'},
-  slug: String,
   image: String,
   creationDate: { type: Date, default: Date.now }
 });
@@ -110,7 +109,10 @@ exports.postProduct = function (req, res) {
 // Projects.
 
 exports.getProjects = function (req, res) {
-  return Project.find({}).populate('themes').populate('products').exec(function(error, projects) {
+  return Project.find({})
+  .populate('themes products')
+  .populate('mockups', 'name creationDate') // don't get image data
+  .exec(function(error, projects) {
     return res.json(projects);
   })
 };
@@ -130,15 +132,23 @@ exports.postProject = function (req, res) {
         if (err) {
           console.error(err);
           return error(res, err, console);
-        } else {
-          project.populate("themes products", function(err, project) {
+        }
+        project.populate({path: 'themes products'}, function(err, project) {
+          if (err) {
+            console.error(err);
+            return error(res, err, console);
+          }
+          project.populate({
+            path: 'mockups',
+            select: 'name creationDate'
+          }, function(err, project) {
             if (err) {
               console.error(err);
               return error(res, err, console);
-            }
+            } 
             return res.json(project)
           });
-        }
+        });
       });   
     });
   });
@@ -160,6 +170,7 @@ exports.putProject = function (req, res) {
     }
 
     project.name = req.body.name;
+    project.mockups = req.body.mockups;
     saveUnsaved(req.body.products, Product, function(products) {
       project.products = products.map(function(product) {return product._id});
       saveUnsaved(req.body.themes, Theme, function(themes) {
@@ -169,16 +180,24 @@ exports.putProject = function (req, res) {
           if (err) {
             console.error(err);
             return error(res, err, console);
-          } else {
-            project.populate("themes products", function(err, project) {
+          }
+          project.populate({path: 'themes products'}, function(err, project) {
+            if (err) {
+              console.error(err);
+              return error(res, err, console);
+            }
+            project.populate({
+              path: 'mockups',
+              select: 'name creationDate'
+            }, function(err, project) {
               if (err) {
                 console.error(err);
                 return error(res, err, console);
-              }
+              } 
               return res.json(project)
             });
-          }
-        });   
+          });
+        });    
       });
     });
   });
@@ -250,7 +269,6 @@ exports.postMockup = function (req, res) {
     }
     req.body.creationDate = new Date();
     req.body.project = req.params.project_id;
-    // req.body.slug = makeSlug(req.body.name);
     var mockup = new Mockup(req.body);
     mockup.save(function (err) {
       if (err) {
