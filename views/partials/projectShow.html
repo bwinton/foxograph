@@ -1,5 +1,6 @@
 <div class="row">
   <div class="col-md-9">
+    <button ng-show="project.user == auth.email" class="btn btn-primary" ng-click="addMockup()">Add mockup</button>
     <table ng-show="project.mockups" class="table table-hover">
       <tbody>
         <tr ng-repeat="mockup in project.mockups">

@@ -53,15 +53,27 @@ foxographApp.controller({
       $scope.formChanged = checkForm();
     }, true);
 
+    $scope.addMockup = function() {
+      var mockupName = window.prompt("Mockup name", $scope.project.name + " " + ($scope.project.mockups.length + 1));
+      if (mockupName !== null) {
+        $scope.project.mockups.push({name: mockupName});
+        var projectPromise = $scope.project.put();
+        projectPromise.then(function(project) {
+          var projects = _.without($rootScope.projects, $scope.project)
+          projects.push(project);
+          $rootScope.projects = projects;
+        });
+      }
+    }
+
     $scope.updateProject = function() {
       var projectPromise = $scope.form.put()
-      console.log($scope.form);
       projectPromise.then(function(project) {
         console.log(project);
         var projects = _.without($rootScope.projects, $scope.project)
         projects.push(project);
         $rootScope.projects = projects;
-        
+
         // add newly created products to rootscope
         var newProducts = _.where(project.products, function(product) {
           return ! _.some($rootScope.products, {_id: product._id})  
