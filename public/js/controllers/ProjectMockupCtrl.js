@@ -18,7 +18,8 @@ foxographApp.controller({
     console.log('BW - Setting m_id to ', $stateParams.m_id);
     $rootScope.m_id = $stateParams.m_id;
 
-
+    $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
+    //$scope.mockup = _.findWhere($rootScope.project.mockups, {_id: $stateParams.mockup_id});
 
     $rootScope.$watch('mockups', function () {
       $scope.mockup = _.findWhere($rootScope.mockups, {_id: $rootScope.m_id});
