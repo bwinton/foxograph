@@ -57,7 +57,7 @@ var Project = mongoose.model('Project', new mongoose.Schema({
   user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
   products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
-  mockups: [mockupSchema]
+  mockups: {type: [mockupSchema], validate: [uniqueMockupNames, "Mockup names must be unique within project."]}
 }));
 
 
@@ -540,8 +540,23 @@ exports.dump = function (req, res) {
     });
   });
 };
+function uniqueMockupNames(mockups) {
+  var nameDict = {}
+
+  for (var i = 0; i < mockups.length; i++) {
+    var mockup = mockups[i]
+    if (nameDict[mockup.name] !== undefined) {
+      console.log("FALSE!");
+      return false;
+    } else {
+      nameDict[mockup.name] = true;
+    }
+  }
+  return true
+}
 
 // Helper function to create any new products or themes if new
+// This should use deferred
 function saveUnsaved(list, Model, cb, acc) {
   // accumulator
   if (acc === undefined) {
