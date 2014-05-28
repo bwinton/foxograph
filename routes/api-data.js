@@ -28,11 +28,12 @@ var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
 }));
 
 var bugSchema = new mongoose.Schema({
-  bugInfo: {type: mongoose.Schema.ObjectId, ref: 'BugInfo'},
+  number: String,
   startX: Number,
   startY: Number,
   endX: Number,
-  endY: Number
+  endY: Number,
+  mockup: String
 })
 var Bug = mongoose.model('Bug', bugSchema);
 
@@ -48,7 +49,7 @@ var mockupSchema = new mongoose.Schema({
   name: {type: "string", required: 'Mockup must have name'},
   image: String,
   creationDate: { type: Date, default: Date.now },
-  bugs: [bugSchema]
+  // bugs: [bugSchema] Someday it should work like this
 });
 var Mockup = mongoose.model('Mockup', mockupSchema);
 
@@ -450,21 +451,20 @@ exports.postBug = function (req, res) {
   if (!req.body || !req.body.number) {
     return error(res, 'Missing number.');
   }
-  Mockup.findOne({_id: req.params.mockup_id}, function (err, mockup) {
-    Project.findOne({_id: mockup.project}, function (err, project) {
-      if (project.user !== req.session.email) {
-        return error(res, 'Cannot add a bug to a project you didn’t create!');
-      }
-      req.body.mockup = req.params.mockup_id;
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    var mockup = project.mockups.id(req.params.mockup_id);
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot add a bug to a project you didn’t create!');
+    }
+    req.body.mockup = req.params.mockup_id;
 
-      var bug = new Bug(req.body);
-      bug.save(function (err) {
-        if (err) {
-          return error(res, err, console);
-        }
-        addBugInfos([bug], function (bugs) {
-          return res.json(bugs);
-        });
+    var bug = new Bug(req.body);
+    bug.save(function (err) {
+      if (err) {
+        return error(res, err, console);
+      }
+      addBugInfos([bug], function (bugs) {
+        return res.json(bugs);
       });
     });
   });
