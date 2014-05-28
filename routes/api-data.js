@@ -27,21 +27,14 @@ var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
   last_got: Date
 }));
 
-var Bug = mongoose.model('Bug', new mongoose.Schema({
-  number: String,
+var bugSchema = new mongoose.Schema({
+  bugInfo: {type: mongoose.Schema.ObjectId, ref: 'BugInfo'},
   startX: Number,
   startY: Number,
   endX: Number,
-  endY: Number,
-  mockup: String
-}));
-
-var mockupSchema = new mongoose.Schema({
-  name: {type: "string", unique: true, required: 'Mockup must have name'},
-  image: String,
-  creationDate: { type: Date, default: Date.now }
-});
-var Mockup = mongoose.model('Mockup', mockupSchema);
+  endY: Number
+})
+var Bug = mongoose.model('Bug', bugSchema);
 
 var Theme = mongoose.model('Theme', new mongoose.Schema({
   name: {type: String, unique: true, required: 'Theme name required.'}
@@ -51,8 +44,17 @@ var Product = mongoose.model('Product', new mongoose.Schema({
   name: {type: String, unique: true, required: 'Product name required.'}
 }));
 
+var mockupSchema = new mongoose.Schema({
+  name: {type: "string", required: 'Mockup must have name'},
+  image: String,
+  creationDate: { type: Date, default: Date.now },
+  bugs: [bugSchema]
+});
+var Mockup = mongoose.model('Mockup', mockupSchema);
+
 var Project = mongoose.model('Project', new mongoose.Schema({
-  name: {type: String, unique: true, required: 'Project name required.'},
+  name: {type: String, required: 'Project name required.'},
+  //slug: {type: String, unique: true, required: 'Project must have a slug'},
   creationDate: {type: Date, default: Date.now },
   user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
@@ -241,6 +243,43 @@ exports.deleteProject = function (req, res) {
   });
 };
 
+exports.putMockup = function (req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot update a mockup in a project you didn’t create!');
+    }
+    var mockup = project.mockups.id(req.params.mockup_id);
+    mockup.name = req.body.name || mockup.name;
+    mockup.image = req.body.image || mockup.image;
+    mockup.bugs = req.body.bugs || mockup.bugs;
+    project.save(function(err) {
+      if (err) {
+        console.error(err);
+        return error(res, err, console);  
+      }
+      return res.json(project.mockups.id(req.params.mockup_id));
+    });
+  });
+};
+
+exports.getMockup = function (req, res) {
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+
+    var mockup = project.mockups.id(req.params.mockup_id);
+    if (!mockup) {
+      return error(res, "No mockup found for that id for this project", console);       
+    }
+    console.log(mockup);
+    return res.json(mockup);
+  });
+};
+
+
+
 
 // Mockups.
 
@@ -278,39 +317,6 @@ exports.postMockup = function (req, res) {
     });
   });
 };
-
-exports.getMockup = function (req, res) {
-  return Mockup.find({_id: req.params.mockup_id}, function (err, mockups) {
-    if (err) {
-      return error(res, err, console);
-    }
-    return res.json(mockups[0]);
-  });
-};
-
-exports.putMockup = function (req, res) {
-  if (!req.session.email) {
-    return error(res, 'Not logged in.');
-  }
-  if (!req.body || !req.body.image) {
-    return error(res, 'Missing image.');
-  }
-  Project.findOne({_id: req.body.project}, function (err, project) {
-    if (project.user !== req.session.email) {
-      return error(res, 'Cannot update a mockup in a project you didn’t create!');
-    }
-    var id = req.body._id;
-    delete req.body._id;
-    Mockup.update({_id: id}, req.body, function (err, mockup) {
-      if (err) {
-        return error(res, err, console);
-      }
-      return res.json(mockup);
-    });
-  });
-};
-
-
 
 exports.deleteMockup = function (req, res) {
   if (!req.session.email) {

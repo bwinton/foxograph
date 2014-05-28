@@ -15,13 +15,28 @@
 foxographApp.controller({
 
   'ProjectMockupCtrl': function ProjectMockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
-    console.log('BW - Setting m_id to ', $stateParams.m_id);
-    $rootScope.m_id = $stateParams.m_id;
 
-    $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
-    //$scope.mockup = _.findWhere($rootScope.project.mockups, {_id: $stateParams.mockup_id});
+    
 
-    $rootScope.$watch('mockups', function () {
+    $rootScope.$watch('projects', loadMockup)
+
+    function loadMockup() {
+      if ($rootScope.projects) {
+        var project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
+        $scope.project = Restangular.restangularizeElement(null, project, 'projects');
+        if ($scope.project) {
+          var mockupPromise = $scope.project.one('mockups', $stateParams.mockup_id).get();
+          mockupPromise.then(function(mockup) {
+            $scope.mockup = mockup;
+            console.log(mockup);
+          });
+        }
+      }
+    }
+
+
+
+   /* $rootScope.$watch('mockups', function () {
       $scope.mockup = _.findWhere($rootScope.mockups, {_id: $rootScope.m_id});
       if (!$scope.mockup) {
         return;
@@ -36,7 +51,7 @@ foxographApp.controller({
 
       console.log('$scope.mockup = ' + $scope.mockup);
     });
-
+*/
     // Handle changes to the currently selected project.
     // $scope.$watch('bugs', function (bugs) {
     //   setTimeout(function () {
