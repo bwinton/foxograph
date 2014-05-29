@@ -28,7 +28,9 @@ foxographApp.controller({
           var mockupPromise = $scope.project.one('mockups', $stateParams.mockup_id).get();
           mockupPromise.then(function(mockup) {
             $scope.mockup = mockup;
-            console.log(mockup);
+            $scope.mockup.all('bugs').getList().then(function(bugList) {
+              $scope.bugs = bugList
+            });
           });
         }
       }
