@@ -11,37 +11,8 @@
   </head>
   <body class="ng-scope" ng-init="auth = {email:<%= email %>}"
     style="{{background}}" >
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container">
-      <ul class="nav container navbar-nav" ng-controller="HeaderCtrl">
-        <a class="navbar-brand" href="/">Foxograph</a>
 
-        <li class="pull-right navbar-form">
-          <button type="submit" class="btn" ng-show="auth.email"
-            ui-sref="project.new()">Create New Project</button>
-        </li>
-        <!-- User box -->
-        <li class="pull-right navbar-text">
-          <user logged-in-user="auth"><div id="user">
-            <a ng-hide="loggedInUser.email || progress" class="button login" title="Click to sign in.">Sign In</a>
-            <p class="ng-hide" ng-show="progress">Signing In...</p>
-            <p class="ng-hide" ng-show="loggedInUser.email"><img src="http://avatars.io/email/"
-              height="24" width="24"><a href="/profile" class="profileLink ng-binding" ng-href="/profile"></a>
-              <small class="text-label ng-binding"></small> | <a class="email" title="Click to sign out.">Sign Out</a>
-            </p>
-          </div>
-          </user>
-        </li>
-        <li ng-show="auth.email" class="pull-right">
-          <a ng-href="/profile/{{auth.email}}">
-            <small class="text-label">My Projects</small>
-          </a>
-        </li>
-      </ul>
-    </div>
-    </nav>
-
-    <div ui-view class="main-content container"></div>
+    <ui-view></ui-view>
 
     <!-- Third-party library code -->
     <script src="/r/js/lib/jquery/jquery.js" type="text/javascript"></script>
@@ -63,7 +34,7 @@
     <script src="/r/js/directives/bugPanel.js" type="text/javascript"></script>
     <script src="/r/js/directives/mockupImage.js" type="text/javascript"></script>
     <script src="/r/js/directives/toggleList.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/IndexCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/AppCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/DashboardCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/ProfileCtrl.js" type="text/javascript"></script>
     <script src="/r/js/controllers/ProjectMockupCtrl.js" type="text/javascript"></script>

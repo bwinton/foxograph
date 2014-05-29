@@ -40,27 +40,31 @@ var foxographApp = angular.module('foxographApp',
       });
 
       $urlRouterProvider.otherwise('/');
-      $stateProvider.state('dashboard', {
+      $stateProvider.state('app', {
+        abstract: true,
+        controller: 'AppCtrl',
+        templateUrl: '/r/app.html'
+      }).state('app.dashboard', {
         url: '/',
         templateUrl: '/r/dashboard.html',
         controller: 'DashboardCtrl'
-      }).state('project', {
+      }).state('app.project', {
         abstract: true,
         url: '/project',
         template: '<ui-view/>',
-      }).state('project.new', {
+      }).state('app.project.new', {
         url: '/new',
         templateUrl: '/r/projectNew.html',
         controller: 'ProjectNewCtrl'
-      }).state('project.show', {
+      }).state('app.project.show', {
         url: '/:project_id',
         templateUrl: '/r/projectShow.html',
         controller: 'ProjectShowCtrl'
-      }).state('project.mockup', {
+      }).state('app.project.mockup', {
         url: '/:project_id/:mockup_id',
         templateUrl: '/r/projectMockup.html',
         controller: 'ProjectMockupCtrl'
-      }).state('profile', {
+      }).state('app.profile', {
         url: '/profile/:user_email',
         templateUrl: '/r/profile.html',
         controller: 'ProfileCtrl'

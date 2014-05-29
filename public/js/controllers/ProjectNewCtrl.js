@@ -50,7 +50,7 @@ foxographApp.controller({
           // delete any newly created themes that were unsaved
           $rootScope.themes = _.filter($rootScope.themes.concat(newThemes), "_id");
           
-          $state.go('project.mockup', {'project_id': project._id, 'mockup_id': project.mockups[0]._id});
+          $state.go('app.project.mockup', {'project_id': project._id, 'mockup_id': project.mockups[0]._id});
       });
     };
 

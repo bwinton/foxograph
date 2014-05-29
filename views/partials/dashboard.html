@@ -23,7 +23,7 @@
       <tbody>
         <tr ng-repeat="project in projects | filterProducts : filteredProducts | filterThemes: filteredThemes">
           <td>
-            <a class="projectTitle" ui-sref="project.show({project_id: project._id})"><strong>{{ project.name }}</strong></a><br/>
+            <a class="projectTitle" ui-sref="app.project.show({project_id: project._id})"><strong>{{ project.name }}</strong></a><br/>
             <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
           </td>
           <td>

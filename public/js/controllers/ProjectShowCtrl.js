@@ -31,22 +31,22 @@ foxographApp.controller({
     });
 
     function checkForm() {
-      if ($scope.project)
-      {
-        if($scope.form.name !== $scope.project.name) return true;
+      if (!$scope.project) {
+        return false;
+      }
+      if($scope.form.name !== $scope.project.name) return true;
 
-        var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id});
-        var formThemes = _.map($scope.form.themes, function(theme) {return theme._id});
+      var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id});
+      var formThemes = _.map($scope.form.themes, function(theme) {return theme._id});
 
-        var projectProducts = _.map($scope.project.products, function(product) {return product._id});
-        var formProducts = _.map($scope.form.products, function(product) {return product._id});
+      var projectProducts = _.map($scope.project.products, function(product) {return product._id});
+      var formProducts = _.map($scope.form.products, function(product) {return product._id});
 
-        if (_.xor(projectThemes, formThemes).length !== 0 ||
-            _.xor(projectProducts, formProducts).length !== 0) {
-          return true;
-        }
-      }         
-        return false;   
+      if (_.xor(projectThemes, formThemes).length !== 0 ||
+          _.xor(projectProducts, formProducts).length !== 0) {
+        return true;
+      }
+      return false;   
     }
 
     $scope.$watch('form', function() {
@@ -100,7 +100,6 @@ foxographApp.controller({
 
 
     $scope.deleteProject = function (project) {
-      alert('deleting project ' + project.name);
       project.remove().then(function (data) {
         $scope.projects = _.without($scope.projects, project);
         $scope.project_id = null;

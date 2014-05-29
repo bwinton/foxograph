@@ -17,7 +17,7 @@ foxographApp.controller({
   // The HeaderCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'HeaderCtrl': function HeaderCtrl($scope, $rootScope, Restangular, $filter, $state) {
+  'AppCtrl': function AppCtrl($scope, $rootScope, Restangular, $filter, $state, $stateParams) {
 
     // Load in the projects.
     Restangular.all('projects').getList().then(function (projectList) {
@@ -31,7 +31,7 @@ foxographApp.controller({
 
     Restangular.all('products').getList().then(function (productList) {
       $rootScope.products = productList;
-    });    
+    });  
     
     // Keep our themes, products, and projects nice and ordered
     $rootScope.$watch('themes', function() {  
@@ -79,16 +79,23 @@ foxographApp.controller({
     });
 
     $rootScope.$watch('projects', function() {
-      if ($rootScope.projects) {
-        var projects = $rootScope.projects;
-
-        projects = $filter('orderBy')(projects, ['name', 'user']);
-
-        if (!identical(projects, $rootScope.projects)) {
-          $rootScope.projects = projects;
-        }        
+      if (!$rootScope.projects) {
+        return
       }
+
+      updateHeader();
+
+      var projects = $rootScope.projects;
+
+      projects = $filter('orderBy')(projects, ['name', 'user']);
+
+      if (!identical(projects, $rootScope.projects)) {
+        $rootScope.projects = projects;
+      }        
     });
+
+    $rootScope.$on('$stateChangeSuccess', updateHeader);
+
 
     // Checks if two collections are identical comparing _id's and names if _id is undefined
     function identical(c1, c2) {
@@ -105,86 +112,19 @@ foxographApp.controller({
 
       return true
     }
-    
-/*
-    var pIdChanged = function (p_id) {
-      $scope.selectedProject = _.findWhere($rootScope.projects, {_id: p_id});
-      $rootScope.mainTitle = 'Please select a project';
-      if ($scope.selectedProject) {
-        $rootScope.mainTitle = $scope.selectedProject.name;
-        // Load in the mockups for that project.
-        $scope.selectedProject.all('mockups').getList().then(function (mockupList) {
-          // Sort the projects by ['name','user'].
-          console.log("BW - Loaded mockups.");
-          $rootScope.mockups = $filter('orderBy')(mockupList, ['creationDate']);
-        });
+
+    function updateHeader() {
+      if ($state.params && $state.params.project_id) {
+        $scope.project = _.findWhere($rootScope.projects, {_id: $state.params.project_id});
+        if ($state.params.mockup_id) {
+          $scope.mockup = _.findWhere($scope.project.mockups, {_id: $state.params.mockup_id});
+        } else {
+          $scope.mockup = null;
+        }
       } else {
-        $rootScope.mockups = null;
+        $scope.project = null;
+        $scope.mockup = null;
       }
-    };
-    $rootScope.$watch('p_id', pIdChanged);
-    $rootScope.$watch('projects', function () {
-      pIdChanged($rootScope.p_id);
-    });
-
-    var mIdChanged = function (m_id) {
-      $scope.selectedMockup = _.findWhere($rootScope.mockups, {_id: m_id});
-      console.log($scope.selectedMockup);
-      console.log("BW - setting selected mockup to " + m_id);
-      $rootScope.subTitle = '';
-      var mockup = _.findWhere($rootScope.mockups, {_id: m_id});
-      if (mockup) {
-        $rootScope.subTitle = mockup.name;
-        // Load in the mockups for that project.
-        mockup.all('bugs').getList().then(function (bugList) {
-          // Sort the bugs by ['number'].
-          console.log("BW - Loaded bugs.", bugList);
-          $rootScope.bugs = $filter('orderBy')(bugList, ['number']);
-        });
-      } else {
-        $rootScope.bugs = null;
-      }
-    };
-    $rootScope.$watch('m_id', mIdChanged);
-    $rootScope.$watch('mockups', function () {
-      mIdChanged($rootScope.m_id);
-    });
-
-    // Something about $rootScope.subTitle = $scope.mockup.name;
-
-    $scope.$watch('selectedProject', function (project, oldProject) {
-      if (project) {
-        $rootScope.m_id = null;
-        $state.go('project.index', {'p_id': project._id});
-      } else {
-        $rootScope.p_id = null;
-        $rootScope.m_id = null;
-        $state.go('index', {});
-      }
-    });
-
-    $scope.$watch('selectedMockup', function (mockup, oldMockup) {
-      $rootScope.m_id = mockup._id
-      $state.go('project.mockup', {'p_id': $rootScope.p_id, 'm_id': mockup._id});
-    });
-
-
-
-    $scope.addMockup = function (p_id) {
-      console.log("Add mockup to:", p_id);
-      var title = prompt('Please enter a title for the new mockup.');
-      if (!title) {
-        return;
-      }
-      var project = $scope.selectedProject;
-      project.all('mockups').post({name: title}).then(function (mockup) {
-        project.getList('mockups').then(function (mockupList) {
-          console.log("Going to the newly created ", mockup);
-          $rootScope.mockups = mockupList;
-          $state.go('project.mockup', {'p_id': project._id, 'm_id': mockup._id});
-        });
-      });
-    };
-*/
+    }
   }
 });
