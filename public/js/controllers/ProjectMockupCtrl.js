@@ -20,12 +20,19 @@ foxographApp.controller({
 
     $rootScope.$watch('projects', loadMockup)
 
+    $scope.$watch('bugs', function() {
+      if ($scope.mockup && $scope.bugs) {
+        $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, 'bugs');        
+      }
+    });
+
     function loadMockup() {
       if ($rootScope.projects) {
-        var project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
+        var project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
         $scope.project = Restangular.restangularizeElement(null, project, 'projects');
         if ($scope.project) {
-          var mockupPromise = $scope.project.one('mockups', $stateParams.mockup_id).get();
+          var mockup = _.findWhere($scope.project.mockups, {slug: $stateParams.mockup_slug})
+          var mockupPromise = $scope.project.one('mockups', mockup._id).get();
           mockupPromise.then(function(mockup) {
             $scope.mockup = mockup;
             $scope.mockup.all('bugs').getList().then(function(bugList) {
@@ -35,34 +42,6 @@ foxographApp.controller({
         }
       }
     }
-
-
-
-   /* $rootScope.$watch('mockups', function () {
-      $scope.mockup = _.findWhere($rootScope.mockups, {_id: $rootScope.m_id});
-      if (!$scope.mockup) {
-        return;
-      }
-
-      var mockupIndex = _.indexOf($rootScope.mockups, $scope.mockup);
-      $rootScope.prevMockupId = (mockupIndex > 0) ?
-                            $rootScope.mockups[mockupIndex - 1]._id : null;
-      $rootScope.nextMockupId = (mockupIndex < $rootScope.mockups.length - 1) ?
-                            $rootScope.mockups[mockupIndex + 1]._id : null;
-
-
-      console.log('$scope.mockup = ' + $scope.mockup);
-    });
-*/
-    // Handle changes to the currently selected project.
-    // $scope.$watch('bugs', function (bugs) {
-    //   setTimeout(function () {
-    //     $scope.$apply(function () {
-    //       console.log("Running!  1");
-    //       run();
-    //     });
-    //   }, 15);
-    // }, true);
 
     var getMockupStyle = function (mockupImage, $scope) {
       var width = 'width: 100%; ';
@@ -111,20 +90,21 @@ foxographApp.controller({
     };
 
     $scope.addBug = function (bug) {
-      $scope.mockup.all('bugs').post(bug).then(function (bug) {
-        // Sort the bugs by ['number'].
+      $scope.bugs.post(bug).then(function (bug) {
         bug = bug[0];
-        $rootScope.bugs.push(bug);
-        $rootScope.bugs = $filter('orderBy')($rootScope.bugs, ['number']);
+        bug = Restangular.restangularizeElement($scope.mockup, bug, "bugs");
+        $scope.bugs.push(bug);
+        $scope.bugs = $filter('orderBy')($scope.bugs, ['number']);
       }, function (response) {
         console.log('Error with status code', response);
       });
     };
 
     $scope.deleteBug = function (bug) {
-      bug.remove().then(function () {
-        $rootScope.bugs = _.without($rootScope.bugs, bug);
-      });
+      bug.remove().then(function() {
+        console.log("Removed!");
+      })
+        $scope.bugs = _.without($scope.bugs, bug);
     };
 
     $scope.$on('$destroy', function() {

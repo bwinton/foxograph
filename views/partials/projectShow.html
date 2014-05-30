@@ -5,7 +5,7 @@
       <tbody>
         <tr ng-repeat="mockup in project.mockups">
           <td>
-            <a class="projectTitle" ui-sref="app.project.mockup({project_id: project._id, mockup_id: mockup._id})"><strong>{{ mockup.name }}</strong></a><br/>
+            <a class="projectTitle" ui-sref="app.project.mockup({project_slug: project.slug, mockup_slug: mockup.slug})"><strong>{{ mockup.name }}</strong></a><br/>
           </td>
         </tr>
       </tbody>

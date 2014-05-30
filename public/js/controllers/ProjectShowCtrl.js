@@ -17,13 +17,13 @@ foxographApp.controller({
   // The ProjectsCtrl handles getting the list of projects, selecting a
   // project, and automatically selecting the appropriate mockup in that
   // project.
-  'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
+  'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $state, $stateParams, Restangular, $filter) {
     console.log('BW - Setting project_id to ', $stateParams.project_id);
     
     $scope.form = {};
 
     $rootScope.$watch('projects', function() {
-      $scope.project = _.findWhere($rootScope.projects, {_id: $stateParams.project_id});
+      $scope.project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
       if ($scope.project) {
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
@@ -90,6 +90,8 @@ foxographApp.controller({
 
         // delete any newly created themes that were unsaved
         $rootScope.themes = _.filter($rootScope.themes.concat(newThemes), "_id");
+      
+        $state.go('app.project.show', {'project_slug': project.slug});
       })
     }
 

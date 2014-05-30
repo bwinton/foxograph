@@ -23,7 +23,7 @@
       <tbody>
         <tr ng-repeat="project in projects | filterProducts : filteredProducts | filterThemes: filteredThemes">
           <td>
-            <a class="projectTitle" ui-sref="app.project.show({project_id: project._id})"><strong>{{ project.name }}</strong></a><br/>
+            <a class="projectTitle" ui-sref="app.project.show({project_slug: project.slug})"><strong>{{ project.name }}</strong></a><br/>
             <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
           </td>
           <td>
@@ -36,5 +36,3 @@
     <div ng-show="!projects.length" class="well well-lg">No projects. <i ng-show="projects.length">Try another filter?</i></div>
   </div>  
 </div>
-
-  <!-- Should have a "." in the ng-model, I think, maybe. -->

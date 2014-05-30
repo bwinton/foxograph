@@ -47,21 +47,23 @@ var Product = mongoose.model('Product', new mongoose.Schema({
 
 var mockupSchema = new mongoose.Schema({
   name: {type: "string", required: 'Mockup must have name'},
+  slug: {type: String, unique: true, required: 'Mockup must have a slug'},
   image: String,
   creationDate: { type: Date, default: Date.now },
   // bugs: [bugSchema] Someday it should work like this
 });
 var Mockup = mongoose.model('Mockup', mockupSchema);
 
-var Project = mongoose.model('Project', new mongoose.Schema({
+var projectSchema = new mongoose.Schema({
   name: {type: String, required: 'Project name required.'},
-  //slug: {type: String, unique: true, required: 'Project must have a slug'},
+  slug: {type: String, unique: true, required: 'Project must have a slug'},
   creationDate: {type: Date, default: Date.now },
   user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
   products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
   mockups: {type: [mockupSchema], validate: [uniqueMockupNames, "Mockup names must be unique within project."]}
-}));
+});
+var Project = mongoose.model('Project', projectSchema)
 
 
 
@@ -274,7 +276,6 @@ exports.getMockup = function (req, res) {
     if (!mockup) {
       return error(res, "No mockup found for that id for this project", console);       
     }
-    console.log(mockup);
     return res.json(mockup);
   });
 };
@@ -546,6 +547,24 @@ exports.dump = function (req, res) {
     });
   });
 };
+
+projectSchema.pre('validate', function (next) {
+  this.slug = slugify(this.name);
+  next();
+});
+
+mockupSchema.pre('validate', function (next) {
+  this.slug = slugify(this.name);
+  next();
+});
+
+function slugify(text) {
+  return text
+          .toLowerCase()
+          .replace(/ +/g,'-')
+          .replace(/[^\w-]+/g,'');
+}
+
 function uniqueMockupNames(mockups) {
   var nameDict = {}
 

@@ -57,11 +57,11 @@ var foxographApp = angular.module('foxographApp',
         templateUrl: '/r/projectNew.html',
         controller: 'ProjectNewCtrl'
       }).state('app.project.show', {
-        url: '/:project_id',
+        url: '/:project_slug',
         templateUrl: '/r/projectShow.html',
         controller: 'ProjectShowCtrl'
       }).state('app.project.mockup', {
-        url: '/:project_id/:mockup_id',
+        url: '/:project_slug/:mockup_slug',
         templateUrl: '/r/projectMockup.html',
         controller: 'ProjectMockupCtrl'
       }).state('app.profile', {
