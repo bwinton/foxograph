@@ -487,17 +487,19 @@ exports.deleteBug = function (req, res) {
     return error(res, 'Not logged in.');
   }
   Bug.findOne({_id: req.params.bug_id}, function (err, bug) {
-    Mockup.findOne({_id: bug.mockup}, function (err, mockup) {
-      Project.findOne({_id: mockup.project}, function (err, project) {
-        if (project.user !== req.session.email) {
-          return error(res, 'Cannot delete a bug from a project you didn’t create!');
+    if (err) {
+      return error(res, err, console);
+    }
+    Project.findOne({_id: req.params.project_id}, function (err, project) {
+      if (project.user !== req.session.email) {
+        return error(res, 'Cannot delete a bug from a project you didn’t create!');
+      }
+      var mockup = project.mockups.id(req.params.mockup_id);
+      Bug.findOneAndRemove({_id: bug._id}, function (err, bug) {
+        if (err) {
+          return error(res, err, console);
         }
-        Bug.findOneAndRemove({_id: req.params.bug_id}, function (err, bug) {
-          if (err) {
-            return error(res, err, console);
-          }
-          return res.json(bug);
-        });
+        return res.json(bug);
       });
     });
   });
