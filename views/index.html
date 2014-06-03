@@ -11,58 +11,8 @@
   </head>
   <body class="ng-scope" ng-init="auth = {email:<%= email %>}"
     style="{{background}}" >
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container">
-      <ul class="nav container navbar-nav" ng-controller="HeaderCtrl">
-        <a class="navbar-brand" href="/">Foxograph</a>
-        <!-- Project Menu -->
-        <li ng-show="projects" id="projects" class="dropdown navbar-form">
-          <select id="project-list" ng-model="selectedProject"
-                  ng-options="project.name for project in projects" class="form-control">
-          </select>
-        </li> 
 
-        <li ng-show="mockups" id="mockups" class="dropdown navbar-form">
-          <select id="mockups-list" ng-model="selectedMockup"
-                  ng-options="mockup.name for mockup in mockups" class="form-control">
-          </select>
-        </li>
-
-        <!-- Current Project, and mockup. -->
-        <li id="project">
-          <p class="navbar-brand">{{mainTitle}}
-            <small>
-            <a ng-show="prevMockupId" class="link"
-               ng-href="/p/{{p_id}}/{{prevMockupId}}">«</a>
-            <span>{{subTitle}}</span>
-            <a ng-show="nextMockupId" class="link"
-               ng-href="/p/{{p_id}}/{{nextMockupId}}">»</a>
-            <a ng-show="auth.email && auth.email == selectedProject.user && !nextMockupId"
-               ng-click="addMockup(p_id)" class="link">+</a>
-            </small>
-          </p>
-
-        <li class="pull-right navbar-form">
-          <button type="submit" class="btn" ng-show="auth.email"
-            ng-click="createProject()">Create New Project</button>
-        </li>
-        <!-- User box -->
-        <li class="pull-right navbar-text">
-          <user logged-in-user="auth"><div id="user">
-            <a ng-hide="loggedInUser.email || progress" class="button login" title="Click to sign in.">Sign In</a>
-            <p class="ng-hide" ng-show="progress">Signing In...</p>
-            <p class="ng-hide" ng-show="loggedInUser.email"><img src="http://avatars.io/email/"
-              height="24" width="24"><a href="/profile" class="profileLink ng-binding" ng-href="/profile"></a>
-              <small class="text-label ng-binding"></small> | <a class="email" title="Click to sign out.">Sign Out</a>
-            </p>
-          </div>
-          </user>
-        </li>
-      </ul>
-    </div>
-    </nav>
-
-    <div ui-view class="main-content container"></div>
+    <ui-view></ui-view>
 
     <!-- Third-party library code -->
     <script src="/r/js/lib/jquery/jquery.js" type="text/javascript"></script>
@@ -84,10 +34,13 @@
     <script src="/r/js/directives/bugPanel.js" type="text/javascript"></script>
     <script src="/r/js/directives/mockupImage.js" type="text/javascript"></script>
     <script src="/r/js/directives/toggleList.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/HeaderCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/ProjectsCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/MockupCtrl.js" type="text/javascript"></script>
-    <script src="/r/js/controllers/NewMockupCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/AppCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/DashboardCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProfileCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProjectMockupCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProjectNewCtrl.js" type="text/javascript"></script>
+    <script src="/r/js/controllers/ProjectShowCtrl.js" type="text/javascript"></script>
+
     <script src="/r/js/filters.js" type="text/javascript"></script>
   </body>
 

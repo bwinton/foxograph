@@ -27,38 +27,43 @@ var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
   last_got: Date
 }));
 
-var Bug = mongoose.model('Bug', new mongoose.Schema({
+var bugSchema = new mongoose.Schema({
   number: String,
   startX: Number,
   startY: Number,
   endX: Number,
   endY: Number,
   mockup: String
-}));
-
-var Mockup = mongoose.model('Mockup', new mongoose.Schema({
-  name: String,
-  slug: String,
-  image: String,
-  creationDate: Date,
-  project: String
-}));
+})
+var Bug = mongoose.model('Bug', bugSchema);
 
 var Theme = mongoose.model('Theme', new mongoose.Schema({
-  name: String
+  name: {type: String, unique: true, required: 'Theme name required.'}
 }));
 
 var Product = mongoose.model('Product', new mongoose.Schema({
-  name: String
+  name: {type: String, unique: true, required: 'Product name required.'}
 }));
 
-var Project = mongoose.model('Project', new mongoose.Schema({
-  name: String,
-  creationDate: Date,
-  user: String,
+var mockupSchema = new mongoose.Schema({
+  name: {type: "string", required: 'Mockup must have name'},
+  slug: {type: String, unique: true, required: 'Mockup must have a slug'},
+  image: String,
+  creationDate: { type: Date, default: Date.now },
+  // bugs: [bugSchema] Someday it should work like this
+});
+var Mockup = mongoose.model('Mockup', mockupSchema);
+
+var projectSchema = new mongoose.Schema({
+  name: {type: String, required: 'Project name required.'},
+  slug: {type: String, unique: true, required: 'Project must have a slug'},
+  creationDate: {type: Date, default: Date.now },
+  user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
-  products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}]
-}));
+  products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
+  mockups: {type: [mockupSchema], validate: [uniqueMockupNames, "Mockup names must be unique within project."]}
+});
+var Project = mongoose.model('Project', projectSchema)
 
 
 
@@ -75,9 +80,6 @@ exports.postTheme = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }  
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
-  }
   var theme = new Theme(req.body);
   theme.save(function (err) {
     if (err) {
@@ -99,9 +101,6 @@ exports.postProduct = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }  
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
-  }
   var product = new Product(req.body);
   product.save(function (err) {
     if (err) {
@@ -115,34 +114,97 @@ exports.postProduct = function (req, res) {
 // Projects.
 
 exports.getProjects = function (req, res) {
-  return Project.find({}).populate('themes').populate('products').exec(function(error, projects) {
+  return Project.find({})
+  .populate('themes products')
+  .populate('mockups', 'name creationDate') // don't get image data
+  .exec(function(error, projects) {
     return res.json(projects);
   })
 };
-
-/*
-exports.getProjects = function (req, res) {
-  return Project.find(function (err, projects) {
-    return res.json(projects);
-  });
-};*/
 
 exports.postProject = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
+
+  saveUnsaved(req.body.products, Product, function(products) {
+    req.body.products = products.map(function(product) {return product._id});
+    saveUnsaved(req.body.themes, Theme, function(themes) {
+      req.body.themes = themes.map(function(theme) {return theme._id});
+      req.body.user = req.session.email;
+      var project = new Project(req.body);
+      project.save(function (err) {
+        if (err) {
+          console.error(err);
+          return error(res, err, console);
+        }
+        project.populate({path: 'themes products'}, function(err, project) {
+          if (err) {
+            console.error(err);
+            return error(res, err, console);
+          }
+          project.populate({
+            path: 'mockups',
+            select: 'name creationDate'
+          }, function(err, project) {
+            if (err) {
+              console.error(err);
+              return error(res, err, console);
+            } 
+            return res.json(project)
+          });
+        });
+      });   
+    });
+  });
+};
+
+exports.putProject = function (req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
   }
-  req.body.user = req.session.email;
-  req.body.creationDate = new Date();
-  var project = new Project(req.body);
-  project.save(function (err) {
+  
+  Project.findById(req.body._id, function (err, project) {
     if (err) {
       console.error(err);
       return error(res, err, console);
     }
-    return res.json(project);
+
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot modify project you did not create.');
+    }
+
+    project.name = req.body.name;
+    project.mockups = req.body.mockups;
+    saveUnsaved(req.body.products, Product, function(products) {
+      project.products = products.map(function(product) {return product._id});
+      saveUnsaved(req.body.themes, Theme, function(themes) {
+        project.themes = themes.map(function(theme) {return theme._id});
+
+        project.save(function (err) {
+          if (err) {
+            console.error(err);
+            return error(res, err, console);
+          }
+          project.populate({path: 'themes products'}, function(err, project) {
+            if (err) {
+              console.error(err);
+              return error(res, err, console);
+            }
+            project.populate({
+              path: 'mockups',
+              select: 'name creationDate'
+            }, function(err, project) {
+              if (err) {
+                console.error(err);
+                return error(res, err, console);
+              } 
+              return res.json(project)
+            });
+          });
+        });    
+      });
+    });
   });
 };
 
@@ -184,6 +246,42 @@ exports.deleteProject = function (req, res) {
   });
 };
 
+exports.putMockup = function (req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot update a mockup in a project you didn’t create!');
+    }
+    var mockup = project.mockups.id(req.params.mockup_id);
+    mockup.name = req.body.name || mockup.name;
+    mockup.image = req.body.image || mockup.image;
+    mockup.bugs = req.body.bugs || mockup.bugs;
+    project.save(function(err) {
+      if (err) {
+        console.error(err);
+        return error(res, err, console);  
+      }
+      return res.json(project.mockups.id(req.params.mockup_id));
+    });
+  });
+};
+
+exports.getMockup = function (req, res) {
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+
+    var mockup = project.mockups.id(req.params.mockup_id);
+    if (!mockup) {
+      return error(res, "No mockup found for that id for this project", console);       
+    }
+    return res.json(mockup);
+  });
+};
+
+
+
 
 // Mockups.
 
@@ -212,7 +310,6 @@ exports.postMockup = function (req, res) {
     }
     req.body.creationDate = new Date();
     req.body.project = req.params.project_id;
-    // req.body.slug = makeSlug(req.body.name);
     var mockup = new Mockup(req.body);
     mockup.save(function (err) {
       if (err) {
@@ -222,39 +319,6 @@ exports.postMockup = function (req, res) {
     });
   });
 };
-
-exports.getMockup = function (req, res) {
-  return Mockup.find({_id: req.params.mockup_id}, function (err, mockups) {
-    if (err) {
-      return error(res, err, console);
-    }
-    return res.json(mockups[0]);
-  });
-};
-
-exports.putMockup = function (req, res) {
-  if (!req.session.email) {
-    return error(res, 'Not logged in.');
-  }
-  if (!req.body || !req.body.image) {
-    return error(res, 'Missing image.');
-  }
-  Project.findOne({_id: req.body.project}, function (err, project) {
-    if (project.user !== req.session.email) {
-      return error(res, 'Cannot update a mockup in a project you didn’t create!');
-    }
-    var id = req.body._id;
-    delete req.body._id;
-    Mockup.update({_id: id}, req.body, function (err, mockup) {
-      if (err) {
-        return error(res, err, console);
-      }
-      return res.json(mockup);
-    });
-  });
-};
-
-
 
 exports.deleteMockup = function (req, res) {
   if (!req.session.email) {
@@ -388,21 +452,20 @@ exports.postBug = function (req, res) {
   if (!req.body || !req.body.number) {
     return error(res, 'Missing number.');
   }
-  Mockup.findOne({_id: req.params.mockup_id}, function (err, mockup) {
-    Project.findOne({_id: mockup.project}, function (err, project) {
-      if (project.user !== req.session.email) {
-        return error(res, 'Cannot add a bug to a project you didn’t create!');
-      }
-      req.body.mockup = req.params.mockup_id;
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    var mockup = project.mockups.id(req.params.mockup_id);
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot add a bug to a project you didn’t create!');
+    }
+    req.body.mockup = req.params.mockup_id;
 
-      var bug = new Bug(req.body);
-      bug.save(function (err) {
-        if (err) {
-          return error(res, err, console);
-        }
-        addBugInfos([bug], function (bugs) {
-          return res.json(bugs);
-        });
+    var bug = new Bug(req.body);
+    bug.save(function (err) {
+      if (err) {
+        return error(res, err, console);
+      }
+      addBugInfos([bug], function (bugs) {
+        return res.json(bugs);
       });
     });
   });
@@ -424,17 +487,19 @@ exports.deleteBug = function (req, res) {
     return error(res, 'Not logged in.');
   }
   Bug.findOne({_id: req.params.bug_id}, function (err, bug) {
-    Mockup.findOne({_id: bug.mockup}, function (err, mockup) {
-      Project.findOne({_id: mockup.project}, function (err, project) {
-        if (project.user !== req.session.email) {
-          return error(res, 'Cannot delete a bug from a project you didn’t create!');
+    if (err) {
+      return error(res, err, console);
+    }
+    Project.findOne({_id: req.params.project_id}, function (err, project) {
+      if (project.user !== req.session.email) {
+        return error(res, 'Cannot delete a bug from a project you didn’t create!');
+      }
+      var mockup = project.mockups.id(req.params.mockup_id);
+      Bug.findOneAndRemove({_id: bug._id}, function (err, bug) {
+        if (err) {
+          return error(res, err, console);
         }
-        Bug.findOneAndRemove({_id: req.params.bug_id}, function (err, bug) {
-          if (err) {
-            return error(res, err, console);
-          }
-          return res.json(bug);
-        });
+        return res.json(bug);
       });
     });
   });
@@ -484,3 +549,71 @@ exports.dump = function (req, res) {
     });
   });
 };
+
+projectSchema.pre('validate', function (next) {
+  this.slug = slugify(this.name);
+  next();
+});
+
+mockupSchema.pre('validate', function (next) {
+  this.slug = slugify(this.name);
+  next();
+});
+
+function slugify(text) {
+  return text
+          .toLowerCase()
+          .replace(/ +/g,'-')
+          .replace(/[^\w-]+/g,'');
+}
+
+function uniqueMockupNames(mockups) {
+  var nameDict = {}
+
+  for (var i = 0; i < mockups.length; i++) {
+    var mockup = mockups[i]
+    if (nameDict[mockup.name] !== undefined) {
+      console.log("FALSE!");
+      return false;
+    } else {
+      nameDict[mockup.name] = true;
+    }
+  }
+  return true
+}
+
+// Helper function to create any new products or themes if new
+// This should use deferred
+function saveUnsaved(list, Model, cb, acc) {
+  // accumulator
+  if (acc === undefined) {
+    acc = [];
+  }
+  // base case
+  if (list.length === 0) {
+    // call callback with accumulated array of saved elements
+    cb(acc);
+  } else {
+  // recursive case
+    // Get an element check to see if it's new
+    var elem = list.pop();
+    if (elem._id === undefined) {
+      // element is new, let's create and save it
+      elem = new Model(elem);
+      elem.save(function(err) {
+        // If no errors (we're throwing out any erroneous elements)
+        if (!err) {
+          acc.push(elem);
+          saveUnsaved(list, Model, cb, acc);
+        } else {
+          // error, throw out element and keep going
+          saveUnsaved(list, Model, cb, acc);          
+        }
+      });
+    } else {
+      // Element is not new push it onto acc and continue
+      acc.push(elem);
+      saveUnsaved(list, Model, cb, acc);
+    }
+  }  
+}

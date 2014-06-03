@@ -40,25 +40,34 @@ var foxographApp = angular.module('foxographApp',
       });
 
       $urlRouterProvider.otherwise('/');
-      $stateProvider.state('index', {
-        url: '/',
-        templateUrl: '/r/projectsList.html'
-      }).state('create', {
-        url: '/create',
-        templateUrl: '/r/createBody.html',
-        controller: 'NewMockupCtrl'
-      }).state('project', {
+      $stateProvider.state('app', {
         abstract: true,
-        url: '/p/:p_id',
-        templateUrl: '/r/project.html',
-        controller: 'ProjectsCtrl'
-      }).state('project.index', {
-        url: '',
-        templateUrl: '/r/mockupsList.html'
-      }).state('project.mockup', {
-        url: '/:m_id',
-        templateUrl: '/r/mockupBody.html',
-        controller: 'MockupCtrl'
+        controller: 'AppCtrl',
+        templateUrl: '/r/app.html'
+      }).state('app.dashboard', {
+        url: '/',
+        templateUrl: '/r/dashboard.html',
+        controller: 'DashboardCtrl'
+      }).state('app.project', {
+        abstract: true,
+        url: '/project',
+        template: '<ui-view/>',
+      }).state('app.project.new', {
+        url: '/new',
+        templateUrl: '/r/projectNew.html',
+        controller: 'ProjectNewCtrl'
+      }).state('app.project.show', {
+        url: '/:project_slug',
+        templateUrl: '/r/projectShow.html',
+        controller: 'ProjectShowCtrl'
+      }).state('app.project.mockup', {
+        url: '/:project_slug/:mockup_slug',
+        templateUrl: '/r/projectMockup.html',
+        controller: 'ProjectMockupCtrl'
+      }).state('app.profile', {
+        url: '/profile/:user_email',
+        templateUrl: '/r/profile.html',
+        controller: 'ProfileCtrl'
       });
 
       RestangularProvider.setBaseUrl('/api');

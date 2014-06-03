@@ -117,14 +117,24 @@ app.configure('production', function () {
 app.get('/api/projects', routes.getProjects);
 app.post('/api/projects', routes.postProject);
 app.get('/api/projects/:project_id', routes.getProject);
+app.put('/api/projects/:project_id', routes.putProject);
 app.delete('/api/projects/:project_id', routes.deleteProject);
 
 // API Mockups.
+app.put('/api/projects/:project_id/mockups/:mockup_id', routes.putMockup);
+app.get('/api/projects/:project_id/mockups/:mockup_id', routes.getMockup);
+
+/*
+// API Mockups.
 app.get('/api/projects/:project_id/mockups', routes.getMockups);
 app.post('/api/projects/:project_id/mockups', routes.postMockup);
+
+// Old routes
+
 app.get('/api/mockups/:mockup_id', routes.getMockup);
 app.put('/api/projects/:project_id/mockups/:mockup_id', routes.putMockup);
 app.delete('/api/projects/:project_id/mockups/:mockup_id', routes.deleteMockup);
+*/
 
 // API Bugs
 app.get('/api/projects/:project_id/bugs', routes.getBugs);
@@ -154,9 +164,10 @@ app.use('/r', express.static(__dirname + '/www'));
 
 // User-facing routes.
 app.get('/', routes.index);
-app.get('/create', routes.index);
-app.get('/p/:project_id', routes.index);
-app.get('/p/:project_id/:mockup_id', routes.index);
+app.get('/new', routes.index);
+app.get('/project/:project_id', routes.index);
+app.get('/project/:project_id/:mockup_id', routes.index);
+app.get('/profile/:user_email', routes.index);
 
 
 require('express-persona')(app, {
