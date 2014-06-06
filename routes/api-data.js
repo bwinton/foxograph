@@ -471,6 +471,45 @@ exports.postBug = function (req, res) {
   });
 };
 
+exports.putBug = function(req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+  if (!req.body || !req.body.number) {
+    return error(res, 'Missing number.');
+  }
+
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    if (err) {
+      return error(res, err, console);
+    }
+
+    var mockup = project.mockups.id(req.params.mockup_id);
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot add a bug to a project you didn’t create!');
+    }
+
+    Bug.findOne({_id: req.params.bug_id}, function (err, bug) {
+      if (err) {
+        return error(res, err, console);
+      }
+      bug.number = req.body.number || bug.number;
+      bug.startX = req.body.startX || bug.startX;
+      bug.startY = req.body.startY || bug.startY;
+      bug.endX = req.body.endX || bug.endX;
+      bug.endY = req.body.endY || bug.endY;
+      bug.mockup = req.params.mockup_id || bug.mockup;
+      bug.save(function(err) {
+        if (err) {
+          console.error(err);
+          return error(res, err, console);
+        }
+        return res.json(bug);
+      });
+    });
+  });
+}
+
 exports.getBug = function (req, res) {
   return Bug.find({_id: req.params.bug_id}, function (err, bugs) {
     if (err) {

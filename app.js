@@ -124,23 +124,12 @@ app.delete('/api/projects/:project_id', routes.deleteProject);
 app.put('/api/projects/:project_id/mockups/:mockup_id', routes.putMockup);
 app.get('/api/projects/:project_id/mockups/:mockup_id', routes.getMockup);
 
-/*
-// API Mockups.
-app.get('/api/projects/:project_id/mockups', routes.getMockups);
-app.post('/api/projects/:project_id/mockups', routes.postMockup);
-
-// Old routes
-
-app.get('/api/mockups/:mockup_id', routes.getMockup);
-app.put('/api/projects/:project_id/mockups/:mockup_id', routes.putMockup);
-app.delete('/api/projects/:project_id/mockups/:mockup_id', routes.deleteMockup);
-*/
-
 // API Bugs
 app.get('/api/projects/:project_id/bugs', routes.getBugs);
 app.get('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
+app.put('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.putBug);
 app.delete('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.deleteBug);
 
 // API Themes

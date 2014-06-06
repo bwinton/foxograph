@@ -7,7 +7,7 @@
   margin: 1em;
 }
 
-.bug-panel, .bugList {
+.bug-panel{
   background:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.65)), to(rgba(0,0,0,0.75)));
   background:-moz-linear-gradient(top,rgba(0,0,0,0.65),rgba(0,0,0,0.75));
   color:white;
@@ -19,23 +19,43 @@
 }
 
 .bug-panel {
+  position: absolute;
   -moz-transition-property:opacity;
-  -moz-transition-duration:2s;
+  -moz-transition-duration:0.5s;
   opacity:0;
   position:absolute;
   z-index:1;
 }
 
+.bug-panel a {
+  cursor: pointer;
+}
+
+.bug-panel.authorized {
+  cursor: grab;
+}
+
+.bug-panel.authorized.dragging {
+  cursor: grabbing;
+}
+
+
 .loading {
   opacity:100;
   width:320px;
-  height:40px;
+  height:60px;
 }
 
 .done {
   opacity:100;
   width:320px;
   height:auto;
+}
+
+.loading img {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 div.complete {
