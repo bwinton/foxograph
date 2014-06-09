@@ -19,27 +19,24 @@ foxographApp.directive('bugPanel', function ($document, Restangular) {
     transclude : true,
     replace: true,
     link: function postLink(scope, element, attrs) {
-      
-      console.log(element);
 
       var MAX_WIDTH = element[0].parentElement.offsetWidth;
       var MAX_HEIGHT = element[0].parentElement.offsetHeight;
       var BUG_WIDTH = 320;
       var BUG_HEIGHT = 40;
 
-      var trashLink = angular.element(element.children()[6]);
-      var trashIcon = angular.element(trashLink.children()[0]);
+      Restangular.restangularizeElement(scope.mockup, scope.bug, "bugs");
 
       scope.deleteBug = function(bugs, $index) {
-        // passing in bugs and destructive modification to avoid 
+        // passing in bugs and destructive modification to avoid
         // climbing mount parent.parent.parent.parent...
         scope.bug.remove();
         bugs.splice($index, 1);
-      }
+      };
 
       element[0].onmousedown = function(e) {
 
-        if (!(scope.auth.email === scope.project.user)) {
+        if (scope.auth.email !== scope.project.user) {
           e.stopPropagation();
           return false;
         }
@@ -60,7 +57,7 @@ foxographApp.directive('bugPanel', function ($document, Restangular) {
           });
           e.stopPropagation();
           return false;
-        }
+        };
 
         $document[0].onmouseup = function(e) {
           $document[0].onmousemove = null;
@@ -70,17 +67,15 @@ foxographApp.directive('bugPanel', function ($document, Restangular) {
             scope.dragging = false;
           });
 
-          console.log(scope.bug);
-
           scope.bug.put();
 
           e.stopPropagation();
           return false;
-        }
+        };
 
         e.stopPropagation();
         return false;
-      }
+      };
     }
   };
 });

@@ -18,7 +18,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
     scope: true,
     templateUrl: '/r/js/directives/mockupImageTemplate.html',
     link: function userPostLink($scope, iElement) {
-      
+
       var MAX_WIDTH = 1100;
       var MAX_HEIGHT = 600;
       var BUG_WIDTH = 320;
@@ -32,53 +32,64 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
       $scope.dragging = false;
 
       $scope.$watch('mockup', function(mockup, oldMockup) {
-        if (mockup && mockup.image) {
+        // load image
+        if ((mockup && mockup.image && (!oldMockup || !oldMockup.image)) ||
+            (mockup && oldMockup && mockup.image !== oldMockup.image)) {
+          console.log("I should only run once");
           image[0].setAttributeNS("http://www.w3.org/1999/xlink", "href", mockup.image);
           Image.load(mockup.image, $scope).then(function (img) {
             var width = Math.min(img.width, MAX_WIDTH);
             var height = Math.min(img.height, MAX_HEIGHT);
-            image[0].setAttribute("x", (MAX_WIDTH - width) / 2)
-            image[0].setAttribute("y", (MAX_HEIGHT - height) / 2)
+            image[0].setAttribute("x", (MAX_WIDTH - width) / 2);
+            image[0].setAttribute("y", (MAX_HEIGHT - height) / 2);
             image[0].setAttribute("width", width);
             image[0].setAttribute("height", height);
             $scope.loaded = true;
           }, function (err) {
             // This would show the error page if the image reader fails?
             // Modeled after existing code using the image reader
-            // We are currently getting this error NS_ERROR_NOT_AVAILABLE: 
+            // We are currently getting this error NS_ERROR_NOT_AVAILABLE:
             // This code does not execute, no error page appears
             $scope.error = true;
             $scope.loaded = true;
           });
-        } else if (mockup && !mockup.image) {
+        } else if (mockup && mockup.image === null) {
           $scope.loaded = true;
+        }
+
+        // load bug
+        if (mockup && mockup.bugs) {
+          if ($scope.bugs === undefined) {
+            $scope.bugs = mockup.bugs;
+          }
+          Restangular.restangularizeCollection(mockup, $scope.bugs, "bugs");
         }
       }, true);
 
-      pasteboard[0].ondragover = function() {
-        if (!($scope.auth.email === $scope.project.user)) {
+      pasteboard[0].ondragover = function(e) {
+        if ($scope.auth.email !== $scope.project.user) {
           e.stopPropagation();
           return false;
         }
         this.classList.add('dragging');
         return false;
-      }
-      
-      pasteboard[0].ondragleave = function() {
-        if (!($scope.auth.email === $scope.project.user)) {
+      };
+
+      pasteboard[0].ondragleave = function(e) {
+        if ($scope.auth.email !== $scope.project.user) {
           e.stopPropagation();
           return false;
         }
 
         this.classList.remove('dragging');
         return false;
-      }
+      };
 
       pasteboard[0].ondrop = function(e) {
         e.preventDefault();
         this.classList.remove('dragging');
 
-        if (!($scope.auth.email === $scope.project.user)) {
+        if ($scope.auth.email !== $scope.project.user) {
           e.stopPropagation();
           return false;
         }
@@ -87,16 +98,16 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
         reader = new FileReader();
         reader.onload = function (event) {
           $scope.$apply(function() {
-            $scope.mockup.image = event.target.result;            
-          })
+            $scope.mockup.image = event.target.result;
+          });
           $scope.mockup.put();
         };
         reader.readAsDataURL(file);
-      }
+      };
 
       pasteboard[0].onmousedown = function(e) {
-        
-        if (!($scope.auth.email === $scope.project.user)) {
+
+        if ($scope.auth.email !== $scope.project.user) {
           e.stopPropagation();
           return false;
         }
@@ -132,13 +143,13 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
             bug.endX = Math.max(0, Math.min(MAX_WIDTH - BUG_WIDTH, x));
             bug.endY = Math.max(0, Math.min(MAX_HEIGHT - BUG_HEIGHT, y));
           });
-        }
+        };
 
         pasteboard[0].onmouseup = function(e) {
           pasteboard[0].onmousemove = null;
           pasteboard[0].onmouseup = null;
           $scope.dragging = false;
-          var oldBug = bug
+          var oldBug = bug;
           var number = prompt('Please enter a bug number');
           if (number) {
             bug.number = number;
@@ -157,10 +168,10 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
               $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, "bugs");
             });
           }
-        }
+        };
         e.stopPropagation();
         return false;
-      }
+      };
 
       /*
        * Thanks to brainjam at SO for this
@@ -192,7 +203,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
         } while (e = e.offsetParent);
         return { x: x, y: y };
       }
-    } 
+    }
   };
   return directiveDefinitionObject;
 });

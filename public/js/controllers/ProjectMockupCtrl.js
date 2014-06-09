@@ -16,13 +16,13 @@ foxographApp.controller({
 
   'ProjectMockupCtrl': function ProjectMockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
 
-    
 
-    $rootScope.$watch('projects', loadMockup)
+
+    $rootScope.$watch('projects', loadMockup);
 
     $scope.$watch('bugs', function() {
       if ($scope.mockup && $scope.bugs) {
-        $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, 'bugs');        
+        $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, 'bugs');
       }
     });
 
@@ -31,14 +31,19 @@ foxographApp.controller({
         var project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
         $scope.project = Restangular.restangularizeElement(null, project, 'projects');
         if ($scope.project) {
-          var mockup = _.findWhere($scope.project.mockups, {slug: $stateParams.mockup_slug})
-          var mockupPromise = $scope.project.one('mockups', mockup._id).get();
-          mockupPromise.then(function(mockup) {
-            $scope.mockup = mockup;
-            $scope.mockup.all('bugs').getList().then(function(bugList) {
-              $scope.bugs = bugList
+          var mockup = _.findWhere($scope.project.mockups, {slug: $stateParams.mockup_slug});
+          if (!mockup.image) {
+            Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+            mockup.one('img').get().then(function(image) {
+              if (_.isEmpty(image.data)) {
+                mockup.image = null;
+              } else {
+                mockup.image = image.data;
+              }
+              $scope.mockup = mockup;
             });
-          });
+          }
+          $scope.mockup = mockup;
         }
       }
     }

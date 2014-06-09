@@ -19,5 +19,13 @@ foxographApp.controller({
 
     $scope.filteredThemes = [];
     $scope.filteredProducts = [];
+
+    $scope.countBugs = function(mockups) {
+      var bugs = _.flatten(_.pluck(mockups, 'bugs'));
+      if (bugs.length === 1 && bugs[0] === undefined) {
+        return -1;
+      }
+      return bugs.length;
+    };
   }
 });

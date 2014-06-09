@@ -19,7 +19,7 @@ foxographApp.controller({
   // project.
   'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $state, $stateParams, Restangular, $filter) {
     console.log('BW - Setting project_id to ', $stateParams.project_id);
-    
+
     $scope.form = {};
 
     $rootScope.$watch('projects', function() {
@@ -36,17 +36,17 @@ foxographApp.controller({
       }
       if($scope.form.name !== $scope.project.name) return true;
 
-      var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id});
-      var formThemes = _.map($scope.form.themes, function(theme) {return theme._id});
+      var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id;});
+      var formThemes = _.map($scope.form.themes, function(theme) {return theme._id;});
 
-      var projectProducts = _.map($scope.project.products, function(product) {return product._id});
-      var formProducts = _.map($scope.form.products, function(product) {return product._id});
+      var projectProducts = _.map($scope.project.products, function(product) {return product._id;});
+      var formProducts = _.map($scope.form.products, function(product) {return product._id;});
 
       if (_.xor(projectThemes, formThemes).length !== 0 ||
           _.xor(projectProducts, formProducts).length !== 0) {
         return true;
       }
-      return false;   
+      return false;
     }
 
     $scope.$watch('form', function() {
@@ -59,46 +59,67 @@ foxographApp.controller({
         $scope.project.mockups.push({name: mockupName});
         var projectPromise = $scope.project.put();
         projectPromise.then(function(project) {
-          var projects = _.without($rootScope.projects, $scope.project)
+          var projects = _.without($rootScope.projects, $scope.project);
           projects.push(project);
           $rootScope.projects = projects;
         });
       }
-    }
+    };
 
     $scope.updateProject = function() {
-      var projectPromise = $scope.form.put()
+      var projectPromise = $scope.form.put();
       projectPromise.then(function(project) {
         console.log(project);
-        var projects = _.without($rootScope.projects, $scope.project)
+        var projects = _.without($rootScope.projects, $scope.project);
         projects.push(project);
         $rootScope.projects = projects;
 
         // add newly created products to rootscope
         var newProducts = _.where(project.products, function(product) {
-          return ! _.some($rootScope.products, {_id: product._id})  
+          return ! _.some($rootScope.products, {_id: product._id});
         });
-        
+
         // delete any newly created products that were unsaved
         $rootScope.products = _.filter($rootScope.products.concat(newProducts), "_id");
 
 
         // add newly created themes to rootscope
         var newThemes = _.where(project.themes, function(theme) {
-          return ! _.some($rootScope.themes, {_id: theme._id})  
+          return ! _.some($rootScope.themes, {_id: theme._id});
         });
 
         // delete any newly created themes that were unsaved
         $rootScope.themes = _.filter($rootScope.themes.concat(newThemes), "_id");
-      
+
         $state.go('app.project.show', {'project_slug': project.slug});
-      })
-    }
+      });
+    };
 
     $scope.$on('$destroy', function() {
       $rootScope.themes = _.filter($rootScope.themes, "_id");
       $rootScope.products = _.filter($rootScope.products, "_id");
     });
+
+    $scope.resolved = function(bugs) {
+      console.log(bugs);
+      return _.where(bugs, function(bug) {
+        return bug.status === 'RESOLVED' || bug.status === 'VERIFIED';
+      });
+    };
+
+    $scope.assigned = function(bugs) {
+      return _.where(bugs, function(bug) {
+        return (bug.status !== 'RESOLVED' && bug.status !== 'VERIFIED') &&
+               bug.assigned !== 'Nobody; OK to take it and work on it';
+      });
+    };
+
+    $scope.unassigned = function(bugs) {
+      return _.where(bugs, function(bug) {
+        return (bug.status !== 'RESOLVED' && bug.status !== 'VERIFIED') &&
+               bug.assigned === 'Nobody; OK to take it and work on it';
+        });
+    };
 
 
     $scope.deleteProject = function (project) {
@@ -125,26 +146,5 @@ foxographApp.controller({
         }
       });
     };
-
-
-
-       // $rootScope.project_id = $stateParams.project_id;
-
-    // Handle a change in project id by setting the project.
-   /* $rootScope.$watch('project_id', function changeProject(project_id) {
-      if (!$rootScope.projects) {
-        // Hopefully we'll do this later.
-        // We should totally make this into an Ensure clause on the route!!!
-        return;
-      }
-      if (!$rootScope.project_id) {
-        $scope.project = null;
-        $scope.mockup = null;
-        return;
-      }
-    }); */
-
-    // If we have projects, and a project_id, make sure that we've set the project.
-
   }
 });

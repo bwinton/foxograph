@@ -8,12 +8,10 @@
     <div class="well well-sm">
       <h4 class="text-center">{{ projects.length }} Projects</h4>
       <h6 class="text-center"><small><i>in current view</i></small></h6>
-      <hr/>
-      <!--<a class="btn btn-primary btn-block btn-xs" ng-show="permissions.add" ng-href="/projects/new">New Project</a>-->
     </div>
-    <toggle-list title="'Products'" list="products" attribute="'name'" 
+    <toggle-list title="'Products'" list="products" attribute="'name'"
     selected="filteredProducts" clearable="true"></toggle-list>
-    <toggle-list title="'Themes'" list="themes" attribute="'name'" 
+    <toggle-list title="'Themes'" list="themes" attribute="'name'"
     selected="filteredThemes" clearable="true"></toggle-list>
   </div>
 
@@ -29,10 +27,27 @@
           <td>
             <span ng-repeat="product in project.products" class="text-label extra-muted">{{ product.name }}<br/></span>
           </td>
+          <td>
+            <div>
+              <ng-pluralize count="countBugs(project.mockups)"
+                   when="{'-1': '',
+                          '0': 'No bugs',
+                          '1': '1 bug',
+                          'other': '{} bugs'}">
+              </ng-pluralize>
+            </div>
+            <div>
+              <ng-pluralize count="project.mockups.length"
+                   when="{'0': 'No mockups',
+                          '1': '1 mockup',
+                          'other': '{} mockups'}">
+              </ng-pluralize>
+            </div>
+          </td>
           <td>{{ project.user }}</td>
         </tr>
       </tbody>
     </table>
     <div ng-show="!projects.length" class="well well-lg">No projects. <i ng-show="projects.length">Try another filter?</i></div>
-  </div>  
+  </div>
 </div>

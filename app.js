@@ -123,12 +123,14 @@ app.delete('/api/projects/:project_id', routes.deleteProject);
 // API Mockups.
 app.put('/api/projects/:project_id/mockups/:mockup_id', routes.putMockup);
 app.get('/api/projects/:project_id/mockups/:mockup_id', routes.getMockup);
+app.get('/api/projects/:project_id/mockups/:mockup_id/img', routes.getMockupImg);
 
 // API Bugs
 app.get('/api/projects/:project_id/bugs', routes.getBugs);
 app.get('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.getBugs);
 app.post('/api/projects/:project_id/mockups/:mockup_id/bugs', routes.postBug);
 app.get('/api/bugs/:bug_id', routes.getBug);
+app.get('/api/bugs', routes.getBugs);
 app.put('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.putBug);
 app.delete('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.deleteBug);
 

@@ -22,7 +22,18 @@ foxographApp.controller({
     // Load in the projects.
     Restangular.all('projects').getList().then(function (projectList) {
       console.log("BW - Loaded projects.");
-      $rootScope.projects = projectList
+      $rootScope.projects = projectList;
+      Restangular.all('bugs').getList().then(function (bugList) {
+        var mockups = _.flatten(_.pluck(projectList, 'mockups'));
+        projectList = _.map(projectList, function(project) {
+          return _.map(project.mockups, function(mockup) {
+            mockup.bugs = _.where(bugList, {'mockup': mockup._id});
+            return mockup;
+          });
+        });
+
+        $rootScope.project = projectList;
+      });
     });
 
     Restangular.all('themes').getList().then(function (themeList) {
@@ -31,18 +42,18 @@ foxographApp.controller({
 
     Restangular.all('products').getList().then(function (productList) {
       $rootScope.products = productList;
-    });  
-    
+    });
+
     // Keep our themes, products, and projects nice and ordered
-    $rootScope.$watch('themes', function() {  
+    $rootScope.$watch('themes', function() {
       if ($rootScope.themes) {
         var themes = $rootScope.themes;
 
         // reject themes without id's if there is a theme with the same name with an id
         // useful after project creation and update
         themes = _.reject(themes, function(theme) {
-          theme._id === undefined && _.some(themes, function(themeComp) {
-            theme.name === themeComp.name
+          return theme._id === undefined && _.some(themes, function(themeComp) {
+            return theme.name === themeComp.name;
           });
         });
 
@@ -56,15 +67,15 @@ foxographApp.controller({
       }
     });
 
-    $rootScope.$watch('products', function() {  
+    $rootScope.$watch('products', function() {
       if ($rootScope.products) {
         var products = $rootScope.products;
 
         // reject products without id's if there is a product with the same name with an id
         // useful after project creation and update
         products = _.reject(products, function(product) {
-          product._id === undefined && _.some(products, function(productComp) {
-            product.name === productComp.name
+          return product._id === undefined && _.some(products, function(productComp) {
+            return product.name === productComp.name;
           });
         });
 
@@ -74,13 +85,13 @@ foxographApp.controller({
         // prevent infinite updating
         if (!identical(products, $rootScope.products)) {
           $rootScope.products = products;
-        }        
+        }
       }
     });
 
     $rootScope.$watch('projects', function() {
       if (!$rootScope.projects) {
-        return
+        return;
       }
 
       updateHeader();
@@ -91,7 +102,7 @@ foxographApp.controller({
 
       if (!identical(projects, $rootScope.projects)) {
         $rootScope.projects = projects;
-      }        
+      }
     });
 
     $rootScope.$on('$stateChangeSuccess', updateHeader);
@@ -110,7 +121,7 @@ foxographApp.controller({
             (c1[i]._id === c2[i]._id && c1[i].name !== c2[i].name)) { return false; }
       }
 
-      return true
+      return true;
     }
 
     function updateHeader() {

@@ -18,7 +18,7 @@ var error = require('./api-utils').error;
 var extend = require('./api-utils').extend;
 
 var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
-  number: String,
+  number: {type: String, required: "BugInfo must have a number"},
   summary: String,
   status: String,
   resolution: String,
@@ -28,13 +28,13 @@ var BugInfo = mongoose.model('BugInfo', new mongoose.Schema({
 }));
 
 var bugSchema = new mongoose.Schema({
-  number: String,
-  startX: Number,
-  startY: Number,
-  endX: Number,
-  endY: Number,
-  mockup: String
-})
+  number: {type: String, required: "Bug must have a number"},
+  startX: {type: Number, required: "Bug must have and startX"},
+  startY: {type: Number, required: "Bug must have and startY"},
+  endX: {type: Number, required: "Bug must have and endX"},
+  endY: {type: Number, required: "Bug must have and endY"},
+  mockup: {type: String, required: "Bug must have a mockup"}
+});
 var Bug = mongoose.model('Bug', bugSchema);
 
 var Theme = mongoose.model('Theme', new mongoose.Schema({
@@ -48,9 +48,8 @@ var Product = mongoose.model('Product', new mongoose.Schema({
 var mockupSchema = new mongoose.Schema({
   name: {type: "string", required: 'Mockup must have name'},
   slug: {type: String, unique: true, required: 'Mockup must have a slug'},
-  image: String,
+  image: {data: Buffer, contentType: String},
   creationDate: { type: Date, default: Date.now },
-  // bugs: [bugSchema] Someday it should work like this
 });
 var Mockup = mongoose.model('Mockup', mockupSchema);
 
@@ -63,7 +62,7 @@ var projectSchema = new mongoose.Schema({
   products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
   mockups: {type: [mockupSchema], validate: [uniqueMockupNames, "Mockup names must be unique within project."]}
 });
-var Project = mongoose.model('Project', projectSchema)
+var Project = mongoose.model('Project', projectSchema);
 
 
 
@@ -79,7 +78,7 @@ exports.getThemes = function (req, res) {
 exports.postTheme = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
-  }  
+  }
   var theme = new Theme(req.body);
   theme.save(function (err) {
     if (err) {
@@ -100,7 +99,7 @@ exports.getProducts = function (req, res) {
 exports.postProduct = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
-  }  
+  }
   var product = new Product(req.body);
   product.save(function (err) {
     if (err) {
@@ -116,10 +115,10 @@ exports.postProduct = function (req, res) {
 exports.getProjects = function (req, res) {
   return Project.find({})
   .populate('themes products')
-  .populate('mockups', 'name creationDate') // don't get image data
+  .select('-mockups.image') // don't get the mockup image
   .exec(function(error, projects) {
     return res.json(projects);
-  })
+  });
 };
 
 exports.postProject = function (req, res) {
@@ -128,9 +127,9 @@ exports.postProject = function (req, res) {
   }
 
   saveUnsaved(req.body.products, Product, function(products) {
-    req.body.products = products.map(function(product) {return product._id});
+    req.body.products = products.map(function(product) {return product._id;});
     saveUnsaved(req.body.themes, Theme, function(themes) {
-      req.body.themes = themes.map(function(theme) {return theme._id});
+      req.body.themes = themes.map(function(theme) {return theme._id;});
       req.body.user = req.session.email;
       var project = new Project(req.body);
       project.save(function (err) {
@@ -150,11 +149,11 @@ exports.postProject = function (req, res) {
             if (err) {
               console.error(err);
               return error(res, err, console);
-            } 
-            return res.json(project)
+            }
+            return res.json(project);
           });
         });
-      });   
+      });
     });
   });
 };
@@ -163,7 +162,7 @@ exports.putProject = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  
+
   Project.findById(req.body._id, function (err, project) {
     if (err) {
       console.error(err);
@@ -177,9 +176,9 @@ exports.putProject = function (req, res) {
     project.name = req.body.name;
     project.mockups = req.body.mockups;
     saveUnsaved(req.body.products, Product, function(products) {
-      project.products = products.map(function(product) {return product._id});
+      project.products = products.map(function(product) {return product._id;});
       saveUnsaved(req.body.themes, Theme, function(themes) {
-        project.themes = themes.map(function(theme) {return theme._id});
+        project.themes = themes.map(function(theme) {return theme._id;});
 
         project.save(function (err) {
           if (err) {
@@ -198,11 +197,11 @@ exports.putProject = function (req, res) {
               if (err) {
                 console.error(err);
                 return error(res, err, console);
-              } 
-              return res.json(project)
+              }
+              return res.json(project);
             });
           });
-        });    
+        });
       });
     });
   });
@@ -262,10 +261,20 @@ exports.putMockup = function (req, res) {
     project.save(function(err) {
       if (err) {
         console.error(err);
-        return error(res, err, console);  
+        return error(res, err, console);
       }
       return res.json(project.mockups.id(req.params.mockup_id));
     });
+  });
+};
+
+exports.getMockupImg = function(req, res) {
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    if (!project) {
+      return error(res, "No project found with id: " + req.params.project_id);
+    }
+    var mockup = project.mockups.id(req.params.mockup_id);
+    return res.json({data: mockup.image});
   });
 };
 
@@ -274,7 +283,7 @@ exports.getMockup = function (req, res) {
 
     var mockup = project.mockups.id(req.params.mockup_id);
     if (!mockup) {
-      return error(res, "No mockup found for that id for this project", console);       
+      return error(res, "No mockup found for that id for this project", console);
     }
     return res.json(mockup);
   });
@@ -429,6 +438,14 @@ function returnBugsForMockups(mockups, res) {
 }
 
 exports.getBugs = function (req, res) {
+  if (!req.params.mockup_id && !req.params.project_id) {
+    Bug.find(function (err, bugs) {
+      addBugInfos(bugs, function(bugs) {
+        return res.json(bugs);
+      });
+    });
+  }
+
   if (req.params.mockup_id) {
     return returnBugsForMockups([req.params.mockup_id], res);
   } else if (req.params.project_id) {
@@ -453,7 +470,7 @@ exports.postBug = function (req, res) {
     return error(res, 'Missing number.');
   }
   Project.findOne({_id: req.params.project_id}, function (err, project) {
-    var mockup = project.mockups.id(req.params.mockup_id);
+    //var mockup = project.mockups.id(req.params.mockup_id);
     if (project.user !== req.session.email) {
       return error(res, 'Cannot add a bug to a project you didn’t create!');
     }
@@ -484,7 +501,7 @@ exports.putBug = function(req, res) {
       return error(res, err, console);
     }
 
-    var mockup = project.mockups.id(req.params.mockup_id);
+    //var mockup = project.mockups.id(req.params.mockup_id);
     if (project.user !== req.session.email) {
       return error(res, 'Cannot add a bug to a project you didn’t create!');
     }
@@ -508,7 +525,7 @@ exports.putBug = function(req, res) {
       });
     });
   });
-}
+};
 
 exports.getBug = function (req, res) {
   return Bug.find({_id: req.params.bug_id}, function (err, bugs) {
@@ -533,7 +550,7 @@ exports.deleteBug = function (req, res) {
       if (project.user !== req.session.email) {
         return error(res, 'Cannot delete a bug from a project you didn’t create!');
       }
-      var mockup = project.mockups.id(req.params.mockup_id);
+      //var mockup = project.mockups.id(req.params.mockup_id);
       Bug.findOneAndRemove({_id: bug._id}, function (err, bug) {
         if (err) {
           return error(res, err, console);
@@ -607,10 +624,10 @@ function slugify(text) {
 }
 
 function uniqueMockupNames(mockups) {
-  var nameDict = {}
+  var nameDict = {};
 
   for (var i = 0; i < mockups.length; i++) {
-    var mockup = mockups[i]
+    var mockup = mockups[i];
     if (nameDict[mockup.name] !== undefined) {
       console.log("FALSE!");
       return false;
@@ -618,7 +635,7 @@ function uniqueMockupNames(mockups) {
       nameDict[mockup.name] = true;
     }
   }
-  return true
+  return true;
 }
 
 // Helper function to create any new products or themes if new
@@ -646,7 +663,7 @@ function saveUnsaved(list, Model, cb, acc) {
           saveUnsaved(list, Model, cb, acc);
         } else {
           // error, throw out element and keep going
-          saveUnsaved(list, Model, cb, acc);          
+          saveUnsaved(list, Model, cb, acc);
         }
       });
     } else {
@@ -654,5 +671,5 @@ function saveUnsaved(list, Model, cb, acc) {
       acc.push(elem);
       saveUnsaved(list, Model, cb, acc);
     }
-  }  
+  }
 }

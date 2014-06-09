@@ -1,6 +1,6 @@
 name: foxographdev
 framework: node
-runtime: node08
+runtime: node010
 inherit: private.yml
 min_version:
   client: 1.6.2
