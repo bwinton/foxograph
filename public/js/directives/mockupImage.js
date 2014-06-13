@@ -33,9 +33,8 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
 
       $scope.$watch('mockup', function(mockup, oldMockup) {
         // load image
-        if ((mockup && mockup.image && (!oldMockup || !oldMockup.image)) ||
-            (mockup && oldMockup && mockup.image !== oldMockup.image)) {
-          console.log("I should only run once");
+        if (mockup && mockup.image && !$scope.loaded) {
+          // we have not loaded the image, or the loaded image is old
           image[0].setAttributeNS("http://www.w3.org/1999/xlink", "href", mockup.image);
           Image.load(mockup.image, $scope).then(function (img) {
             var width = Math.min(img.width, MAX_WIDTH);
@@ -54,6 +53,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
             $scope.loaded = true;
           });
         } else if (mockup && mockup.image === null) {
+          // image has already been loaded, or there is no image to load
           $scope.loaded = true;
         }
 
@@ -118,7 +118,6 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
 
         $scope.dragging = true;
 
-        console.log(e);
         var bug = {
           'mockup': $scope.mockup._id,
           'number': null,
@@ -131,10 +130,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
         $scope.$apply(function () {
           $scope.bugs.push(bug);
           //$scope.setCurrentBug(bug);
-          console.log($scope.bugs);
         });
-
-        console.log(pasteboard);
 
         pasteboard[0].onmousemove = function(e) {
           $scope.$apply(function() {

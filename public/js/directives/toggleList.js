@@ -4,15 +4,15 @@ foxographApp.directive('toggleList', function () {
         '<button ng-show="clearable" type="button" ng-click="clear()" class="btn btn-default btn-xs pull-right">Clear</button>' +
       '</div>' +
       '<ul class="toggle-list list-group">' +
-        '<a class="list-group-item toggle-list" ng-repeat="listItem in list" ng-click="toggle(listItem)"' +  
+        '<a class="list-group-item toggle-list" ng-repeat="listItem in list" ng-click="toggle(listItem)"' +
           'ng-class="{on: isSelected(listItem)}">' +
           '<span class="title" ng-bind="listItem[attribute]"></span><span class="circle"></span></a>' +
-        '<a ng-show="addable && !adding" ng-click="add()" class="list-group-item toggle-list">Add' + 
+        '<a ng-show="addable && !adding" ng-click="add()" class="list-group-item toggle-list">Add' +
           '<span class="plus"></span>'+
         '</a>' +
         '<form ng-show="addable && adding">' +
           '<input type="text" ng-model="newItem" placeholder="Adding to {{title}}">' +
-          '<button type="button" ng-click="addItem()" class="btn btn-default btn-xs pull-right">Add</button>'
+          '<button type="button" ng-click="addItem()" class="btn btn-default btn-xs pull-right">Add</button>' +
       '</ul>' +
     '</div>';
   return {

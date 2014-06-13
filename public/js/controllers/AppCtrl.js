@@ -21,7 +21,6 @@ foxographApp.controller({
 
     // Load in the projects.
     Restangular.all('projects').getList().then(function (projectList) {
-      console.log("BW - Loaded projects.");
       $rootScope.projects = projectList;
       Restangular.all('bugs').getList().then(function (bugList) {
         var mockups = _.flatten(_.pluck(projectList, 'mockups'));
@@ -31,8 +30,6 @@ foxographApp.controller({
             return mockup;
           });
         });
-
-        $rootScope.project = projectList;
       });
     });
 
