@@ -381,6 +381,7 @@ var getBugzillaInfo = function (bug, bugInfo) {
     return def.promise;
   }
   bugzilla.getBug(bug.number, function (err, response, body) {
+    var body = body.bugs[0];
     var bugzillaInfo = {};
     if (!err && response.statusCode === 200) {
       bugzillaInfo = bugzilla.getInfo(body);
