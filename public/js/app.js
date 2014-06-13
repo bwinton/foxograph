@@ -26,14 +26,12 @@ var foxographApp = angular.module('foxographApp',
           // If it's just a single '/', then leave it.
           // pathEnd = Math.max(pathEnd, 1);
           if (JSON.stringify(search) === '{}') {
-            console.log(path.substring(0, pathEnd));
             return path.substring(0, pathEnd);
           } else {
             var params = [];
             angular.forEach(search, function (v, k) {
               params.push(k + '=' + v);
             });
-            console.log(path.substring(0, pathEnd) + '?' + params.join('&'));
             return path.substring(0, pathEnd) + '?' + params.join('&');
           }
         }

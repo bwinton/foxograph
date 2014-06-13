@@ -12,16 +12,17 @@ globalstrict:true, nomen:false, newcap:false */
 
 var request = require('request');
 
-
 var BASE_URL = 'https://api-dev.bugzilla.mozilla.org/latest';
+var BUG = '/bug?include_fields=id,assigned_to,whiteboard,status,resolution,summary,flags,ref,product,last_change_time,creation_time,depends_on,blocks&bug_id=';
+
 // var BASE_UI_URL = "https://bugzilla.mozilla.org";
 
 exports.getBug = function (id, callback) {
-  var options = {
-    uri: BASE_URL + '/bug/' + id,
-    json: true
-  };
-  request(options, callback);
+    var options = {
+      uri: BASE_URL + BUG+ id,
+      json: true
+    };
+    request(options, callback);
 };
 
 exports.getInfo = function (bug) {
@@ -29,6 +30,7 @@ exports.getInfo = function (bug) {
   if (bug.error) {
     return {};
   }
+  //console.log(bug);
   var rv = {
     number: bug.id,
     summary: bug.summary,
@@ -36,6 +38,7 @@ exports.getInfo = function (bug) {
     resolution: bug.resolution,
     blocking: '-',
     assigned: bug.assigned_to.real_name,
+    assigned_to: bug.assigned_to,
     last_got: new Date()
   };
   return rv;

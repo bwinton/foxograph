@@ -135,48 +135,47 @@ foxographApp.filter('statusClass', function styleFactory() {
       }
     }
     return blocking;
-  }
+  };
 }).filter('filterThemes', function() {
    return function(projects, themes) {
     if (themes.length === 0) {
-      return projects
+      return projects;
     } else {
-      var filteredProjects = []
-      var themesMap = {}
+      var filteredProjects = [];
+      var themesMap = {};
       for (var i = 0; i < themes.length; i++) {
         themesMap[themes[i]._id] = true;
       }
-      for (var i = 0; i < projects.length; i++) {
+      for (i = 0; i < projects.length; i++) {
         for (var k = 0; k < projects[i].themes.length; k++) {
           if (themesMap[projects[i].themes[k]._id]) {
-            filteredProjects.push(projects[i]);  
+            filteredProjects.push(projects[i]);
             break;
           }
         }
       }
       return filteredProjects;
     }
-  } /* redundant but we want an OR relatioship within products and themes, and AND between */
+  }; /* redundant but we want an OR relatioship within products and themes, and AND between */
 }).filter('filterProducts', function() {
    return function(projects, products) {
     if (products.length === 0) {
-      return projects
+      return projects;
     } else {
-      var filteredProjects = []
-      var productsMap = {}
+      var filteredProjects = [];
+      var productsMap = {};
       for (var i = 0; i < products.length; i++) {
         productsMap[products[i]._id] = true;
       }
-      for (var i = 0; i < projects.length; i++) {
+      for (i = 0; i < projects.length; i++) {
         for (var k = 0; k < projects[i].products.length; k++) {
           if (productsMap[projects[i].products[k]._id]) {
-            filteredProjects.push(projects[i]);  
+            filteredProjects.push(projects[i]);
             break;
           }
         }
       }
       return filteredProjects;
     }
-  }
-})
-
+  };
+});

@@ -13,8 +13,8 @@
           <user logged-in-user="auth"><div id="user">
             <a ng-hide="loggedInUser.email || progress" class="button login" title="Click to sign in.">Sign In</a>
             <p class="ng-hide" ng-show="progress">Signing In...</p>
-            <p class="ng-hide" ng-show="loggedInUser.email"><img src="http://avatars.io/email/"
-              height="24" width="24"><a href="/profile" class="profileLink ng-binding" ng-href="/profile"></a>
+            <p class="ng-hide" ng-show="loggedInUser.email"><img class="profile" src="http://avatars.io/email/"
+              height="24" width="24"></img><a href="/profile" class="profileLink ng-binding" ng-href="/profile"></a>
               <small class="text-label ng-binding"></small> | <a class="email" title="Click to sign out.">Sign Out</a>
             </p>
           </div>

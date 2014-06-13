@@ -1,42 +1,86 @@
 <div class="row">
-  <div class="col-md-9">
-    <button ng-show="project.user == auth.email" class="btn btn-primary" ng-click="addMockup()">Add mockup</button>
+  <div class="col-md-8">
+        <label for="newMockupText" class="sr-only control-label extra-muted">Mockup name</label>
+        <div class="input-group">
+          <input id="newMockupText" type="text" class="form-control" ng-model="newMockupName" placeholder="New mockup name">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" ng-click="addMockup()">Add Mockup</button>
+          </span>
+        </div>
+        <button class="btn btn-secondary">Edit Mockups</button>
+
+    <div class="input-group" ng-show="project.user != auth.email">
+    </div>
     <table ng-show="project.mockups" class="table table-hover">
+      <thead>
+        <th></th>
+        <th>Resolved</th>
+        <th>Assigned</th>
+        <th>Unassigned</th>
+      </thead>
       <tbody>
         <tr ng-repeat="mockup in project.mockups">
           <td>
             <a class="projectTitle" ui-sref="app.project.mockup({project_slug: project.slug, mockup_slug: mockup.slug})"><strong>{{ mockup.name }}</strong></a><br/>
           </td>
+          <td>{{resolved(mockup.bugs).length}}</td>
+          <td>{{assigned(mockup.bugs).length}}</td>
+          <td>{{unassigned(mockup.bugs).length}}</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div class="col-md-3 sidebar">{{projectChanged}}
+  <div class="col-md-3 col-md-offset-1">
     <div ng-show="project.user == auth.email">
-      <form name="projectForm">
-        <input type="text" name="name" ng-model="form.name">
-        <img src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
-        <i>{{project.user}}</i>
-        <toggle-list title="'Products'" list="products" attribute="'name'" 
-        selected="form.products" addfn="addProduct"></toggle-list>
-        <toggle-list title="'Themes'" list="themes" attribute="'name'" 
-        selected="form.themes" addfn="addTheme"></toggle-list>
-        <button ng-show="formChanged" ng-click="updateProject()" class="btn-block btn-primary" type="submit">Save Project</button>
+      <form name="projectForm" role="form">
+          <div class="form-group">
+            <label for="project-title">Project Title</label>
+            <input type="text" required class="form-control" id="project-title" placeholder="Enter Project Name" ng-model="form.name">
+          </div>
+
+        <div class="form-group">
+          <!-- Allow for changing ownership of projects here someday? -->
+          <img class="profile" src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
+          <i>{{project.user}}</i>
+        </div>
+        <div class="form-group">
+          <toggle-list title="'Products'" list="products" attribute="'name'"
+          selected="form.products" addfn="addProduct"></toggle-list>
+        </div>
+        <div class="form-group">
+          <toggle-list title="'Themes'" list="themes" attribute="'name'"
+          selected="form.themes" addfn="addTheme"></toggle-list>
+        </div>
+        <div class="form-group">
+          <button ng-show="formChanged" ng-click="updateProject()" class="btn btn-block btn-primary" type="submit">Save Changes</button>
+          <button ng-show="formChanged" ng-click="resetProject()" class="btn btn-block btn-secondary" type="submit">Reset</button>
+        </div>
       </form>
 
     </div>
     <div ng-show="project.user != auth.email">
-      <h3>{{project.name}}</h3>
-      <img src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
+      <h1>{{project.name}}</h1>
+      <img class="profile" src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
       <i>{{project.user}}</i>
-      <h3>Products</h3>
+      <hr>
+      <div ng-show="project.products.length">
+        <h3>Products</h3>
         <ul>
           <li ng-repeat="product in project.products">{{product.name}}</li>
         </ul>
-      <h3>Themes</h3>
+      </div>
+      <div ng-show="!project.products.length">
+        <h6>No products associated with this project</h6>
+      </div>
+      <div ng-show="project.themes.length">
+        <h3>Themes</h3>
         <ul>
           <li ng-repeat="theme in project.themes">{{theme.name}}</li>
         </ul>
+      </div>
+      <div ng-show="!project.products.length">
+        <h6>No themes associated with this project</h6>
+      </div>
     </div>
   </div>
 </div>

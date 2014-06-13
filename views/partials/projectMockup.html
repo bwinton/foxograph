@@ -1,34 +1,5 @@
-<div id="mockup-wrapper" data-mockup-image class="mockupBody">
-  <svg viewbox="0 0 1500 900" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <line ng-repeat="bug in bugs | filter:{mockup:mockup._id}"
-          ng-attr-x1="{{bug.startX}}"
-          ng-attr-y1="{{bug.startY}}"
-          ng-attr-x2="{{bug.endX + 150}}"
-          ng-attr-y2="{{bug.endY + 30}}"></line>
-  </svg>
-
-  <mockup-image id="mockup" style="{{mockupStyle}}">&nbsp;
-    <div ng-repeat="bug in bugs | filter:{mockup:mockup._id}">
-      <bug-panel bug="bug" loading-image="/r/images/bugzilla-loading.png">
-        <a ng-show="auth.email && auth.email == project.user"
-           ng-click="deleteBug(bug)" class="delete link pull-right"
-           ><i class="glyphicon glyphicon-trash icon-white"></i></a>
-      </bug-panel>
-    </div>
-  </mockup-image>
-  <div id="bugs" ng-show="listMode">
-    <div ng-repeat="mockupsummary in mockups"  class="bugList">
-      <h4>
-        <a ng-hide="mockupsummary._id==mockup._id"
-           href="/{{project._id}}/{{mockupsummary._id}}">{{mockupsummary.name}}</a>
-        <span ng-show="mockupsummary._id==mockup._id">» {{mockupsummary.name}}</span>
-      </h4>
-      <ul>
-        <li ng-repeat="bug in bugs | filter:{mockup:mockupsummary._id}">{{$index + 1}}:
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">bug
-            {{bug.number}}</a> (at {{bug.endX}}x{{bug.endY}})
-        </li>
-      </ul>
-    </div>
+<div class="row">
+  <div class="col-md-12">
+    <mockup-image bugs=bugs mockup=mockup></mockup-image>
   </div>
 </div>
