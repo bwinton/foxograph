@@ -1,13 +1,16 @@
 <div class="row">
   <div class="col-md-8">
-    <ul class="list-inline pull-right">
-      <li>
-        <button ng-show="project.user == auth.email" class="btn btn-primary" ng-click="addMockup()">New Mockup</button>
-      </li>
-      <li>
-        <button ng-show="project.user == auth.email" class="btn btn-secondary">Edit Mockups</button>
-      </li>
-    </ul>
+        <label for="newMockupText" class="sr-only control-label extra-muted">Mockup name</label>
+        <div class="input-group">
+          <input id="newMockupText" type="text" class="form-control" ng-model="newMockupName" placeholder="New mockup name">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" ng-click="addMockup()">Add Mockup</button>
+          </span>
+        </div>
+        <button class="btn btn-secondary">Edit Mockups</button>
+
+    <div class="input-group" ng-show="project.user != auth.email">
+    </div>
     <table ng-show="project.mockups" class="table table-hover">
       <thead>
         <th></th>

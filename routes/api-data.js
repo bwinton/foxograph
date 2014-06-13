@@ -307,24 +307,27 @@ exports.postMockup = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  if (!req.body || !req.body.name) {
-    return error(res, 'Missing name.');
-  }
+
   Project.findOne({_id: req.params.project_id}, function (err, project) {
     if (err) {
       return error(res, err, console);
     }
+
+    if (!project) {
+      return error(res, 'Project not found for id: ' + req.params.project_id);
+    }
+
     if (project.user !== req.session.email) {
       return error(res, 'Cannot add a mockup to a project you didn’t create!');
     }
-    req.body.creationDate = new Date();
-    req.body.project = req.params.project_id;
+
     var mockup = new Mockup(req.body);
-    mockup.save(function (err) {
+    project.mockups.push(mockup);
+    project.save(function(err) {
       if (err) {
         return error(res, err, console);
       }
-      return res.json(mockup);
+      return res.json(project.mockups.id(mockup._id));
     });
   });
 };

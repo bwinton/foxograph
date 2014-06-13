@@ -18,7 +18,6 @@ foxographApp.controller({
   // project, and automatically selecting the appropriate mockup in that
   // project.
   'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $state, $stateParams, Restangular, $filter) {
-    console.log('BW - Setting project_id to ', $stateParams.project_id);
 
     $scope.form = {};
 
@@ -54,14 +53,15 @@ foxographApp.controller({
     }, true);
 
     $scope.addMockup = function() {
-      var mockupName = window.prompt("Mockup name", $scope.project.name + " " + ($scope.project.mockups.length + 1));
-      if (mockupName !== null) {
-        $scope.project.mockups.push({name: mockupName});
-        var projectPromise = $scope.project.put();
-        projectPromise.then(function(project) {
-          var projects = _.without($rootScope.projects, $scope.project);
-          projects.push(project);
-          $rootScope.projects = projects;
+      var mockup = {};
+      mockup.name = $scope.newMockupName;
+      if (mockup.name) {
+        Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+        mockup.post().then(function(mockup) {
+          console.log(mockup);
+          mockup.bugs = [];
+          $scope.newMockupName = '';
+          $scope.project.mockups.push(mockup);
         });
       }
     };
@@ -69,7 +69,6 @@ foxographApp.controller({
     $scope.updateProject = function() {
       var projectPromise = $scope.form.put();
       projectPromise.then(function(project) {
-        console.log(project);
         var projects = _.without($rootScope.projects, $scope.project);
         projects.push(project);
         $rootScope.projects = projects;
@@ -101,7 +100,6 @@ foxographApp.controller({
     });
 
     $scope.resolved = function(bugs) {
-      console.log(bugs);
       return _.where(bugs, function(bug) {
         return bug.status === 'RESOLVED' || bug.status === 'VERIFIED';
       });
@@ -131,7 +129,6 @@ foxographApp.controller({
 
     $scope.deleteMockup = function (mockup) {
       var index = _.indexOf($rootScope.mockups, mockup);
-      console.log("6 deleting " + mockup._id);
       mockup.remove().then(function (data) {
         $rootScope.mockups = _.without($rootScope.mockups, mockup);
         if (index >= $rootScope.mockups.length) {
