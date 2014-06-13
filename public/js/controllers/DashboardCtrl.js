@@ -22,10 +22,11 @@ foxographApp.controller({
 
     $scope.countBugs = function(mockups) {
       var bugs = _.flatten(_.pluck(mockups, 'bugs'));
-      if (bugs.length === 1 && bugs[0] === undefined) {
-        return -1;
+      console.log(bugs);
+      if (bugs.length > 0 && bugs[0] === undefined) {
+        return null;
       }
-      return bugs.length;
+      return _.reject(bugs, function(bug) {return bug === undefined;}).length;
     };
   }
 });

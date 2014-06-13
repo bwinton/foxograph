@@ -30,7 +30,7 @@
           <td>
             <div>
               <ng-pluralize count="countBugs(project.mockups)"
-                   when="{'-1': '',
+                   when="{'null': '',
                           '0': 'No bugs',
                           '1': '1 bug',
                           'other': '{} bugs'}">
