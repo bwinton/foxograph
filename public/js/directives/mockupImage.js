@@ -98,6 +98,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
         reader = new FileReader();
         reader.onload = function (event) {
           $scope.$apply(function() {
+            $scope.loaded = false;
             $scope.mockup.image = event.target.result;
           });
           $scope.mockup.put();
