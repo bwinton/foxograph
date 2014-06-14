@@ -381,22 +381,26 @@ var getBugzillaInfo = function (bug, bugInfo) {
     return def.promise;
   }
   bugzilla.getBug(bug.number, function (err, response, body) {
-    var body = body.bugs[0];
+    body = body.bugs[0];
     var bugzillaInfo = {};
-    if (!err && response.statusCode === 200) {
-      bugzillaInfo = bugzilla.getInfo(body);
-    }
-    if (bugzillaInfo.number) {
-      var bugInfo = new BugInfo(bugzillaInfo);
-      bugInfo.save(function () {
-        def.resolve(makeFullBug(bug, bugInfo));
-      });
+    if (!body) {
+      def.resolve(new Error("Could not get bug"));
     } else {
-      // Figure out how to handle errors.
-      // The form is: { error: true, code: 102, message: 'Access Denied' }
-      // At the least, we need to remove the bug from the db.
-      // Or do we?  For now, let's return the error, and filter it out.
-      def.resolve(makeFullBug(bug, body));
+      if (!err && response.statusCode === 200) {
+        bugzillaInfo = bugzilla.getInfo(body);
+      }
+      if (bugzillaInfo.number) {
+        var bugInfo = new BugInfo(bugzillaInfo);
+        bugInfo.save(function () {
+          def.resolve(makeFullBug(bug, bugInfo));
+        });
+      } else {
+        // Figure out how to handle errors.
+        // The form is: { error: true, code: 102, message: 'Access Denied' }
+        // At the least, we need to remove the bug from the db.
+        // Or do we?  For now, let's return the error, and filter it out.
+        def.resolve(makeFullBug(bug, body));
+      }
     }
   });
   return def.promise;
@@ -421,10 +425,10 @@ var addBugInfos = function (bugs, callback) {
       result = result.filter(function (bug) {
         return !bug.error;
       });
-      callback(result);
+      callback(null, result);
     }, function (response) {
       console.log('addBugInfos 5 Error:', response);
-      callback(response);
+      callback(response, null);
     });
   });
 };
@@ -435,7 +439,10 @@ function returnBugsForMockups(mockups, res) {
     if (err) {
       return error(res, err, console);
     }
-    addBugInfos(bugs, function (bugs) {
+    addBugInfos(bugs, function (err, bugs) {
+      if (err) {
+        return res.json(err);
+      }
       return res.json(bugs);
     });
   });
@@ -444,7 +451,11 @@ function returnBugsForMockups(mockups, res) {
 exports.getBugs = function (req, res) {
   if (!req.params.mockup_id && !req.params.project_id) {
     Bug.find(function (err, bugs) {
-      addBugInfos(bugs, function(bugs) {
+      addBugInfos(bugs, function(err, bugs) {
+        if (err) {
+          return res.json(err);
+        }
+
         return res.json(bugs);
       });
     });
@@ -485,8 +496,18 @@ exports.postBug = function (req, res) {
       if (err) {
         return error(res, err, console);
       }
-      addBugInfos([bug], function (bugs) {
-        return res.json(bugs);
+      addBugInfos([bug], function (err, bugs) {
+        if (err) {
+          Bug.findOneAndRemove({_id: bug._id}, function (err, bug) {
+            if (err) {
+              return error(res, err, console);
+            }
+            res.statusCode = 400;
+            return res.send("Could not find bug");
+          });
+        } else {
+          return res.json(bugs);
+        }
       });
     });
   });
@@ -536,7 +557,11 @@ exports.getBug = function (req, res) {
     if (err) {
       return error(res, err, console);
     }
-    addBugInfos(bugs, function (bugs) {
+    addBugInfos(bugs, function (err, bugs) {
+      if (err) {
+        return res.json(err);
+      }
+
       return res.json(bugs[0]);
     });
   });
