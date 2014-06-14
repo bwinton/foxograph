@@ -157,7 +157,9 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
               $scope.bugs.push(bug);
               $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, "bugs");
             }, function (response) {
-              console.log('Error with status code', response);
+              alert("Could not find bug: " + bug.number);
+              $scope.bugs = _.without($scope.bugs, bug);
+              $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, "bugs");
             });
           } else {
             $scope.$apply(function() {
