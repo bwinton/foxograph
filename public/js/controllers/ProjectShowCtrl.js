@@ -58,7 +58,6 @@ foxographApp.controller({
       if (mockup.name) {
         Restangular.restangularizeElement($scope.project, mockup, 'mockups');
         mockup.post().then(function(mockup) {
-          console.log(mockup);
           mockup.bugs = [];
           $scope.newMockupName = '';
           $scope.project.mockups.push(mockup);

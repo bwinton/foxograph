@@ -22,7 +22,6 @@ foxographApp.controller({
 
     $scope.countBugs = function(mockups) {
       var bugs = _.flatten(_.pluck(mockups, 'bugs'));
-      console.log(bugs);
       if (bugs.length > 0 && bugs[0] === undefined) {
         return null;
       }
