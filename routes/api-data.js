@@ -71,6 +71,9 @@ var BUGZILLA_FETCH_DELAY = 4 * 60 * 60 * 1000; // 4 hours.
 // Themes
 exports.getThemes = function (req, res) {
   return Theme.find(function (err, themes) {
+    if (err) {
+      return error(res, err, console);
+    }
     return res.json(themes);
   });
 };
@@ -82,7 +85,6 @@ exports.postTheme = function (req, res) {
   var theme = new Theme(req.body);
   theme.save(function (err) {
     if (err) {
-      console.error(err);
       return error(res, err, console);
     }
     return res.json(theme);
@@ -92,6 +94,9 @@ exports.postTheme = function (req, res) {
 // Products
 exports.getProducts = function (req, res) {
   return Product.find(function (err, products) {
+    if (err) {
+      return error(res, err, console);
+    }
     return res.json(products);
   });
 };
@@ -103,7 +108,6 @@ exports.postProduct = function (req, res) {
   var product = new Product(req.body);
   product.save(function (err) {
     if (err) {
-      console.error(err);
       return error(res, err, console);
     }
     return res.json(product);
@@ -113,10 +117,13 @@ exports.postProduct = function (req, res) {
 // Projects.
 
 exports.getProjects = function (req, res) {
-  return Project.find({})
+  return Project.find()
   .populate('themes products')
   .select('-mockups.image') // don't get the mockup image
-  .exec(function(error, projects) {
+  .exec(function(err, projects) {
+    if (err) {
+      return error(res, err, console);
+    }
     return res.json(projects);
   });
 };
@@ -134,24 +141,13 @@ exports.postProject = function (req, res) {
       var project = new Project(req.body);
       project.save(function (err) {
         if (err) {
-          console.error(err);
           return error(res, err, console);
         }
         project.populate({path: 'themes products'}, function(err, project) {
           if (err) {
-            console.error(err);
             return error(res, err, console);
           }
-          project.populate({
-            path: 'mockups',
-            select: 'name creationDate'
-          }, function(err, project) {
-            if (err) {
-              console.error(err);
-              return error(res, err, console);
-            }
-            return res.json(project);
-          });
+          return res.json(project);
         });
       });
     });
@@ -165,8 +161,11 @@ exports.putProject = function (req, res) {
 
   Project.findById(req.body._id, function (err, project) {
     if (err) {
-      console.error(err);
       return error(res, err, console);
+    }
+
+    if (!project) {
+      return error(res, "No project with id: " + req.params.project_id);
     }
 
     if (project.user !== req.session.email) {
@@ -182,24 +181,13 @@ exports.putProject = function (req, res) {
 
         project.save(function (err) {
           if (err) {
-            console.error(err);
             return error(res, err, console);
           }
           project.populate({path: 'themes products'}, function(err, project) {
             if (err) {
-              console.error(err);
               return error(res, err, console);
             }
-            project.populate({
-              path: 'mockups',
-              select: 'name creationDate'
-            }, function(err, project) {
-              if (err) {
-                console.error(err);
-                return error(res, err, console);
-              }
-              return res.json(project);
-            });
+            return res.json(project);
           });
         });
       });
@@ -208,11 +196,16 @@ exports.putProject = function (req, res) {
 };
 
 exports.getProject = function (req, res) {
-  return Project.find({_id: req.params.project_id}, function (err, projects) {
+  return Project.findById(req.params.project_id, function (err, project) {
     if (err) {
       return error(res, err, console);
     }
-    return res.json(projects[0]);
+
+    if (!project) {
+      return error(res, 'No project with id: ' + req.params.project_id);
+    }
+
+    return res.json(project);
   });
 };
 
@@ -225,15 +218,9 @@ exports.deleteProject = function (req, res) {
       return error(res, 'Cannot delete a project you didn’t create!');
     }
 
-    // Delete all the mockups and bugs for this project.
-    Mockup.find({project: req.params.project_id}, function (err, mockups) {
-      if (err) {
-        return error(res, err, console);
-      }
-      mockups.forEach(function (mockup) {
-        Bug.find({mockup: mockup._id}).remove();
-      });
-    }).remove();
+    project.mockups.forEach(function (mockup) {
+      Bug.find({mockup: mockup._id}).remove();
+    });
 
     // Delete the project itself!
     Project.findOneAndRemove({_id: req.params.project_id}, function (err, project) {
@@ -245,35 +232,17 @@ exports.deleteProject = function (req, res) {
   });
 };
 
-exports.putMockup = function (req, res) {
-  if (!req.session.email) {
-    return error(res, 'Not logged in.');
-  }
-
-  Project.findOne({_id: req.params.project_id}, function (err, project) {
-    if (project.user !== req.session.email) {
-      return error(res, 'Cannot update a mockup in a project you didn’t create!');
-    }
-    var mockup = project.mockups.id(req.params.mockup_id);
-    mockup.name = req.body.name || mockup.name;
-    mockup.image = req.body.image || mockup.image;
-    mockup.bugs = req.body.bugs || mockup.bugs;
-    project.save(function(err) {
-      if (err) {
-        console.error(err);
-        return error(res, err, console);
-      }
-      return res.json(project.mockups.id(req.params.mockup_id));
-    });
-  });
-};
-
 exports.getMockupImg = function(req, res) {
   Project.findOne({_id: req.params.project_id}, function (err, project) {
     if (!project) {
-      return error(res, "No project found with id: " + req.params.project_id);
+      return error(res, "No project with id: " + req.params.project_id);
     }
     var mockup = project.mockups.id(req.params.mockup_id);
+
+    if (!mockup) {
+      return error(res, "No mockup with id: " + req.params.mockup_id);
+    }
+
     return res.json({data: mockup.image});
   });
 };
@@ -281,25 +250,19 @@ exports.getMockupImg = function(req, res) {
 exports.getMockup = function (req, res) {
   Project.findOne({_id: req.params.project_id}, function (err, project) {
 
-    var mockup = project.mockups.id(req.params.mockup_id);
-    if (!mockup) {
-      return error(res, "No mockup found for that id for this project", console);
-    }
-    return res.json(mockup);
-  });
-};
-
-
-
-
-// Mockups.
-
-exports.getMockups = function (req, res) {
-  return Mockup.find({project: req.params.project_id}, function (err, mockups) {
     if (err) {
       return error(res, err, console);
     }
-    return res.json(mockups);
+
+    if (!project) {
+      return error(res, "No project with id: " + req.params.project_id);
+    }
+
+    var mockup = project.mockups.id(req.params.mockup_id);
+    if (!mockup) {
+      return error(res, "No mockup with id: " + req.params.mockup_id, console);
+    }
+    return res.json(mockup);
   });
 };
 
@@ -328,6 +291,37 @@ exports.postMockup = function (req, res) {
         return error(res, err, console);
       }
       return res.json(project.mockups.id(mockup._id));
+    });
+  });
+};
+
+exports.putMockup = function (req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+
+  Project.findOne({_id: req.params.project_id}, function (err, project) {
+    if (!project) {
+      return error(res, 'No project with id: ' + req.params.project_id);
+    }
+
+    if (project.user !== req.session.email) {
+      return error(res, 'Cannot update a mockup in a project you didn’t create!');
+    }
+    var mockup = project.mockups.id(req.params.mockup_id);
+
+    if (!mockup) {
+      return error(res, 'No mockup with id: ' + req.params.mockup_id);
+    }
+
+    mockup.name = req.body.name || mockup.name;
+    mockup.image = req.body.image || mockup.image;
+    mockup.bugs = req.body.bugs || mockup.bugs;
+    project.save(function(err) {
+      if (err) {
+        return error(res, err, console);
+      }
+      return res.json(project.mockups.id(req.params.mockup_id));
     });
   });
 };
@@ -453,7 +447,7 @@ exports.getBugs = function (req, res) {
     Bug.find(function (err, bugs) {
       addBugInfos(bugs, function(err, bugs) {
         if (err) {
-          return res.json(err);
+          return error(res, err, console);
         }
 
         return res.json(bugs);
@@ -464,10 +458,11 @@ exports.getBugs = function (req, res) {
   if (req.params.mockup_id) {
     return returnBugsForMockups([req.params.mockup_id], res);
   } else if (req.params.project_id) {
-    return Mockup.find({project: req.params.project_id}, function (err, mockups) {
+    return Mockup.findById(req.params.project_id, function (err, mockups) {
       if (err) {
         return error(res, err, console);
       }
+
       var keys = mockups.map(function (mockup) {
         return mockup._id;
       });
@@ -481,14 +476,16 @@ exports.postBug = function (req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  if (!req.body || !req.body.number) {
-    return error(res, 'Missing number.');
-  }
-  Project.findOne({_id: req.params.project_id}, function (err, project) {
-    //var mockup = project.mockups.id(req.params.mockup_id);
+
+  Project.findById(req.params.project_id, function (err, project) {
+    if (!project) {
+      return error(res, 'No project with id: ' + req.params.project_id);
+    }
+
     if (project.user !== req.session.email) {
       return error(res, 'Cannot add a bug to a project you didn’t create!');
     }
+
     req.body.mockup = req.params.mockup_id;
 
     var bug = new Bug(req.body);
@@ -498,13 +495,8 @@ exports.postBug = function (req, res) {
       }
       addBugInfos([bug], function (err, bugs) {
         if (err) {
-          Bug.findOneAndRemove({_id: bug._id}, function (err, bug) {
-            if (err) {
-              return error(res, err, console);
-            }
-            res.statusCode = 400;
-            return res.send("Could not find bug");
-          });
+          bug.remove();
+          return error(res, "Could not find bug");
         } else {
           return res.json(bugs);
         }
@@ -517,13 +509,14 @@ exports.putBug = function(req, res) {
   if (!req.session.email) {
     return error(res, 'Not logged in.');
   }
-  if (!req.body || !req.body.number) {
-    return error(res, 'Missing number.');
-  }
 
   Project.findOne({_id: req.params.project_id}, function (err, project) {
     if (err) {
       return error(res, err, console);
+    }
+
+    if (!project) {
+      return error(res, 'No project with id: ' + req.params.project_id);
     }
 
     //var mockup = project.mockups.id(req.params.mockup_id);
@@ -531,10 +524,15 @@ exports.putBug = function(req, res) {
       return error(res, 'Cannot add a bug to a project you didn’t create!');
     }
 
-    Bug.findOne({_id: req.params.bug_id}, function (err, bug) {
+    Bug.findById(req.params.bug_id, function (err, bug) {
       if (err) {
         return error(res, err, console);
       }
+
+      if (!bug) {
+        return error(res, 'No bug with id: ' + req.params.bug_id);
+      }
+
       bug.number = req.body.number || bug.number;
       bug.startX = req.body.startX || bug.startX;
       bug.startY = req.body.startY || bug.startY;
@@ -543,7 +541,6 @@ exports.putBug = function(req, res) {
       bug.mockup = req.params.mockup_id || bug.mockup;
       bug.save(function(err) {
         if (err) {
-          console.error(err);
           return error(res, err, console);
         }
         return res.json(bug);
@@ -553,13 +550,13 @@ exports.putBug = function(req, res) {
 };
 
 exports.getBug = function (req, res) {
-  return Bug.find({_id: req.params.bug_id}, function (err, bugs) {
+  return Bug.findById(req.params.bug_id, function (err, bug) {
     if (err) {
       return error(res, err, console);
     }
-    addBugInfos(bugs, function (err, bugs) {
+    addBugInfos([bug], function (err, bugs) {
       if (err) {
-        return res.json(err);
+        return error(res, err, console);
       }
 
       return res.json(bugs[0]);
@@ -575,7 +572,20 @@ exports.deleteBug = function (req, res) {
     if (err) {
       return error(res, err, console);
     }
-    Project.findOne({_id: req.params.project_id}, function (err, project) {
+
+    if (!bug) {
+      return error(res, 'No bug with id: ' + req.params.bug_id);
+    }
+
+    Project.findById(req.params.project_id, function (err, project) {
+      if (err) {
+        return error(res, err, console);
+      }
+
+      if (!project) {
+        return error(res, 'No project with id: ' + req.params.project_id);
+      }
+
       if (project.user !== req.session.email) {
         return error(res, 'Cannot delete a bug from a project you didn’t create!');
       }
@@ -588,6 +598,10 @@ exports.deleteBug = function (req, res) {
       });
     });
   });
+};
+
+exports.disabled = function(req, res) {
+    res.send(501, 'Not implemented');
 };
 
 exports.dump = function (req, res) {
