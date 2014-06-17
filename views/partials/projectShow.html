@@ -23,11 +23,25 @@
           <td>
             <a class="projectTitle" ui-sref="app.project.mockup({project_slug: project.slug, mockup_slug: mockup.slug})"><strong>{{ mockup.name }}</strong></a><br/>
           </td>
-          <td>{{resolved(mockup.bugs).length}}</td>
-          <td>{{assigned(mockup.bugs).length}}</td>
-          <td>{{unassigned(mockup.bugs).length}}</td>
+          <td>{{resolved(mockup)}}</td>
+          <td>{{assigned(mockup)}}</td>
+          <td>{{unassigned(mockup)}}</td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr class="extra-muted">
+          <td><strong>
+          <ng-pluralize count="project.mockups.length"
+               when="{'0': 'No mockups',
+                      '1': '1 mockup',
+                      'other': '{} mockups'}">
+          </ng-pluralize>
+          </strong></td>
+          <td><strong>{{total.resolved}}</strong></td>
+          <td><strong>{{total.assigned}}</strong></td>
+          <td><strong>{{total.unassigned}}</strong></td>
+        </tr>
+      </tfoot>
     </table>
   </div>
   <div class="col-md-3 col-md-offset-1">

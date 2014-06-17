@@ -1,4 +1,4 @@
-<div class="bug-panel {{bug | statusClass}}" 
+<div class="bug-panel {{bug | statusClass}}"
      ng-class="{authorized: loaded && project.user == auth.email, dragging: dragging}"
      style="top:{{bug.endY}}px; left:{{bug.endX}}px;">
     <a ng-show="bug && bug.status" href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.number}}">{{bug.number}}, {{bug.summary}}</a>
@@ -8,7 +8,7 @@
     <span ng-show="bug && bug.status" class="{{bug | blockingClass}}">{{bug | blockingText}}</span>
     <span ng-show="bug && bug.status" class="{{bug | assignedClass}}">{{bug | assignedText}}</span>
     <a ng-show="bug && bug.status && auth.email && auth.email == project.user"
-       ng-click="deleteBug(bugs, $index)" class="delete link pull-right"
+       ng-click="deleteBug(mockup.bugs, $index)" class="delete link pull-right"
        ><i class="glyphicon glyphicon-trash icon-white"></i>
     </a>
 </div>

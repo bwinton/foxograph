@@ -22,14 +22,26 @@ foxographApp.controller({
     $scope.form = {};
     $scope.loaded = false;
 
-    $rootScope.$watch('projects', function() {
+    var mockups = {};
+    $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
+
+    $scope.$watch('projects', function() {
       $scope.project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
       if ($scope.project) {
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
+
+        _.forEach($scope.project.mockups, function(mockup) {
+          mockups[mockup._id] = {resolved: 0, assigned: 0, unassigned: 0};
+          _.forEach(mockup.bugs, function(bug) {
+              var status = bugIs(bug);
+              mockups[mockup._id][status] += 1;
+              $scope.total[status] += 1;
+          });
+        });
       }
       $scope.loaded = true;
-    });
+    }, true);
 
     function checkForm() {
       if (!$scope.project) {
@@ -100,26 +112,26 @@ foxographApp.controller({
       $rootScope.products = _.filter($rootScope.products, "_id");
     });
 
-    $scope.resolved = function(bugs) {
-      return _.where(bugs, function(bug) {
-        return bug.status === 'RESOLVED' || bug.status === 'VERIFIED';
-      });
+    $scope.resolved = function(mockup) {
+      if (mockup.bugs) {
+        return mockups[mockup._id].resolved;
+      }
+      return '-';
     };
 
-    $scope.assigned = function(bugs) {
-      return _.where(bugs, function(bug) {
-        return (bug.status !== 'RESOLVED' && bug.status !== 'VERIFIED') &&
-               bug.assigned !== 'Nobody; OK to take it and work on it';
-      });
+    $scope.assigned = function(mockup) {
+      if (mockup.bugs) {
+        return mockups[mockup._id].assigned;
+      }
+      return '-';
     };
 
-    $scope.unassigned = function(bugs) {
-      return _.where(bugs, function(bug) {
-        return (bug.status !== 'RESOLVED' && bug.status !== 'VERIFIED') &&
-               bug.assigned === 'Nobody; OK to take it and work on it';
-        });
+    $scope.unassigned = function(mockup) {
+      if (mockup.bugs) {
+        return mockups[mockup._id].unassigned;
+      }
+      return '-';
     };
-
 
     $scope.deleteProject = function (project) {
       project.remove().then(function (data) {
@@ -144,5 +156,17 @@ foxographApp.controller({
         }
       });
     };
+
+    function bugIs(bug) {
+      if (bug.status === 'RESOLVED' || bug.status === 'VERIFIED') {
+        return 'resolved';
+      }
+
+      if (bug.assigned !== 'Nobody; OK to take it and work on it') {
+        return 'assigned';
+      }
+
+      return 'unassigned';
+    }
   }
 });

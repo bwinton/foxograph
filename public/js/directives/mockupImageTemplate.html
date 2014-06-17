@@ -3,7 +3,7 @@
        ng-class="{authorized: loaded && project.user == auth.email, dragging: dragging}"
        version="1.1" xmlns="http://www.w3.org/2000/svg">
     <image xlink:href=""></image>
-    <line ng-if="loaded" ng-repeat="bug in bugs"
+    <line ng-if="loaded" ng-repeat="bug in mockup.bugs"
       ng-attr-x1="{{bug.startX}}"
       ng-attr-y1="{{bug.startY}}"
       ng-attr-x2="{{bug.endX}}"
@@ -14,7 +14,7 @@
   <div ng-if="loaded">
 
   </div>
-  <bug-panel ng-if="loaded" ng-repeat="bug in bugs">
+  <bug-panel ng-if="loaded" ng-repeat="bug in mockup.bugs">
 
 </bug-panel>
   <div class="mockup-message extra-muted" ng-show="loaded && !mockup.image &&(project.user == auth.email)">
