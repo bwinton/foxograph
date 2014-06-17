@@ -20,6 +20,7 @@ foxographApp.controller({
   'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $state, $stateParams, Restangular, $filter) {
 
     $scope.form = {};
+    $scope.loaded = false;
 
     $rootScope.$watch('projects', function() {
       $scope.project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
@@ -27,6 +28,7 @@ foxographApp.controller({
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
       }
+      $scope.loaded = true;
     });
 
     function checkForm() {
