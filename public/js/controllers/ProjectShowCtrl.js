@@ -157,6 +157,11 @@ foxographApp.controller({
       });
     };
 
+    $scope.resetProject = function() {
+      $scope.form = Restangular.copy($scope.project);
+      $scope.formChanged = false;
+    };
+
     function bugIs(bug) {
       if (bug.status === 'RESOLVED' || bug.status === 'VERIFIED') {
         return 'resolved';
