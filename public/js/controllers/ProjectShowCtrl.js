@@ -21,6 +21,7 @@ foxographApp.controller({
 
     $scope.form = {};
     $scope.loaded = false;
+    $scope.mockupForm = {};
 
     var mockups = {};
     $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
@@ -68,12 +69,12 @@ foxographApp.controller({
 
     $scope.addMockup = function() {
       var mockup = {};
-      mockup.name = $scope.newMockupName;
+      mockup.name = $scope.mockupForm.name;
       if (mockup.name) {
         Restangular.restangularizeElement($scope.project, mockup, 'mockups');
         mockup.post().then(function(mockup) {
           mockup.bugs = [];
-          $scope.newMockupName = '';
+          $scope.mockupForm.name = '';
           $scope.project.mockups.push(mockup);
         });
       }

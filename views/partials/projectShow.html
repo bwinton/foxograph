@@ -1,17 +1,21 @@
 <div ng-show="loaded && project" class="row">
   <div class="col-md-8">
-        <label for="newMockupText" class="sr-only control-label extra-muted">Mockup name</label>
+    <div class="row mockup-form" ng-show="project.user == auth.email">
+      <div class="col-md-10">
         <div class="input-group">
-          <input id="newMockupText" type="text" class="form-control" ng-model="newMockupName" placeholder="New mockup name">
+          <label for="newMockupText" class="sr-only control-label extra-muted">Mockup name</label>
+          <input id="newMockupText" type="text" class="form-control" ng-model="mockupForm.name" placeholder="New mockup name">
           <span class="input-group-btn">
-            <button class="btn btn-primary" type="button" ng-click="addMockup()">Add Mockup</button>
+            <button class="btn btn-primary" type="button" ng-click="addMockup()" ng-disabled="!mockupForm.name">Add Mockup</button>
           </span>
         </div>
+      </div>
+      <div class="col-md-2">
         <button class="btn btn-secondary">Edit Mockups</button>
-
-    <div class="input-group" ng-show="project.user != auth.email">
+      </div>
     </div>
-    <table ng-show="project.mockups" class="table table-hover">
+
+    <table ng-show="project.mockups" class="table table-hover mockup-list">
       <thead>
         <th></th>
         <th>Resolved</th>
@@ -29,7 +33,7 @@
         </tr>
       </tbody>
       <tfoot>
-        <tr class="extra-muted">
+        <tr class="extra-muted doubleBorder">
           <td><strong>
           <ng-pluralize count="project.mockups.length"
                when="{'0': 'No mockups',
