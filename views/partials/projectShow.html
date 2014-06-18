@@ -57,6 +57,11 @@
           </div>
 
         <div class="form-group">
+          <label>
+            <input type="checkbox" ng-model="form.archived"> Archived
+          </label>
+        </div>
+        <div class="form-group">
           <!-- Allow for changing ownership of projects here someday? -->
           <img class="profile" src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
           <i>{{project.user}}</i>
@@ -78,6 +83,8 @@
     </div>
     <div ng-show="project.user != auth.email">
       <h1>{{project.name}}</h1>
+      <div><span ng-show="project.archived" class="label label-default">Archived</span></div>
+      <hr>
       <img class="profile" src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
       <i>{{project.user}}</i>
       <hr>

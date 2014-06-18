@@ -48,7 +48,9 @@ foxographApp.controller({
       if (!$scope.project) {
         return false;
       }
-      if($scope.form.name !== $scope.project.name) return true;
+      if ($scope.form.name !== $scope.project.name) return true;
+
+      if ($scope.form.archived !== $scope.project.archived) return true;
 
       var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id;});
       var formThemes = _.map($scope.form.themes, function(theme) {return theme._id;});

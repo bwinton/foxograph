@@ -48,6 +48,7 @@ var Product = mongoose.model('Product', new mongoose.Schema({
 var mockupSchema = new mongoose.Schema({
   name: {type: "string", required: 'Mockup must have name'},
   slug: {type: String, unique: true, required: 'Mockup must have a slug'},
+  archived: {type: "boolean", required: "Mockup must specify if it's archived", default: false},
   image: {data: Buffer, contentType: String},
   creationDate: { type: Date, default: Date.now },
 });
@@ -56,6 +57,7 @@ var Mockup = mongoose.model('Mockup', mockupSchema);
 var projectSchema = new mongoose.Schema({
   name: {type: String, required: 'Project name required.'},
   slug: {type: String, unique: true, required: 'Project must have a slug'},
+  archived: {type: "boolean", required: "Project must specify if it's archived", default: false},
   creationDate: {type: Date, default: Date.now },
   user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
@@ -174,6 +176,7 @@ exports.putProject = function (req, res) {
 
     project.name = req.body.name;
     project.mockups = req.body.mockups;
+    project.archived = req.body.archived;
     saveUnsaved(req.body.products, Product, function(products) {
       project.products = products.map(function(product) {return product._id;});
       saveUnsaved(req.body.themes, Theme, function(themes) {
