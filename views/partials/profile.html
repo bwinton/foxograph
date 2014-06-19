@@ -1,19 +1,69 @@
-<div ng-show="projects.length" class="row">
-  <table ng-show="projects.length" class="table table-hover">
-      <tbody>
-        <tr ng-repeat="project in projects">
-          <td>
-            <a class="projectTitle" ui-sref="app.project.show({project_slug: project.slug })"><strong>{{ project.name }}</strong></a><br/>
-            <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
-          </td>
-          <td>
-            <span ng-repeat="product in project.products" class="text-label extra-muted">{{ product.name }}<br/></span>
-          </td>
-          <td>{{ project.user }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="row">
+  <h2>Projects</h2>
+  <table ng-show="activeProjects.length" class="table table-hover">
+    <tbody>
+      <tr ng-repeat="project in activeProjects">
+        <td>
+          <a class="projectTitle" ui-sref="app.project.show({project_slug: project.slug})"><strong>{{ project.name }}</strong></a><br/>
+          <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
+        </td>
+        <td>
+          <span ng-repeat="product in project.products" class="text-label extra-muted">{{ product.name }}<br/></span>
+        </td>
+        <td>
+          <div>
+            <ng-pluralize count="countBugs(project.mockups)"
+                 when="{'null': '',
+                        '0': 'No bugs',
+                        '1': '1 bug',
+                        'other': '{} bugs'}">
+            </ng-pluralize>
+          </div>
+          <div>
+            <ng-pluralize count="project.mockups.length"
+                 when="{'0': 'No mockups',
+                        '1': '1 mockup',
+                        'other': '{} mockups'}">
+            </ng-pluralize>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<div ng-show="!projects.length" class="row">
-  <h3 class="text-center extra-muted">No projects found for this user</h3>
+<div ng-show="!activeProjects.length" class="row">
+  <h3 class="text-center extra-muted">No active projects found for this user</h3>
+</div>
+<div ng-show="archivedProjects.length" class="row">
+<h2>Archived Projects</h2>
+  <table class="table table-hover">
+    <tbody>
+      <tr ng-repeat="project in archivedProjects">
+        <td>
+          <a class="projectTitle" ui-sref="app.project.show({project_slug: project.slug})"><strong>{{ project.name }}</strong></a><br/>
+          <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
+        </td>
+        <td>
+          <span ng-repeat="product in project.products" class="text-label extra-muted">{{ product.name }}<br/></span>
+        </td>
+        <td>
+          <div>
+            <ng-pluralize count="countBugs(project.mockups)"
+                 when="{'null': '',
+                        '0': 'No bugs',
+                        '1': '1 bug',
+                        'other': '{} bugs'}">
+            </ng-pluralize>
+          </div>
+          <div>
+            <ng-pluralize count="project.mockups.length"
+                 when="{'0': 'No mockups',
+                        '1': '1 mockup',
+                        'other': '{} mockups'}">
+            </ng-pluralize>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

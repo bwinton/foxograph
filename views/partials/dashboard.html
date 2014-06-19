@@ -49,7 +49,7 @@
               </ng-pluralize>
             </div>
           </td>
-          <td>{{ project.user }}</td>
+          <td><a ui-sref="app.profile({user_email: project.user})">{{ project.user }}</a></td>
         </tr>
       </tbody>
     </table>
