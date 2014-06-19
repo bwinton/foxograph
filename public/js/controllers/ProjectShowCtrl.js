@@ -21,7 +21,7 @@ foxographApp.controller({
 
     $scope.form = {};
     $scope.loaded = false;
-    $scope.mockupForm = {};
+    $scope.editing = false;
 
     var mockups = {};
     $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
@@ -31,8 +31,14 @@ foxographApp.controller({
       if ($scope.project) {
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
+        $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
+        $scope.archivedMockups = [];
 
         _.forEach($scope.project.mockups, function(mockup) {
+          if (mockup.archived) {
+            $scope.archivedMockups.push(mockup);
+            return;
+          }
           mockups[mockup._id] = {resolved: 0, assigned: 0, unassigned: 0};
           _.forEach(mockup.bugs, function(bug) {
               var status = bugIs(bug);
@@ -136,6 +142,14 @@ foxographApp.controller({
       return '-';
     };
 
+    $scope.edit = function() {
+      $scope.editing = true;
+    };
+
+    $scope.done = function() {
+      $scope.editing = false;
+    };
+
     $scope.deleteProject = function (project) {
       project.remove().then(function (data) {
         $scope.projects = _.without($scope.projects, project);
@@ -158,6 +172,24 @@ foxographApp.controller({
           nextMockup = $rootScope.mockups[index];
         }
       });
+    };
+
+    $scope.archive = function(mockup) {
+      mockup.archived = true;
+      Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+      mockup.put();
+    };
+
+    $scope.unarchive = function(mockup) {
+      mockup.archived = false;
+      Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+      mockup.put();
+    };
+
+    $scope.saveMockup = function(mockup, name) {
+      mockup.name = name;
+      Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+      mockup.put();
     };
 
     $scope.resetProject = function() {

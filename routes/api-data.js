@@ -317,6 +317,10 @@ exports.putMockup = function (req, res) {
       return error(res, 'No mockup with id: ' + req.params.mockup_id);
     }
 
+    if (req.body.archived !== undefined) {
+      mockup.archived = req.body.archived;
+    }
+
     mockup.name = req.body.name || mockup.name;
     mockup.image = req.body.image || mockup.image;
     mockup.bugs = req.body.bugs || mockup.bugs;
