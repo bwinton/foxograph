@@ -62,7 +62,7 @@ var projectSchema = new mongoose.Schema({
   user: {type: String, required: 'Project must have a user.'},
   themes: [{type: mongoose.Schema.ObjectId, ref: 'Theme'}],
   products: [{type: mongoose.Schema.ObjectId, ref: 'Product'}],
-  mockups: {type: [mockupSchema], validate: [uniqueMockupNames, "Mockup names must be unique within project."]}
+  mockups: {type: [mockupSchema]}
 });
 var Project = mongoose.model('Project', projectSchema);
 
@@ -656,14 +656,41 @@ exports.dump = function (req, res) {
   });
 };
 
-projectSchema.pre('validate', function (next) {
-  this.slug = slugify(this.name);
+projectSchema.pre('validate', true, function slugifyProject(next, done, something, suffix) {
+  var slug = suffix === undefined ? slugify(this.name) : slugify(this.name + ' ' + suffix);
+  Project.findOne({slug: slug}, function(err, project) {
+    if (!project) {
+      this.slug = slug;
+      done();
+    } else {
+      suffix = suffix || 1;
+      suffix++;
+      slugifyProject.bind(this)(next, done, something, suffix);
+    }
+  }.bind(this));
   next();
 });
 
-mockupSchema.pre('validate', function (next) {
-  this.slug = slugify(this.name);
+mockupSchema.pre('validate', true, function slugifyMockup(next, done, something, suffix) {
   next();
+  var slug = suffix === undefined ? slugify(this.name) : slugify(this.name + ' ' + suffix);
+  var slugUnique = true;
+  var project = this.parent();
+
+  for (var i = 0; i < project.mockups.length; i++) {
+    if (project.mockups[i].slug === slug && this._id !== project.mockups[i]._id) {
+      slugUnique = false;
+    }
+  }
+
+  if (slugUnique) {
+    this.slug = slug;
+    done();
+  } else {
+    suffix = suffix || 1;
+    suffix++;
+    slugifyMockup.bind(this)(next, done, something, suffix);
+  }
 });
 
 function slugify(text) {
@@ -671,21 +698,6 @@ function slugify(text) {
           .toLowerCase()
           .replace(/ +/g,'-')
           .replace(/[^\w-]+/g,'');
-}
-
-function uniqueMockupNames(mockups) {
-  var nameDict = {};
-
-  for (var i = 0; i < mockups.length; i++) {
-    var mockup = mockups[i];
-    if (nameDict[mockup.name] !== undefined) {
-      console.log("FALSE!");
-      return false;
-    } else {
-      nameDict[mockup.name] = true;
-    }
-  }
-  return true;
 }
 
 // Helper function to create any new products or themes if new
