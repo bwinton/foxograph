@@ -18,10 +18,12 @@ foxographApp.controller({
     // Would be nice to update URL when filtering
 
     $scope.filters = {};
-    $scope.filters.themes = [];
-    $scope.filters.products = [];
-    $scope.filters.archived = false;
-    $scope.filteredProjects = _.filter($rootScope.projects, {archived: false});
+    $scope.filters = {
+      'themes': [],
+      'products': [],
+      'archived': false
+    };
+    $scope.filteredProjects = _.filter($rootScope.projects, {archived: $scope.filters.archived});
 
     function updateProjectListing() {
       var products = _.pluck($scope.filters.products, '_id');

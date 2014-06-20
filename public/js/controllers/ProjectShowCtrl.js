@@ -28,10 +28,10 @@ foxographApp.controller({
 
     $scope.$watch('projects', function() {
       $scope.project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
+      $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
       if ($scope.project) {
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
-        $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
         $scope.archivedMockups = [];
 
         _.forEach($scope.project.mockups, function(mockup) {

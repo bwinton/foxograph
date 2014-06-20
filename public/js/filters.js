@@ -193,15 +193,8 @@ foxographApp.filter('statusClass', function styleFactory() {
   };
 }).filter('archived', function() {
   return function(items) {
-    if (!items) {
-      return [];
-    }
-    var filteredItems = [];
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].archived === true) {
-        filteredItems.push(items[i]);
-      }
-    }
-    return filteredItems;
+    _.filter(items, function(item) {
+      return item.archived;
+    });
   };
 });
