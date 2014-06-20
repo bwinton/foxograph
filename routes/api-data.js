@@ -47,7 +47,7 @@ var Product = mongoose.model('Product', new mongoose.Schema({
 
 var mockupSchema = new mongoose.Schema({
   name: {type: "string", required: 'Mockup must have name'},
-  slug: {type: String, unique: true, required: 'Mockup must have a slug'},
+  slug: {type: String, required: 'Mockup must have a slug'},
   archived: {type: "boolean", required: "Mockup must specify if it's archived", default: false},
   image: {data: Buffer, contentType: String},
   creationDate: { type: Date, default: Date.now },
@@ -303,7 +303,7 @@ exports.putMockup = function (req, res) {
     return error(res, 'Not logged in.');
   }
 
-  Project.findOne({_id: req.params.project_id}, function (err, project) {
+  Project.findById(req.params.project_id, function (err, project) {
     if (!project) {
       return error(res, 'No project with id: ' + req.params.project_id);
     }
@@ -608,7 +608,7 @@ exports.deleteBug = function (req, res) {
 };
 
 exports.disabled = function(req, res) {
-    res.send(501, 'Not implemented');
+  res.send(501, 'Not implemented');
 };
 
 exports.dump = function (req, res) {
@@ -656,41 +656,51 @@ exports.dump = function (req, res) {
   });
 };
 
-projectSchema.pre('validate', true, function slugifyProject(next, done, something, suffix) {
-  var slug = suffix === undefined ? slugify(this.name) : slugify(this.name + ' ' + suffix);
-  Project.findOne({slug: slug}, function(err, project) {
-    if (!project) {
-      this.slug = slug;
-      done();
-    } else {
-      suffix = suffix || 1;
-      suffix++;
-      slugifyProject.bind(this)(next, done, something, suffix);
-    }
-  }.bind(this));
+projectSchema.pre('validate', true, function slugifyProject(next, done) {
   next();
+  if (this.slug !== undefined) {
+    return done();
+  }
+  var slug = slugify(this.name);
+  Project.find({slug: RegExp('^'+slug+'([-][0-9]+)?$')}, 'slug', function(err, projects) {
+    // get an array of just the slugs
+    var slugs = projects.map(function(project) {return project.slug;});
+    if (slugs.indexOf(slug) === -1) {
+      // the slug is unused, just use it
+      this.slug = slug;
+    } else {
+      // the slug is used, append a hyphen and the first unused number starting from 2;
+      var i = 2;
+      while(slugs.indexOf(slug + '-' + i) !== -1) {
+        i++;
+      }
+      this.slug = slug + '-' + i;
+    }
+    done();
+  }.bind(this));
 });
 
-mockupSchema.pre('validate', true, function slugifyMockup(next, done, something, suffix) {
-  next();
-  var slug = suffix === undefined ? slugify(this.name) : slugify(this.name + ' ' + suffix);
-  var slugUnique = true;
+mockupSchema.pre('validate', function slugifyMockup(next) {
+  if (this.slug !== undefined) {
+    return next();
+  }
+  var slug = slugify(this.name);
   var project = this.parent();
-
-  for (var i = 0; i < project.mockups.length; i++) {
-    if (project.mockups[i].slug === slug && this._id !== project.mockups[i]._id) {
-      slugUnique = false;
-    }
-  }
-
-  if (slugUnique) {
+  if (project.mockups.length === 1) {
     this.slug = slug;
-    done();
-  } else {
-    suffix = suffix || 1;
-    suffix++;
-    slugifyMockup.bind(this)(next, done, something, suffix);
+    return next();
   }
+  var slugs = project.mockups.map(function(mockup) {return mockup.slug;});
+  if (slugs.indexOf(slug) === -1) {
+    this.slug = slug;
+  } else {
+    var i = 2;
+    while(slugs.indexOf(slug + '-' + i) !== -1) {
+      i++;
+    }
+    this.slug = slug + '-' + i;
+  }
+  next();
 });
 
 function slugify(text) {
