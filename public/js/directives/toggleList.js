@@ -66,11 +66,31 @@ foxographApp.directive('toggleList', function () {
       scope.addItem = function() {
         var item = {};
         item[scope.attribute] = scope.newItem;
-        scope.selected.push(item);
-        scope.list.push(item);
+        var itemLC = scope.newItem.toLowerCase();
+        var itemsLC = [];
+        var selectedLC = [];
+
+        for (var i = 0; i < scope.list.length; i++) {
+          itemsLC.push(scope.list[i][scope.attribute].toLowerCase());
+        }
+
+        for (var i = 0; i < scope.selected.length; i++) {
+          selectedLC.push(scope.list[i][scope.attribute].toLowerCase());
+        }
+
+        var index = itemsLC.indexOf(itemLC);
+        if (index !== -1) {
+          if (selectedLC.indexOf(itemLC) === -1) {
+            scope.selected.push(scope.list[index]);
+          }
+        } else {
+          scope.selected.push(item);
+          scope.list.push(item);
+        }
+
         scope.newItem = '';
         scope.adding = false;
-      }
+      };
     }
   };
 });
