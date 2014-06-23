@@ -9,6 +9,7 @@
       <h4 class="text-center">{{ filteredProjects.length }} Projects</h4>
       <h6 class="text-center"><small><i>in current view</i></small></h6>
       <hr>
+      <a class="btn btn-block btn-primary btn-xs" ng-show="auth.email" ui-sref="app.project.new()">New Project </a>
       <a class="btn btn-block btn-xs btn-default" type="button" ng-click="toggleArchived()" ng-class="{'btn-danger': filters.archived}">
         <span ng-show="!filters.archived">Show</span>
         <span ng-show="filters.archived">Hide</span> Archived
