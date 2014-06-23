@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="toggle-list panel-title">{{title}}</h3>
+      <button ng-show="clearable" type="button" ng-click="clear()" class="btn btn-default btn-xs pull-right">Clear</button>
+    </div>
+    <ul class="toggle-list list-group">
+      <a class="list-group-item toggle-list" ng-repeat="listItem in list" ng-click="toggle(listItem)"
+        ng-class="{on: isSelected(listItem)}">
+        <span class="title" ng-bind="listItem[attribute]"></span><span class="circle"></span></a>
+      <a ng-show="addable && !form.adding" ng-click="add()" class="list-group-item toggle-list extra-muted">
+        <span class="glyphicon glyphicon-plus extra-muted"></span> Add {{title}}
+      </a>
+      <form ng-show="addable && form.adding">
+        <div class="input-group">
+          <label for="newItemText" class="sr-only control-label extra-muted">Add to {{title}}</label>
+          <input id="newItemText" type="text" class="form-control" ng-model="form.newItem" placeholder="Adding to {{title}}">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" ng-click="addItem()" ng-disabled="!form.newItem">
+              Add
+              <span class="glyphicon glyphicon-plus extra-muted inverse"></span>
+            </button>
+          </span>
+        </div>
+      </form>
+    </ul>
+  </div>
