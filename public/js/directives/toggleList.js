@@ -17,6 +17,16 @@ foxographApp.directive('toggleList', function () {
         newItem: '',
       };
 
+      scope.$watch('selected', function() {
+        var list = [];
+        for (var i = 0; i < scope.list.length; i++) {
+          if (scope.list[i]._id !== undefined || scope.isSelected(scope.list[i])) {
+            list.push(scope.list[i]);
+          }
+        }
+        scope.list = list;
+      });
+
       scope.isSelected = function(listItem) {
         if (scope.selected) {
           for (var i = 0; i < scope.selected.length; i++) {
@@ -62,7 +72,7 @@ foxographApp.directive('toggleList', function () {
         }
 
         for (i = 0; i < scope.selected.length; i++) {
-          selectedLC.push(scope.list[i][scope.attribute].toLowerCase());
+          selectedLC.push(scope.selected[i][scope.attribute].toLowerCase());
         }
 
         var index = itemsLC.indexOf(itemLC);
@@ -74,7 +84,6 @@ foxographApp.directive('toggleList', function () {
           scope.selected.push(item);
           scope.list.push(item);
         }
-
         scope.form.newItem = '';
         scope.form.adding = false;
       };
