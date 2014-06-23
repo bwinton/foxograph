@@ -6,22 +6,27 @@
    <!-- sidebar -->
    <div class="col-md-2">
     <div class="well well-sm">
-      <h4 class="text-center">{{ projects.length }} Projects</h4>
+      <h4 class="text-center">{{ filteredProjects.length }} Projects</h4>
       <h6 class="text-center"><small><i>in current view</i></small></h6>
+      <hr>
+      <a class="btn btn-block btn-xs btn-default" type="button" ng-click="toggleArchived()" ng-class="{'btn-danger': filters.archived}">
+        <span ng-show="!filters.archived">Show</span>
+        <span ng-show="filters.archived">Hide</span> Archived
+      </a>
     </div>
     <toggle-list title="'Products'" list="products" attribute="'name'"
-    selected="filteredProducts" clearable="true"></toggle-list>
+    selected="filters.products" clearable="true"></toggle-list>
     <toggle-list title="'Themes'" list="themes" attribute="'name'"
-    selected="filteredThemes" clearable="true"></toggle-list>
+    selected="filters.themes" clearable="true"></toggle-list>
   </div>
 
   <!-- project listing -->
   <div class="col-md-10">
-    <table ng-show="projects.length" class="table table-hover">
+    <table ng-show="filteredProjects.length" class="table table-hover">
       <tbody>
-        <tr ng-repeat="project in projects | filterProducts : filteredProducts | filterThemes: filteredThemes">
+        <tr ng-repeat="project in filteredProjects">
           <td>
-            <a class="projectTitle" ui-sref="app.project.show({project_slug: project.slug})"><strong>{{ project.name }}</strong></a><br/>
+            <a class="projectTitle" ng-class="{'extra-muted': project.archived}" ui-sref="app.project.show({project_slug: project.slug})"><strong>{{ project.name }}</strong></a><br/>
             <span ng-repeat="theme in project.themes" class="text-label extra-muted">{{ theme.name }}<br/></span>
           </td>
           <td>
@@ -44,10 +49,10 @@
               </ng-pluralize>
             </div>
           </td>
-          <td>{{ project.user }}</td>
+          <td><a ui-sref="app.profile({user_email: project.user})">{{ project.user }}</a></td>
         </tr>
       </tbody>
     </table>
-    <div ng-show="!projects.length" class="well well-lg">No projects. <i ng-show="projects.length">Try another filter?</i></div>
+    <div ng-show="!filteredProjects.length" class="well well-lg">No projects. <i ng-show="filteredProjects.length">Try another filter?</i></div>
   </div>
 </div>

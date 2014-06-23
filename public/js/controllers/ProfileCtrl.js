@@ -16,7 +16,11 @@ foxographApp.controller({
   'ProfileCtrl': function ProfileCtrl($scope, $rootScope, $location, $stateParams, Restangular, $filter) {
 
     $rootScope.$watch('projects', function () {
-      $scope.projects = _.filter($rootScope.projects, {user: $stateParams.user_email});
+      var userProjects = _.filter($rootScope.projects, {user: $stateParams.user_email});
+      $scope.activeProjects = _.filter(userProjects, {archived: false});
+      $scope.archivedProjects = _.filter(userProjects, {archived: true});
     });
+
+
   }
 });

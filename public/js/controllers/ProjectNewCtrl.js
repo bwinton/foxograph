@@ -18,38 +18,40 @@ foxographApp.controller({
     $scope.project = {};
     $scope.selectedThemes = [];
     $scope.selectedProducts = [];
-    
+
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
 
-      var mockups = [{name: newProject.mockup}]
+      var mockups = [{name: newProject.mockup}];
       var project = {
-        name: newProject.name, 
-        themes: $scope.selectedThemes, 
-        products: $scope.selectedProducts, 
+        name: newProject.name,
+        themes: $scope.selectedThemes,
+        products: $scope.selectedProducts,
         mockups: mockups
-      }
+      };
 
       projects.post(project).then(function (project) {
+          project.mockups[0].bugs = [];
+
           $rootScope.projects.push(project);
-          
+
           // add newly created products to rootscope
           var newProducts = _.where(project.products, function(product) {
-            return ! _.some($rootScope.products, {_id: product._id})  
+            return ! _.some($rootScope.products, {_id: product._id});
           });
-          
+
           // delete any newly created products that were unsaved
           $rootScope.products = _.filter($rootScope.products.concat(newProducts), "_id");
 
 
           // add newly created themes to rootscope
           var newThemes = _.where(project.themes, function(theme) {
-            return ! _.some($rootScope.themes, {_id: theme._id})  
+            return ! _.some($rootScope.themes, {_id: theme._id});
           });
 
           // delete any newly created themes that were unsaved
           $rootScope.themes = _.filter($rootScope.themes.concat(newThemes), "_id");
-          
+
           $state.go('app.project.mockup', {'project_slug': project.slug, 'mockup_slug': project.mockups[0].slug});
       });
     };

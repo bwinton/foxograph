@@ -57,12 +57,8 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
           $scope.loaded = true;
         }
 
-        // load bug
-        if (mockup && mockup.bugs) {
-          if ($scope.bugs === undefined) {
-            $scope.bugs = mockup.bugs;
-          }
-          Restangular.restangularizeCollection(mockup, $scope.bugs, "bugs");
+        if ($scope.mockup && $scope.mockup.bugs) {
+          $scope.mockup.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.mockup.bugs, "bugs");
         }
       }, true);
 
@@ -129,8 +125,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
         };
 
         $scope.$apply(function () {
-          $scope.bugs.push(bug);
-          //$scope.setCurrentBug(bug);
+          $scope.mockup.bugs.push(bug);
         });
 
         pasteboard[0].onmousemove = function(e) {
@@ -150,19 +145,21 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
           var number = prompt('Please enter a bug number');
           if (number) {
             bug.number = number;
-            $scope.bugs.post(bug).then(function (bug) {
+            $scope.mockup.bugs.post(bug).then(function (bug) {
               bug = bug[0];
               bug = Restangular.restangularizeElement($scope.mockup, bug, "bugs");
-              $scope.bugs = _.without($scope.bugs, oldBug);
-              $scope.bugs.push(bug);
-              $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, "bugs");
+              $scope.mockup.bugs.push(bug);
+              $scope.mockup.bugs = _.without($scope.mockup.bugs, oldBug);
+              $scope.mockup.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.mockup.bugs, "bugs");
             }, function (response) {
-              console.log('Error with status code', response);
+              alert("Could not find bug: " + bug.number);
+              $scope.mockup.bugs = _.without($scope.mockup.bugs, bug);
+              $scope.mockup.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.mockup.bugs, "bugs");
             });
           } else {
             $scope.$apply(function() {
-              $scope.bugs = _.without($scope.bugs, bug);
-              $scope.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.bugs, "bugs");
+              $scope.mockup.bugs = _.without($scope.mockup.bugs, bug);
+              $scope.mockup.bugs = Restangular.restangularizeCollection($scope.mockup, $scope.mockup.bugs, "bugs");
             });
           }
         };

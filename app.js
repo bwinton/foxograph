@@ -112,13 +112,30 @@ app.configure('production', function () {
   app.use(express.errorHandler());
 });
 
+// Static files.
+app.use('/r', express.static(__dirname + '/www'));
+
+// User-facing routes.
+app.get('/', routes.index);
+app.get('/new', routes.index);
+app.get('/project/:project_id', routes.index);
+app.get('/project/:project_id/:mockup_id', routes.index);
+app.get('/profile/:user_email', routes.index);
+
+// API Themes
+app.get('/api/themes', routes.getThemes);
+app.post('/api/themes', routes.postTheme);
+
+// API Products
+app.get('/api/products', routes.getProducts);
+app.post('/api/products', routes.postProduct);
 
 // API Projects.
 app.get('/api/projects', routes.getProjects);
 app.post('/api/projects', routes.postProject);
 app.get('/api/projects/:project_id', routes.getProject);
 app.put('/api/projects/:project_id', routes.putProject);
-app.delete('/api/projects/:project_id', routes.deleteProject);
+app.delete('/api/projects/:project_id', routes.disabled);
 
 // API Mockups.
 app.post('/api/projects/:project_id/mockups', routes.postMockup);
@@ -135,32 +152,14 @@ app.get('/api/bugs', routes.getBugs);
 app.put('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.putBug);
 app.delete('/api/projects/:project_id/mockups/:mockup_id/bugs/:bug_id', routes.deleteBug);
 
-// API Themes
-app.get('/api/themes', routes.getThemes);
-app.post('/api/themes', routes.postTheme);
-
-// API Products
-app.get('/api/products', routes.getProducts);
-app.post('/api/products', routes.postProduct);
-
-// API Admin
-app.get('/api/deleteAll', routes.deleteAll);
-app.get('/api/dump', routes.dump);
-
 // Persona API.
 app.get('/user', routes.getUser);
 app.post('/logout', routes.logout);
 
-// Static files.
-app.use('/r', express.static(__dirname + '/www'));
-
-// User-facing routes.
-app.get('/', routes.index);
-app.get('/new', routes.index);
-app.get('/project/:project_id', routes.index);
-app.get('/project/:project_id/:mockup_id', routes.index);
-app.get('/profile/:user_email', routes.index);
-
+// API Admin
+// scary API calls disabled
+// app.get('/api/deleteAll', routes.deleteAll);
+// app.get('/api/dump', routes.dump);
 
 require('express-persona')(app, {
   audience: audience

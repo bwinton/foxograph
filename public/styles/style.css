@@ -97,6 +97,26 @@ img.profile {
   font-weight: 300;
 }
 
+.mockup-form {
+  margin-bottom: 40px;
+}
+
+ tr.doubleBorder {
+  border-top: 2px solid #ddd;
+}
+
+.bugNumber {
+  text-align: center;
+}
+
+.input-group {
+  width: 100%;
+}
+
+td.control {
+  text-align: right;
+}
+
 /* toggle-list stuff requires bootstrap */
 
 .toggle-list a {

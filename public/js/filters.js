@@ -178,4 +178,16 @@ foxographApp.filter('statusClass', function styleFactory() {
       return filteredProjects;
     }
   };
+}).filter('active', function() {
+  return function(items) {
+    return _.filter(items, function(item) {
+      return !item.archived;
+    });
+  };
+}).filter('archived', function() {
+  return function(items) {
+    return _.filter(items, function(item) {
+      return item.archived;
+    });
+  };
 });

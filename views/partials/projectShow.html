@@ -1,36 +1,81 @@
-<div class="row">
+<div ng-show="loaded && project" class="row">
   <div class="col-md-8">
-        <label for="newMockupText" class="sr-only control-label extra-muted">Mockup name</label>
+<h3>Mockups</h3>
+    <div class="row mockup-form" ng-show="project.user == auth.email">
+      <div class="col-md-10">
         <div class="input-group">
-          <input id="newMockupText" type="text" class="form-control" ng-model="newMockupName" placeholder="New mockup name">
+          <label for="newMockupText" class="sr-only control-label extra-muted">Mockup name</label>
+          <input id="newMockupText" type="text" class="form-control" ng-model="mockupForm.name" placeholder="New mockup name">
           <span class="input-group-btn">
-            <button class="btn btn-primary" type="button" ng-click="addMockup()">Add Mockup</button>
+            <button class="btn btn-primary" type="button" ng-click="addMockup()" ng-disabled="!mockupForm.name">Add Mockup</button>
           </span>
         </div>
-        <button class="btn btn-secondary">Edit Mockups</button>
-
-    <div class="input-group" ng-show="project.user != auth.email">
+      </div>
+      <div class="col-md-2">
+        <button ng-show="!editing" class="btn btn-default" ng-click="edit()">Edit Mockups</button>
+        <button ng-show="editing" class="btn btn-primary" ng-click="done()">Done Editing</button>
+      </div>
     </div>
-    <table ng-show="project.mockups" class="table table-hover">
-      <thead>
-        <th></th>
-        <th>Resolved</th>
-        <th>Assigned</th>
-        <th>Unassigned</th>
-      </thead>
-      <tbody>
-        <tr ng-repeat="mockup in project.mockups">
-          <td>
-            <a class="projectTitle" ui-sref="app.project.mockup({project_slug: project.slug, mockup_slug: mockup.slug})"><strong>{{ mockup.name }}</strong></a><br/>
-          </td>
-          <td>{{resolved(mockup.bugs).length}}</td>
-          <td>{{assigned(mockup.bugs).length}}</td>
-          <td>{{unassigned(mockup.bugs).length}}</td>
-        </tr>
-      </tbody>
-    </table>
+
+<table ng-show="project.mockups" class="table mockup-list">
+  <thead>
+    <th></th>
+    <th class="bugNumber">Resolved</th>
+    <th class="bugNumber">Assigned</th>
+    <th class="bugNumber">Unassigned</th>
+    <th ng-if="editing"></th>
+  </thead>
+  <tbody>
+    <tr ng-repeat="mockup in project.mockups | active">
+      <td>
+        <a class="projectTitle" ng-show="!editing" ui-sref="app.project.mockup({project_slug: project.slug, mockup_slug: mockup.slug})"><strong>{{ mockup.name }}</strong></a>
+        <div class="input-group" ng-show="editing">
+          <input id="newMockupText" type="text" class="form-control" placeholder="Mockup name" ng-model="name" ng-init="name = mockup.name" />
+          <span class="input-group-btn">
+            <button ng-show="name != mockup.name" class="btn btn-default" type="button" ng-click="saveMockup(mockup, name)" ng-disabled="!mockup.name">Save</button>
+          </span>
+        </div>
+      </td>
+      <td class="bugNumber">{{resolved(mockup)}}</td>
+      <td class="bugNumber">{{assigned(mockup)}}</td>
+      <td class="bugNumber">{{unassigned(mockup)}}</td>
+      <td ng-if="editing" class="control"><button class="btn btn-default btn-sm" ng-click="archive(mockup)">Archive</button></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr class="extra-muted doubleBorder">
+      <td><strong>
+      <ng-pluralize count="project.mockups.length"
+           when="{'0': 'No mockups',
+                  '1': '1 mockup',
+                  'other': '{} mockups'}">
+      </ng-pluralize>
+      </strong></td>
+      <td class="bugNumber"><strong>{{total.resolved}}</strong></td>
+      <td class="bugNumber"><strong>{{total.assigned}}</strong></td>
+      <td class="bugNumber"><strong>{{total.unassigned}}</strong></td>
+    </tr>
+  </tfoot>
+</table>
+<h3 ng-show="archivedMockups.length">Archived Mockups</h3>
+<table ng-show="archivedMockups.length" class="table mockup-list">
+  <tbody>
+    <tr ng-repeat="mockup in archivedMockups">
+      <td>
+        <a class="projectTitle" ng-show="!editing" ui-sref="app.project.mockup({project_slug: project.slug, mockup_slug: mockup.slug})"><strong>{{ mockup.name }}</strong></a>
+        <div class="input-group" ng-show="editing">
+          <input id="newMockupText" type="text" class="form-control" placeholder="Mockup name" ng-model="name" ng-init="name = mockup.name" />
+          <span class="input-group-btn">
+            <button ng-show="name != mockup.name" class="btn btn-default" type="button" ng-click="saveMockup(mockup, name)" ng-disabled="!mockup.name">Save</button>
+          </span>
+        </div>
+      </td>
+      <td ng-if="editing" class="control"><button class="btn btn-default btn-sm" ng-click="unarchive(mockup)">Unarchive</button></td>
+    </tr>
+  </tbody>
+</table>
   </div>
-  <div class="col-md-3 col-md-offset-1">
+  <div class="col-md-3 col-md-offset-1 well">
     <div ng-show="project.user == auth.email">
       <form name="projectForm" role="form">
           <div class="form-group">
@@ -38,6 +83,11 @@
             <input type="text" required class="form-control" id="project-title" placeholder="Enter Project Name" ng-model="form.name">
           </div>
 
+        <div class="form-group">
+          <label>
+            <input type="checkbox" ng-model="form.archived"> Archived
+          </label>
+        </div>
         <div class="form-group">
           <!-- Allow for changing ownership of projects here someday? -->
           <img class="profile" src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
@@ -60,6 +110,8 @@
     </div>
     <div ng-show="project.user != auth.email">
       <h1>{{project.name}}</h1>
+      <div><span ng-show="project.archived" class="label label-default">Archived</span></div>
+      <hr>
       <img class="profile" src="http://avatars.io/email/{{project.user}}" height="36" width="36"></img>
       <i>{{project.user}}</i>
       <hr>
@@ -83,4 +135,7 @@
       </div>
     </div>
   </div>
+</div>
+<div ng-show="loaded && !project" class="row">
+  <h3 class="text-center extra-muted">Can't find project at this URL</h3>
 </div>

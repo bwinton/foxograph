@@ -1,5 +1,8 @@
-<div class="row">
+<div ng-show="project && mockup" class="row">
   <div class="col-md-12">
     <mockup-image bugs=bugs mockup=mockup></mockup-image>
   </div>
+</div>
+<div ng-show="!project || !mockup" class="row">
+  <h3 class="text-center extra-muted">No mockup at this URL</h3>
 </div>

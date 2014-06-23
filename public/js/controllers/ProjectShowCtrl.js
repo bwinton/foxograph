@@ -20,20 +20,43 @@ foxographApp.controller({
   'ProjectShowCtrl': function ProjectShowCtrl($scope, $rootScope, $location, $state, $stateParams, Restangular, $filter) {
 
     $scope.form = {};
+    $scope.loaded = false;
+    $scope.editing = false;
 
-    $rootScope.$watch('projects', function() {
+    var mockups = {};
+    $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
+
+    $scope.$watch('projects', function() {
       $scope.project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
+      $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
       if ($scope.project) {
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
+        $scope.archivedMockups = [];
+
+        _.forEach($scope.project.mockups, function(mockup) {
+          if (mockup.archived) {
+            $scope.archivedMockups.push(mockup);
+            return;
+          }
+          mockups[mockup._id] = {resolved: 0, assigned: 0, unassigned: 0};
+          _.forEach(mockup.bugs, function(bug) {
+              var status = bugIs(bug);
+              mockups[mockup._id][status] += 1;
+              $scope.total[status] += 1;
+          });
+        });
       }
-    });
+      $scope.loaded = true;
+    }, true);
 
     function checkForm() {
       if (!$scope.project) {
         return false;
       }
-      if($scope.form.name !== $scope.project.name) return true;
+      if ($scope.form.name !== $scope.project.name) return true;
+
+      if ($scope.form.archived !== $scope.project.archived) return true;
 
       var projectThemes = _.map($scope.project.themes, function(theme) {return theme._id;});
       var formThemes = _.map($scope.form.themes, function(theme) {return theme._id;});
@@ -54,13 +77,12 @@ foxographApp.controller({
 
     $scope.addMockup = function() {
       var mockup = {};
-      mockup.name = $scope.newMockupName;
+      mockup.name = $scope.mockupForm.name;
       if (mockup.name) {
         Restangular.restangularizeElement($scope.project, mockup, 'mockups');
         mockup.post().then(function(mockup) {
-          console.log(mockup);
           mockup.bugs = [];
-          $scope.newMockupName = '';
+          $scope.mockupForm.name = '';
           $scope.project.mockups.push(mockup);
         });
       }
@@ -99,26 +121,34 @@ foxographApp.controller({
       $rootScope.products = _.filter($rootScope.products, "_id");
     });
 
-    $scope.resolved = function(bugs) {
-      return _.where(bugs, function(bug) {
-        return bug.status === 'RESOLVED' || bug.status === 'VERIFIED';
-      });
+    $scope.resolved = function(mockup) {
+      if (mockup.bugs) {
+        return mockups[mockup._id].resolved;
+      }
+      return '-';
     };
 
-    $scope.assigned = function(bugs) {
-      return _.where(bugs, function(bug) {
-        return (bug.status !== 'RESOLVED' && bug.status !== 'VERIFIED') &&
-               bug.assigned !== 'Nobody; OK to take it and work on it';
-      });
+    $scope.assigned = function(mockup) {
+      if (mockup.bugs) {
+        return mockups[mockup._id].assigned;
+      }
+      return '-';
     };
 
-    $scope.unassigned = function(bugs) {
-      return _.where(bugs, function(bug) {
-        return (bug.status !== 'RESOLVED' && bug.status !== 'VERIFIED') &&
-               bug.assigned === 'Nobody; OK to take it and work on it';
-        });
+    $scope.unassigned = function(mockup) {
+      if (mockup.bugs) {
+        return mockups[mockup._id].unassigned;
+      }
+      return '-';
     };
 
+    $scope.edit = function() {
+      $scope.editing = true;
+    };
+
+    $scope.done = function() {
+      $scope.editing = false;
+    };
 
     $scope.deleteProject = function (project) {
       project.remove().then(function (data) {
@@ -143,5 +173,40 @@ foxographApp.controller({
         }
       });
     };
+
+    $scope.archive = function(mockup) {
+      mockup.archived = true;
+      Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+      mockup.put();
+    };
+
+    $scope.unarchive = function(mockup) {
+      mockup.archived = false;
+      Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+      mockup.put();
+    };
+
+    $scope.saveMockup = function(mockup, name) {
+      mockup.name = name;
+      Restangular.restangularizeElement($scope.project, mockup, 'mockups');
+      mockup.put();
+    };
+
+    $scope.resetProject = function() {
+      $scope.form = Restangular.copy($scope.project);
+      $scope.formChanged = false;
+    };
+
+    function bugIs(bug) {
+      if (bug.status === 'RESOLVED' || bug.status === 'VERIFIED') {
+        return 'resolved';
+      }
+
+      if (bug.assigned !== 'Nobody; OK to take it and work on it') {
+        return 'assigned';
+      }
+
+      return 'unassigned';
+    }
   }
 });
