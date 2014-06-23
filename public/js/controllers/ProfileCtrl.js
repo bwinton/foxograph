@@ -17,6 +17,7 @@ foxographApp.controller({
 
     $rootScope.$watch('projects', function () {
       var userProjects = _.filter($rootScope.projects, {user: $stateParams.user_email});
+      $rootScope.title = $stateParams.user_email;
       $scope.activeProjects = _.filter(userProjects, {archived: false});
       $scope.archivedProjects = _.filter(userProjects, {archived: true});
     });

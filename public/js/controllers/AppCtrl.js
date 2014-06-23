@@ -20,6 +20,8 @@ foxographApp.controller({
   'AppCtrl': function AppCtrl($scope, $rootScope, Restangular, $filter, $state, $stateParams) {
 
     // Load in the projects.
+    $rootScope.title = 'Foxograph';
+
     Restangular.all('projects').getList().then(function (projectList) {
       $rootScope.projects = projectList;
       Restangular.all('bugs').getList().then(function (bugList) {
