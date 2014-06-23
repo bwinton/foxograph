@@ -104,7 +104,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
 
       pasteboard[0].onmousedown = function(e) {
 
-        if ($scope.auth.email !== $scope.project.user) {
+        if ($scope.auth.email !== $scope.project.user || !$scope.mockup.image) {
           e.stopPropagation();
           return false;
         }
