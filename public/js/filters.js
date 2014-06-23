@@ -180,20 +180,13 @@ foxographApp.filter('statusClass', function styleFactory() {
   };
 }).filter('active', function() {
   return function(items) {
-    if(!items) {
-      return [];
-    }
-    var filteredItems = [];
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].archived === false) {
-        filteredItems.push(items[i]);
-      }
-    }
-    return filteredItems;
+    return _.filter(items, function(item) {
+      return !item.archived;
+    });
   };
 }).filter('archived', function() {
   return function(items) {
-    _.filter(items, function(item) {
+    return _.filter(items, function(item) {
       return item.archived;
     });
   };
