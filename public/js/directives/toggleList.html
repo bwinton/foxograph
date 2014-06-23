@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="toggle-list panel-title">{{title}}</h3>
-      <button ng-show="clearable" type="button" ng-click="clear()" class="btn btn-default btn-xs pull-right">Clear</button>
+      <button ng-show="clearable && selected.length" type="button" ng-click="clear()" class="btn btn-default btn-xs pull-right">Clear</button>
     </div>
     <ul class="toggle-list list-group">
       <a class="list-group-item toggle-list" ng-repeat="listItem in list" ng-click="toggle(listItem)"
