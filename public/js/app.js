@@ -66,6 +66,10 @@ var foxographApp = angular.module('foxographApp',
         url: '/profile/:user_email',
         templateUrl: '/r/profile.html',
         controller: 'ProfileCtrl'
+      }).state('app.products', {
+        url: '/products',
+        templateUrl: '/r/products.html',
+        controller: 'ProductsCtrl'
       });
 
       RestangularProvider.setBaseUrl('/api');

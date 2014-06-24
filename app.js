@@ -121,6 +121,7 @@ app.get('/new', routes.index);
 app.get('/project/:project_id', routes.index);
 app.get('/project/:project_id/:mockup_id', routes.index);
 app.get('/profile/:user_email', routes.index);
+app.get('/products', routes.index);
 
 // API Themes
 app.get('/api/themes', routes.getThemes);
