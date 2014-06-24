@@ -193,3 +193,7 @@ ol.breadcrumb {
     background-color: #A3ED2B;
     border-color: #A3ED2B;
 }
+
+.toggle-list .glyphicon.inverse {
+  color: #fff;
+}
