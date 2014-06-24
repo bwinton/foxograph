@@ -124,10 +124,10 @@ foxographApp.controller({
     }
 
     function updateHeader() {
-      if ($state.params && $state.params.project_id) {
-        $scope.project = _.findWhere($rootScope.projects, {_id: $state.params.project_id});
-        if ($state.params.mockup_id) {
-          $scope.mockup = _.findWhere($scope.project.mockups, {_id: $state.params.mockup_id});
+      if ($state.params && $state.params.project_slug) {
+        $scope.project = _.findWhere($rootScope.projects, {slug: $state.params.project_slug});
+        if ($state.params.mockup_slug) {
+          $scope.mockup = _.findWhere($scope.project.mockups, {slug: $state.params.mockup_slug});
         } else {
           $scope.mockup = null;
         }
