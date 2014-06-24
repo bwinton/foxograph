@@ -49,7 +49,7 @@ var foxographApp = angular.module('foxographApp',
       }).state('app.project', {
         abstract: true,
         url: '/project',
-        template: '<ui-view/>',
+        templateUrl: '/r/project.html',
       }).state('app.project.new', {
         url: '/new',
         templateUrl: '/r/projectNew.html',

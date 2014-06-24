@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li ng-if="!mockup" class="active">
+        {{project.name}}
+      </li>
+      <li ng-if="mockup">
+        <a ui-sref="app.project.show({project_slug: project.slug})">{{project.name}}</a>
+      </li>
+      <li class="active" ng-if="mockup">{{mockup.name}}</li>
+    </ol>
+  </div>
+</div>
+<ui-view />

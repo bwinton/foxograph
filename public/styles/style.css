@@ -117,6 +117,27 @@ td.control {
   text-align: right;
 }
 
+.breadcrumb {
+  float: left;
+  background-color: transparent;
+  padding: 15px;
+}
+
+ol.breadcrumb {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.breadcrumb li {
+  font-size: 24px;
+}
+
+.breadcrumb li.active {
+  font-size: 32px;
+  color: #333;
+}
+
 /* toggle-list stuff requires bootstrap */
 
 .toggle-list a {
