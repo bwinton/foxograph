@@ -93,6 +93,41 @@ exports.postTheme = function (req, res) {
   });
 };
 
+exports.putTheme = function(req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+  Theme.findById(req.params.theme_id, function(err, theme) {
+    if (err) {
+      return error(res, err, console);
+    }
+
+    theme.name = req.body.name;
+
+    theme.save(function (err) {
+      if (err) {
+        return error(res, err, console);
+      }
+      res.json(theme);
+    });
+  });
+};
+
+exports.deleteTheme = function(req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+  Theme.findById(req.params.theme_id, function(err, theme) {
+    if (err) {
+      return error(res, err, console);
+    }
+
+    theme.remove();
+
+    res.json(theme);
+  });
+};
+
 // Products
 exports.getProducts = function (req, res) {
   return Product.find(function (err, products) {
