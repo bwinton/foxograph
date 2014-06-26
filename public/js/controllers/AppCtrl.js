@@ -22,26 +22,30 @@ foxographApp.controller({
     // Load in the projects.
     $rootScope.title = 'Foxograph';
 
-    Restangular.all('projects').getList().then(function (projectList) {
-      $rootScope.projects = projectList;
-      Restangular.all('bugs').getList().then(function (bugList) {
-        var mockups = _.flatten(_.pluck(projectList, 'mockups'));
-        projectList = _.map(projectList, function(project) {
-          return _.map(project.mockups, function(mockup) {
-            mockup.bugs = _.where(bugList, {'mockup': mockup._id});
-            return mockup;
+    $rootScope.load = function() {
+      Restangular.all('projects').getList().then(function (projectList) {
+        $rootScope.projects = projectList;
+        Restangular.all('bugs').getList().then(function (bugList) {
+          var mockups = _.flatten(_.pluck(projectList, 'mockups'));
+          projectList = _.map(projectList, function(project) {
+            return _.map(project.mockups, function(mockup) {
+              mockup.bugs = _.where(bugList, {'mockup': mockup._id});
+              return mockup;
+            });
           });
         });
       });
-    });
 
-    Restangular.all('themes').getList().then(function (themeList) {
-      $rootScope.themes = themeList;
-    });
+      Restangular.all('themes').getList().then(function (themeList) {
+        $rootScope.themes = themeList;
+      });
 
-    Restangular.all('products').getList().then(function (productList) {
-      $rootScope.products = productList;
-    });
+      Restangular.all('products').getList().then(function (productList) {
+        $rootScope.products = productList;
+      });
+    };
+
+    $rootScope.load();
 
     // Keep our themes, products, and projects nice and ordered
     $rootScope.$watch('themes', function() {

@@ -12,7 +12,11 @@
 
 /* Directives */
 
-foxographApp.directive('listEditor', function (Restangular) {
+// HACK: theme/product collections were out of sync with themes/products
+// internal to projects. We are just refetching everything from the server
+// when a theme/product is updated/deleted
+
+foxographApp.directive('listEditor', function ($rootScope, Restangular) {
   var directiveDefinitionObject = {
     restrict: 'E',
     scope: {
@@ -27,6 +31,7 @@ foxographApp.directive('listEditor', function (Restangular) {
             if (item._id === updatedItem._id) {
               item.name = updatedItem.name;
             }
+            $rootScope.load(); // HACK
             return item;
           });
         });
@@ -36,6 +41,7 @@ foxographApp.directive('listEditor', function (Restangular) {
         if (window.confirm("Permantely delete " + item.name + "?")) {
           item.remove().then(function(item) {
               scope.items.splice($index, 1);
+              $rootScope.load(); // HACK
           });
         }
       };
