@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <table class="table">
+      <tr ng-repeat="item in items">
+        <td>
+          <div class="input-group" ng-show="!editing">
+            <input type="text" class="form-control" placeholder="Product name" ng-model="name" ng-init="name = item.name" />
+            <span class="input-group-btn">
+              <button ng-show="name != item.name" class="btn btn-default" type="button" ng-click="save(item, name)" ng-disabled="!name">Save</button>
+            </span>
+          </div>
+        </td>
+        <td>
+          <button ng-click="delete(item, $index)" class="btn btn-danger">Delete</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

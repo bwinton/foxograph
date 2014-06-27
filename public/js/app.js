@@ -49,7 +49,7 @@ var foxographApp = angular.module('foxographApp',
       }).state('app.project', {
         abstract: true,
         url: '/project',
-        templateUrl: '/r/project.html',
+        templateUrl: '/r/project.html'
       }).state('app.project.new', {
         url: '/new',
         templateUrl: '/r/projectNew.html',
@@ -66,6 +66,12 @@ var foxographApp = angular.module('foxographApp',
         url: '/profile/:user_email',
         templateUrl: '/r/profile.html',
         controller: 'ProfileCtrl'
+      }).state('app.products', {
+        url: '/products',
+        templateUrl: '/r/products.html'
+      }).state('app.themes', {
+        url: '/themes',
+        templateUrl: '/r/themes.html'
       });
 
       RestangularProvider.setBaseUrl('/api');

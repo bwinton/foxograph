@@ -16,8 +16,6 @@ foxographApp.controller({
 
   'ProjectMockupCtrl': function ProjectMockupCtrl($scope, $rootScope, $stateParams, $location, $filter, Restangular, Image) {
 
-
-
     $rootScope.$watch('projects', loadMockup);
 
     $scope.$watch('bugs', function() {
@@ -32,6 +30,9 @@ foxographApp.controller({
         $scope.project = Restangular.restangularizeElement(null, project, 'projects');
         if ($scope.project) {
           var mockup = _.findWhere($scope.project.mockups, {slug: $stateParams.mockup_slug});
+
+          $rootScope.title = mockup.name + ' — ' + project.name;
+
           if (!mockup.image) {
             Restangular.restangularizeElement($scope.project, mockup, 'mockups');
             mockup.one('img').get().then(function(image) {

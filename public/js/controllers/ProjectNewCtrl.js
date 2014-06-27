@@ -19,6 +19,8 @@ foxographApp.controller({
     $scope.selectedThemes = [];
     $scope.selectedProducts = [];
 
+  $rootScope.title = 'New Foxograph Project';
+
     $scope.create = function (newProject) {
       var projects = Restangular.all('projects');
 
