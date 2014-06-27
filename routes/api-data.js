@@ -151,6 +151,41 @@ exports.postProduct = function (req, res) {
   });
 };
 
+exports.putProduct = function(req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+  Product.findById(req.params.product_id, function(err, product) {
+    if (err) {
+      return error(res, err, console);
+    }
+
+    product.name = req.body.name;
+
+    product.save(function (err) {
+      if (err) {
+        return error(res, err, console);
+      }
+      res.json(product);
+    });
+  });
+};
+
+exports.deleteProduct = function(req, res) {
+  if (!req.session.email) {
+    return error(res, 'Not logged in.');
+  }
+  Product.findById(req.params.product_id, function(err, product) {
+    if (err) {
+      return error(res, err, console);
+    }
+
+    product.remove();
+
+    res.json(product);
+  });
+};
+
 // Projects.
 
 exports.getProjects = function (req, res) {
