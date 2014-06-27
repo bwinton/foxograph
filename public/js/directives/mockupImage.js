@@ -20,7 +20,7 @@ foxographApp.directive('mockupImage', function ($document, Image, Restangular) {
     link: function userPostLink($scope, iElement) {
 
       var MAX_WIDTH = 1100;
-      var MAX_HEIGHT = 600;
+      var MAX_HEIGHT = 550;
       var BUG_WIDTH = 320;
       var BUG_HEIGHT = 60;
       var pasteboard = angular.element(iElement.children()[0]);
