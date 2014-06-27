@@ -24,24 +24,18 @@ foxographApp.directive('listEditor', function ($rootScope, Restangular) {
     },
     templateUrl: '/r/js/directives/listEditor.html',
     link: function userPostLink(scope) {
+
       scope.save = function(item, name) {
         item.name = name;
         item.put().then(function (updatedItem) {
-          scope.items = _.map(scope.items, function(item) {
-            if (item._id === updatedItem._id) {
-              item.name = updatedItem.name;
-            }
-            $rootScope.load(); // HACK
-            return item;
-          });
+          $rootScope.load(); // HACK
         });
       };
 
       scope.delete = function(item, $index) {
         if (window.confirm("Permantely delete " + item.name + "?")) {
           item.remove().then(function(item) {
-              scope.items.splice($index, 1);
-              $rootScope.load(); // HACK
+            $rootScope.load(); // HACK
           });
         }
       };
