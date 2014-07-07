@@ -1,6 +1,6 @@
 <div ng-show="loaded && project" class="row">
   <div class="col-md-8">
-<h3>Mockups</h3>
+<h4>Mockups</h4>
     <div class="row mockup-form" ng-show="project.user == auth.email">
       <div class="col-md-10">
         <div class="input-group">
@@ -57,7 +57,7 @@
     </tr>
   </tfoot>
 </table>
-<h3 ng-show="archivedMockups.length">Archived Mockups</h3>
+<h4 ng-show="archivedMockups.length">Archived Mockups</h4>
 <table ng-show="archivedMockups.length" class="table mockup-list">
   <tbody>
     <tr ng-repeat="mockup in archivedMockups">

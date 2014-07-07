@@ -20,70 +20,61 @@ foxographApp.controller({
   'AppCtrl': function AppCtrl($scope, $rootScope, Restangular, $filter, $state, $stateParams) {
 
     // Load in the projects.
-    Restangular.all('projects').getList().then(function (projectList) {
-      $rootScope.projects = projectList;
-      Restangular.all('bugs').getList().then(function (bugList) {
-        var mockups = _.flatten(_.pluck(projectList, 'mockups'));
-        projectList = _.map(projectList, function(project) {
-          return _.map(project.mockups, function(mockup) {
-            mockup.bugs = _.where(bugList, {'mockup': mockup._id});
-            return mockup;
+    $rootScope.title = 'Foxograph';
+
+    $rootScope.load = function() {
+      Restangular.all('projects').getList().then(function (projectList) {
+        $rootScope.projects = projectList;
+        Restangular.all('bugs').getList().then(function (bugList) {
+          var mockups = _.flatten(_.pluck(projectList, 'mockups'));
+          projectList = _.map(projectList, function(project) {
+            return _.map(project.mockups, function(mockup) {
+              mockup.bugs = _.where(bugList, {'mockup': mockup._id});
+              return mockup;
+            });
           });
         });
       });
-    });
 
-    Restangular.all('themes').getList().then(function (themeList) {
-      $rootScope.themes = themeList;
-    });
+      Restangular.all('themes').getList().then(function (themeList) {
+        $rootScope.themes = themeList;
+      });
 
-    Restangular.all('products').getList().then(function (productList) {
-      $rootScope.products = productList;
-    });
+      Restangular.all('products').getList().then(function (productList) {
+        $rootScope.products = productList;
+      });
+    };
+
+    $rootScope.load();
+
+    function updateList(listType) {
+      if ($rootScope[listType]) {
+        var list = $rootScope[listType];
+
+        list = _.reject(list, function(item) {
+          return item._id === undefined && _.some(list, function(itemCompare) {
+            return item.name === itemCompare.name;
+          });
+        });
+
+        list = $filter('orderBy')(list, ['name']);
+
+        if (!identical(list, $rootScope[listType])) {
+          list = _.map(list, function(item) {
+            return Restangular.restangularizeElement(null, item, listType);
+          });
+          $rootScope[listType] = Restangular.restangularizeCollection(null, list, listType);
+        }
+      }
+    }
 
     // Keep our themes, products, and projects nice and ordered
     $rootScope.$watch('themes', function() {
-      if ($rootScope.themes) {
-        var themes = $rootScope.themes;
-
-        // reject themes without id's if there is a theme with the same name with an id
-        // useful after project creation and update
-        themes = _.reject(themes, function(theme) {
-          return theme._id === undefined && _.some(themes, function(themeComp) {
-            return theme.name === themeComp.name;
-          });
-        });
-
-        // order themes alphabetically by name
-        themes = $filter('orderBy')(themes, ['name']);
-
-        // prevent infinite updating
-        if (!identical(themes, $rootScope.themes)) {
-          $rootScope.themes = themes;
-        }
-      }
+      updateList('themes');
     });
 
     $rootScope.$watch('products', function() {
-      if ($rootScope.products) {
-        var products = $rootScope.products;
-
-        // reject products without id's if there is a product with the same name with an id
-        // useful after project creation and update
-        products = _.reject(products, function(product) {
-          return product._id === undefined && _.some(products, function(productComp) {
-            return product.name === productComp.name;
-          });
-        });
-
-        // order products alphabetically by name
-        products = $filter('orderBy')(products, ['name']);
-
-        // prevent infinite updating
-        if (!identical(products, $rootScope.products)) {
-          $rootScope.products = products;
-        }
-      }
+      updateList('products');
     });
 
     $rootScope.$watch('projects', function() {
@@ -122,10 +113,10 @@ foxographApp.controller({
     }
 
     function updateHeader() {
-      if ($state.params && $state.params.project_id) {
-        $scope.project = _.findWhere($rootScope.projects, {_id: $state.params.project_id});
-        if ($state.params.mockup_id) {
-          $scope.mockup = _.findWhere($scope.project.mockups, {_id: $state.params.mockup_id});
+      if ($state.params && $state.params.project_slug) {
+        $scope.project = _.findWhere($rootScope.projects, {slug: $state.params.project_slug});
+        if ($state.params.mockup_slug) {
+          $scope.mockup = _.findWhere($scope.project.mockups, {slug: $state.params.mockup_slug});
         } else {
           $scope.mockup = null;
         }

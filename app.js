@@ -121,14 +121,20 @@ app.get('/new', routes.index);
 app.get('/project/:project_id', routes.index);
 app.get('/project/:project_id/:mockup_id', routes.index);
 app.get('/profile/:user_email', routes.index);
+app.get('/products', routes.index);
+app.get('/themes', routes.index);
 
 // API Themes
 app.get('/api/themes', routes.getThemes);
 app.post('/api/themes', routes.postTheme);
+app.put('/api/themes/:theme_id', routes.putTheme);
+app.delete('/api/themes/:theme_id', routes.deleteTheme);
 
 // API Products
 app.get('/api/products', routes.getProducts);
 app.post('/api/products', routes.postProduct);
+app.put('/api/products/:product_id', routes.putProduct);
+app.delete('/api/products/:product_id', routes.deleteProduct);
 
 // API Projects.
 app.get('/api/projects', routes.getProjects);

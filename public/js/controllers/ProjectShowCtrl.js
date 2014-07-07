@@ -30,6 +30,7 @@ foxographApp.controller({
       $scope.project = _.findWhere($rootScope.projects, {slug: $stateParams.project_slug});
       $scope.total= {resolved: 0, assigned: 0, unassigned: 0};
       if ($scope.project) {
+        $rootScope.title = $scope.project.name;
         $scope.form = Restangular.copy($scope.project);
         $scope.formChanged = false;
         $scope.archivedMockups = [];

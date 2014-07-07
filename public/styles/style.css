@@ -52,7 +52,7 @@ img.profile {
 .pasteboard {
   position: relative;
   width: 1100px;
-  height: 600px;
+  height: 550px;
   background-color: #F8F8F8;
   border: 1px solid #E7E7E7;
   border-radius: 2px;
@@ -117,6 +117,27 @@ td.control {
   text-align: right;
 }
 
+.breadcrumb {
+  float: left;
+  background-color: transparent;
+  padding: 15px;
+}
+
+ol.breadcrumb {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.breadcrumb li {
+  font-size: 24px;
+}
+
+.breadcrumb li.active {
+  font-size: 32px;
+  color: #333;
+}
+
 /* toggle-list stuff requires bootstrap */
 
 .toggle-list a {
@@ -171,4 +192,8 @@ td.control {
 .toggle-list.list-group-item.on .circle {
     background-color: #A3ED2B;
     border-color: #A3ED2B;
+}
+
+.toggle-list .glyphicon.inverse {
+  color: #fff;
 }

@@ -17,6 +17,8 @@ foxographApp.controller({
 
     // Would be nice to update URL when filtering
 
+    $rootScope.title = 'Foxograph Dashboard';
+
     $scope.filters = {};
     $scope.filters = {
       'themes': [],

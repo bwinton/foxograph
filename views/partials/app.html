@@ -1,32 +1,19 @@
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container">
-      <ul class="nav container navbar-nav">
-        <a class="navbar-brand" href="/">Foxograph</a>
-        <li>{{project.name}}</li>
-        <li>{{mockup.name}}</li>
-        <li class="pull-right navbar-form">
-          <button type="submit" class="btn" ng-show="auth.email"
-            ui-sref="app.project.new()">Create New Project</button>
-        </li>
-        <!-- User box -->
-        <li class="pull-right navbar-text">
-          <user logged-in-user="auth"><div id="user">
-            <a ng-hide="loggedInUser.email || progress" class="button login" title="Click to sign in.">Sign In</a>
-            <p class="ng-hide" ng-show="progress">Signing In...</p>
-            <p class="ng-hide" ng-show="loggedInUser.email"><img class="profile" src="http://avatars.io/email/"
-              height="24" width="24"></img><a href="/profile" class="profileLink ng-binding" ng-href="/profile"></a>
-              <small class="text-label ng-binding"></small> | <a class="email" title="Click to sign out.">Sign Out</a>
-            </p>
-          </div>
-          </user>
-        </li>
-        <li ng-show="auth.email" class="pull-right">
-          <a ng-href="/profile/{{auth.email}}">
-            <small class="text-label">My Projects</small>
-          </a>
-        </li>
-      </ul>
-    </div>
-    </nav>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <a class="navbar-brand" href="/">Foxograph</a>
+    <ul ng-show="auth.email" class="nav navbar-nav">
+      <li><a ui-sref="app.products()">Products</a></li>
+      <li><a ui-sref="app.themes()">Themes</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li ng-show="auth.email">
+        <a ui-sref="app.profile({user_email: auth.email})">
+          <small class="text-label">My Projects</small>
+        </a>
+      </li>
+      <li class="navbar-text"><user logged-in-user="auth"></user></li>
+    </ul>
+  </div>
+</nav>
 
-    <div ui-view class="main-content container"></div>
+<div ui-view class="main-content container"></div>

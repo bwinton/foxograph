@@ -1,5 +1,6 @@
 <div class="row">
-  <h2>Projects</h2>
+  <h2>Projects <button type="submit" class="btn pull-right btn-primary"
+    ui-sref="app.project.new()" ng-show="auth.email == user.email">Create New Project</button></h2>
   <table ng-show="activeProjects.length" class="table table-hover">
     <tbody>
       <tr ng-repeat="project in activeProjects">
