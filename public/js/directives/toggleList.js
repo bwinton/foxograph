@@ -28,7 +28,7 @@ foxographApp.directive('toggleList', function () {
       });
 
       scope.isSelected = function(listItem) {
-        if (scope.selected.length > 1) {
+        if (scope.selected.length > 0) {
           for (var i = 0; i < scope.selected.length; i++) {
             if (scope.selected[i][scope.attribute] === listItem[scope.attribute]) {
               return true;
